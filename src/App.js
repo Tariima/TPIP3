@@ -1,28 +1,37 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
+import { obtenerPruebaBackend } from './services/api';
 
 function App() {
+  const [estadoBackend, setEstadoBackend] = useState('Conectando con el backend...');
+
+  useEffect(() => {
+    obtenerPruebaBackend()
+      .then((data) => setEstadoBackend(data.mensaje))
+      .catch(() => setEstadoBackend('No se pudo conectar con el backend'));
+  }, []);
+
   return (
     <div className="App">
       <header className="App-header">
-        <h1>¡Bienvenido a mi página con React!</h1>
-        <p>Esta es una estructura inicial para tu proyecto.</p>
+        <h1>TPIP3</h1>
+        <p>Estructura base con React, Node y Express.</p>
       </header>
-      
+
       <main className="App-main">
         <section>
-          <h2>Sección 1</h2>
-          <p>Aquí puedes agregar contenido.</p>
+          <h2>Frontend</h2>
+          <p>Aplicacion React lista para comenzar a desarrollar.</p>
         </section>
-        
+
         <section>
-          <h2>Sección 2</h2>
-          <p>Personaliza esta plantilla según tus necesidades.</p>
+          <h2>Backend</h2>
+          <p>{estadoBackend}</p>
         </section>
       </main>
 
       <footer className="App-footer">
-        <p>&copy; 2026 Mi Página React</p>
+        <p>Programacion 3 - TUP</p>
       </footer>
     </div>
   );
