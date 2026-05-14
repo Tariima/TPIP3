@@ -1,79 +1,355 @@
-/* Estilos generales */
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f4f1ec;
+  color: #25211c;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+button {
+  font: inherit;
 }
 
 .App {
   min-height: 100vh;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px 40px;
+  background: #1f2a24;
+  color: #fff;
+}
+
+.brand-kicker,
+.panel-label,
+.table-badge {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.brand-kicker {
+  color: #e2bd67;
+}
+
+.topbar h1 {
+  margin: 4px 0 0;
+  font-size: 2rem;
+}
+
+.connection-status {
+  max-width: 360px;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 6px;
+  color: #e8e3da;
+  text-align: right;
+}
+
+.layout {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 32px 0;
+}
+
+.intro-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 24px;
+  align-items: stretch;
+  padding: 32px;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid #e2d8c9;
+}
+
+.intro-copy {
   display: flex;
   flex-direction: column;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #333;
+  justify-content: center;
 }
 
-.App-header {
-  background-color: rgba(255, 255, 255, 0.95);
-  padding: 40px 20px;
-  text-align: center;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+.table-badge {
+  width: max-content;
+  padding: 8px 10px;
+  border-radius: 4px;
+  background: #e2bd67;
+  color: #25211c;
 }
 
-.App-header h1 {
+.intro-copy h2 {
+  max-width: 720px;
+  margin: 18px 0 12px;
+  font-size: clamp(2rem, 5vw, 4.4rem);
+  line-height: 1;
+}
+
+.intro-copy p {
+  max-width: 620px;
   margin: 0;
-  color: #667eea;
-  font-size: 2.5rem;
-}
-
-.App-header p {
-  margin: 10px 0 0 0;
-  color: #666;
-  font-size: 1.1rem;
-}
-
-.App-main {
-  flex: 1;
-  padding: 40px 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.App-main section {
-  background-color: rgba(255, 255, 255, 0.95);
-  padding: 30px;
-  margin-bottom: 30px;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.App-main h2 {
-  color: #667eea;
-  margin-top: 0;
-}
-
-.App-main p {
-  color: #666;
+  color: #625b51;
+  font-size: 1.08rem;
   line-height: 1.6;
 }
 
-.App-footer {
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
+.qr-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid #ded4c4;
+  border-radius: 8px;
+  background: #faf8f4;
   text-align: center;
-  padding: 20px;
-  margin-top: auto;
 }
 
-.App-footer p {
+.qr-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  aspect-ratio: 1;
+}
+
+.qr-grid span {
+  background: #1f2a24;
+  border-radius: 2px;
+}
+
+.qr-grid span:nth-child(2),
+.qr-grid span:nth-child(7),
+.qr-grid span:nth-child(9),
+.qr-grid span:nth-child(12),
+.qr-grid span:nth-child(14) {
+  background: #e2bd67;
+}
+
+.qr-card p {
   margin: 0;
+  font-weight: 700;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: minmax(300px, 1.1fr) minmax(280px, 0.9fr);
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.phone-preview,
+.order-panel,
+.waiter-panel {
+  border-radius: 8px;
+  border: 1px solid #e2d8c9;
+  background: #fff;
+}
+
+.phone-preview {
+  grid-row: span 2;
+  padding: 22px;
+}
+
+.phone-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #e8ded0;
+}
+
+.phone-header span {
+  color: #625b51;
+}
+
+.pin-box {
+  margin: 22px 0;
+  padding: 18px;
+  border-radius: 8px;
+  background: #f4f1ec;
+}
+
+.pin-box label {
+  display: block;
+  margin-bottom: 10px;
+  color: #625b51;
+  font-weight: 700;
+}
+
+.pin-input {
+  padding: 14px;
+  border: 1px solid #d4c5b1;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.menu-list h3,
+.order-panel h3,
+.waiter-panel h3 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.product-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 14px;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid #eee5d8;
+}
+
+.product-row:last-child {
+  border-bottom: 0;
+}
+
+.product-row strong,
+.product-row span {
+  display: block;
+}
+
+.product-row span {
+  margin-top: 4px;
+  color: #625b51;
+  font-size: 0.9rem;
+}
+
+.product-row button,
+.order-type button,
+.confirm-button {
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.product-row button {
+  padding: 9px 12px;
+  background: #1f2a24;
+  color: #fff;
+}
+
+.order-panel,
+.waiter-panel {
+  padding: 22px;
+}
+
+.panel-label {
+  margin-bottom: 8px;
+  color: #7d5d25;
+}
+
+.order-type {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 22px 0;
+  padding: 4px;
+  border-radius: 8px;
+  background: #f4f1ec;
+}
+
+.order-type button {
+  padding: 10px;
+  background: transparent;
+  color: #625b51;
+}
+
+.order-type .active {
+  background: #fff;
+  color: #25211c;
+  box-shadow: 0 1px 4px rgba(31, 42, 36, 0.12);
+}
+
+.ticket {
+  display: grid;
+  gap: 14px;
+}
+
+.ticket div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: #625b51;
+}
+
+.confirm-button {
+  width: 100%;
+  margin-top: 24px;
+  padding: 14px;
+  background: #d66a34;
+  color: #fff;
+}
+
+.waiter-order {
+  margin-top: 18px;
+  padding: 16px;
+  border-left: 4px solid #d66a34;
+  border-radius: 6px;
+  background: #fbf6ef;
+}
+
+.waiter-order span,
+.waiter-order strong {
+  display: block;
+}
+
+.waiter-order span {
+  color: #7d5d25;
+  font-weight: 700;
+}
+
+.waiter-order strong {
+  margin-top: 6px;
+}
+
+.waiter-order p {
+  margin: 8px 0 0;
+  color: #625b51;
+}
+
+.waiter-order.muted {
+  border-left-color: #7d8a7f;
+}
+
+@media (max-width: 820px) {
+  .topbar,
+  .intro-panel,
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar {
+    align-items: flex-start;
+    padding: 20px;
+  }
+
+  .connection-status {
+    text-align: left;
+  }
+
+  .intro-panel {
+    padding: 22px;
+  }
+}
+
+@media (max-width: 560px) {
+  .product-row {
+    grid-template-columns: 1fr;
+  }
+
+  .order-type {
+    grid-template-columns: 1fr;
+  }
+
+  .ticket div {
+    display: grid;
+  }
 }
