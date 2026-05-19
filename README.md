@@ -50,10 +50,10 @@ Para correr el proyecto hay que levantar el backend y el frontend en dos termina
 
 ### Backend
 
-```powershell
+```bash
 cd backend
-npm.cmd install
-npm.cmd run dev
+npm install
+npm run dev
 ```
 
 El servidor queda disponible en:
@@ -72,9 +72,9 @@ http://localhost:3001/api/prueba
 
 Desde la carpeta principal del proyecto:
 
-```powershell
-npm.cmd install
-npm.cmd run dev
+```bash
+npm install
+npm run dev
 ```
 
 La aplicacion queda disponible en:
