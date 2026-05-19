@@ -1,46 +1,46 @@
 const sequelize = require('../db');
 
-const Role = require('./Role');
-const User = require('./User');
-const Category = require('./Category');
-const Product = require('./Product');
-const Table = require('./Table');
-const TableSession = require('./TableSession');
-const Order = require('./Order');
-const OrderItem = require('./OrderItem');
+const Rol = require('./Rol');
+const Usuario = require('./Usuario');
+const Categoria = require('./Categoria');
+const Producto = require('./Producto');
+const Mesa = require('./Mesa');
+const SesionMesa = require('./SesionMesa');
+const Pedido = require('./Pedido');
+const DetallePedido = require('./DetallePedido');
 
-Role.hasMany(User, { foreignKey: 'roleId' });
-User.belongsTo(Role, { foreignKey: 'roleId' });
+Rol.hasMany(Usuario, { foreignKey: 'rolId' });
+Usuario.belongsTo(Rol, { foreignKey: 'rolId' });
 
-Category.hasMany(Product, { foreignKey: 'categoryId' });
-Product.belongsTo(Category, { foreignKey: 'categoryId' });
+Categoria.hasMany(Producto, { foreignKey: 'categoriaId' });
+Producto.belongsTo(Categoria, { foreignKey: 'categoriaId' });
 
-Table.hasMany(TableSession, { foreignKey: 'tableId' });
-TableSession.belongsTo(Table, { foreignKey: 'tableId' });
+Mesa.hasMany(SesionMesa, { foreignKey: 'mesaId' });
+SesionMesa.belongsTo(Mesa, { foreignKey: 'mesaId' });
 
-User.hasMany(TableSession, { foreignKey: 'openedByUserId' });
-TableSession.belongsTo(User, { foreignKey: 'openedByUserId', as: 'openedBy' });
+Usuario.hasMany(SesionMesa, { foreignKey: 'usuarioAperturaId' });
+SesionMesa.belongsTo(Usuario, { foreignKey: 'usuarioAperturaId' });
 
-TableSession.hasMany(Order, { foreignKey: 'tableSessionId' });
-Order.belongsTo(TableSession, { foreignKey: 'tableSessionId' });
+SesionMesa.hasMany(Pedido, { foreignKey: 'sesionMesaId' });
+Pedido.belongsTo(SesionMesa, { foreignKey: 'sesionMesaId' });
 
-User.hasMany(Order, { foreignKey: 'createdByUserId' });
-Order.belongsTo(User, { foreignKey: 'createdByUserId', as: 'createdBy' });
+Usuario.hasMany(Pedido, { foreignKey: 'usuarioCreadorId' });
+Pedido.belongsTo(Usuario, { foreignKey: 'usuarioCreadorId' });
 
-Order.hasMany(OrderItem, { foreignKey: 'orderId' });
-OrderItem.belongsTo(Order, { foreignKey: 'orderId' });
+Pedido.hasMany(DetallePedido, { foreignKey: 'pedidoId' });
+DetallePedido.belongsTo(Pedido, { foreignKey: 'pedidoId' });
 
-Product.hasMany(OrderItem, { foreignKey: 'productId' });
-OrderItem.belongsTo(Product, { foreignKey: 'productId' });
+Producto.hasMany(DetallePedido, { foreignKey: 'productoId' });
+DetallePedido.belongsTo(Producto, { foreignKey: 'productoId' });
 
 module.exports = {
   sequelize,
-  Role,
-  User,
-  Category,
-  Product,
-  Table,
-  TableSession,
-  Order,
-  OrderItem
+  Rol,
+  Usuario,
+  Categoria,
+  Producto,
+  Mesa,
+  SesionMesa,
+  Pedido,
+  DetallePedido
 };

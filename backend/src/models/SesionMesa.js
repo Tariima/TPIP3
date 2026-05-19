@@ -1,27 +1,27 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
 
-const TableSession = sequelize.define('TableSession', {
+const SesionMesa = sequelize.define('SesionMesa', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  openedAt: {
+  fechaApertura: {
     type: DataTypes.DATE,
     allowNull: false,
     defaultValue: DataTypes.NOW
   },
-  closedAt: {
+  fechaCierre: {
     type: DataTypes.DATE
   },
-  status: {
+  estado: {
     type: DataTypes.STRING,
     defaultValue: 'abierta'
   }
 }, {
-  tableName: 'table_sessions',
+  tableName: 'sesiones_mesa',
   timestamps: false
 });
 
-module.exports = TableSession;
+module.exports = SesionMesa;
