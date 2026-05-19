@@ -83,6 +83,34 @@ La aplicacion queda disponible en:
 http://localhost:3000
 ```
 
+## Flujo de trabajo
+
+Para organizar el desarrollo vamos a usar el flujo de feature branches.
+
+Cada cambio se va a trabajar en una rama propia, separada de la rama principal. La rama tiene que tener un nombre claro que indique el tipo de trabajo y una breve descripcion.
+
+Convencion para nombrar ramas:
+
+- `feat/nombre-del-cambio`: para nuevas funcionalidades o implementaciones.
+- `fix/nombre-del-arreglo`: para correcciones de errores.
+- `hotfix/nombre-del-arreglo`: para correcciones urgentes.
+- `docs/nombre-del-cambio`: para cambios en documentacion.
+- `refactor/nombre-del-cambio`: para mejoras internas del codigo que no cambian el comportamiento.
+- `style/nombre-del-cambio`: para cambios de formato, estilos o ajustes visuales.
+
+Ejemplos:
+
+```txt
+feat/crear-menu-digital
+fix/error-conexion-backend
+hotfix/api-key-expuesta
+docs/actualizar-readme
+refactor/ordenar-rutas-backend
+style/mejorar-estilos-app
+```
+
+Una vez terminado el trabajo en la rama, se revisa y se integra a la rama principal.
+
 ## Estado actual
 
 Por ahora el proyecto cuenta con la estructura inicial y una ruta de prueba para comprobar que el frontend se conecta correctamente con el backend.
