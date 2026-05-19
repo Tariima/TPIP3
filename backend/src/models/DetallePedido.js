@@ -1,18 +1,18 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
 
-const OrderItem = sequelize.define('OrderItem', {
+const DetallePedido = sequelize.define('DetallePedido', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  quantity: {
+  cantidad: {
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 1
   },
-  unitPrice: {
+  precioUnitario: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false
   },
@@ -21,8 +21,8 @@ const OrderItem = sequelize.define('OrderItem', {
     allowNull: false
   }
 }, {
-  tableName: 'order_items',
+  tableName: 'detalles_pedido',
   timestamps: false
 });
 
-module.exports = OrderItem;
+module.exports = DetallePedido;

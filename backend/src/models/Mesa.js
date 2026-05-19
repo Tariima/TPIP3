@@ -1,13 +1,13 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
 
-const Table = sequelize.define('Table', {
+const Mesa = sequelize.define('Mesa', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  number: {
+  numero: {
     type: DataTypes.INTEGER,
     allowNull: false,
     unique: true
@@ -16,17 +16,17 @@ const Table = sequelize.define('Table', {
     type: DataTypes.STRING,
     allowNull: false
   },
-  status: {
+  estado: {
     type: DataTypes.STRING,
     defaultValue: 'disponible'
   },
-  active: {
+  activa: {
     type: DataTypes.BOOLEAN,
     defaultValue: true
   }
 }, {
-  tableName: 'tables',
+  tableName: 'mesas',
   timestamps: false
 });
 
-module.exports = Table;
+module.exports = Mesa;

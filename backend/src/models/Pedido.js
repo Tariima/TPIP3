@@ -1,23 +1,23 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
 
-const Order = sequelize.define('Order', {
+const Pedido = sequelize.define('Pedido', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  type: {
+  tipo: {
     type: DataTypes.STRING,
     allowNull: false,
     defaultValue: 'mesa'
   },
-  status: {
+  estado: {
     type: DataTypes.STRING,
     allowNull: false,
     defaultValue: 'pendiente'
   },
-  notes: {
+  notas: {
     type: DataTypes.TEXT
   },
   total: {
@@ -25,8 +25,8 @@ const Order = sequelize.define('Order', {
     defaultValue: 0
   }
 }, {
-  tableName: 'orders',
-  timestamps: true
+  tableName: 'pedidos',
+  timestamps: false
 });
 
-module.exports = Order;
+module.exports = Pedido;

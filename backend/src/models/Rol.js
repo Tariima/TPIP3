@@ -1,18 +1,18 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
 
-const Role = sequelize.define('Role', {
+const Rol = sequelize.define('Rol', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  name: {
+  nombre: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true
   },
-  description: {
+  descripcion: {
     type: DataTypes.STRING
   }
 }, {
@@ -20,4 +20,4 @@ const Role = sequelize.define('Role', {
   timestamps: false
 });
 
-module.exports = Role;
+module.exports = Rol;
