@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import { obtenerPruebaBackend } from './services/api';
+import { AuthProvider } from './AuthContext.js';
+import Login from './Login.jsx';
 
 function App() {
   const [estadoBackend, setEstadoBackend] = useState('Conectando con el backend...');
@@ -12,6 +14,7 @@ function App() {
   }, []);
 
   return (
+  <AuthProvider>
     <div className="App">
       <header className="App-header">
         <h1>TPIP3</h1>
@@ -25,6 +28,10 @@ function App() {
         </section>
 
         <section>
+          <Login/>
+        </section>
+
+        <section>
           <h2>Backend</h2>
           <p>{estadoBackend}</p>
         </section>
@@ -34,6 +41,7 @@ function App() {
         <p>Programacion 3 - TUP</p>
       </footer>
     </div>
+  </AuthProvider>
   );
 }
 
