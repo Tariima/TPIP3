@@ -17,7 +17,7 @@ Crear una aplicacion para la gestion de bares donde:
 
 ## Tecnologias utilizadas
 
-- React para el frontend.
+- React (con Vite como build tool y dev server) para el frontend.
 - Node.js con Express para el backend.
 - Variables de entorno para configurar la conexion entre cliente y servidor.
 
@@ -31,14 +31,15 @@ TPIP3/
       server.js
     package.json
     .env.example
-  public/
   src/
     services/
       api.js
-    App.js
+    App.jsx
     App.css
-    index.js
+    main.jsx
     index.css
+  index.html
+  vite.config.js
   .env.example
   package.json
   README.md
