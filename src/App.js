@@ -1,39 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
-import { obtenerPruebaBackend } from './services/api';
+import Login from './components/auth/login/Login';
+import Home from './components/home/Home';
+import Protected from './components/routing/protected/Protected';
 
 function App() {
-  const [estadoBackend, setEstadoBackend] = useState('Conectando con el backend...');
-
-  useEffect(() => {
-    obtenerPruebaBackend()
-      .then((data) => setEstadoBackend(data.mensaje))
-      .catch(() => setEstadoBackend('No se pudo conectar con el backend'));
-  }, []);
-
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>TPIP3</h1>
-        <p>Estructura base con React, Node y Express.</p>
-      </header>
+    <Routes>
+      <Route path="/login" element={<Login />} />
 
-      <main className="App-main">
-        <section>
-          <h2>Frontend</h2>
-          <p>Aplicacion React lista para comenzar a desarrollar.</p>
-        </section>
+      {/* Rutas que requieren sesion iniciada */}
+      <Route element={<Protected />}>
+        <Route path="/" element={<Home />} />
+      </Route>
 
-        <section>
-          <h2>Backend</h2>
-          <p>{estadoBackend}</p>
-        </section>
-      </main>
-
-      <footer className="App-footer">
-        <p>Programacion 3 - TUP</p>
-      </footer>
-    </div>
+      {/* Cualquier otra ruta redirige al inicio */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
 
