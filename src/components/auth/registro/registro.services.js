@@ -1,5 +1,7 @@
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 export const crearNuevoUsuario = async (formData) => {
-  const response = await fetch('http://localhost:3001/api/auth/registro', {
+  const response = await fetch(`${API_URL}/api/auth/registro`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
