@@ -3,7 +3,9 @@ const cors = require('cors');
 require('dotenv').config();
 
 const pruebaRoutes = require('./routes/prueba.routes');
+const authRoutes = require('./routes/auth.routes');
 const { sequelize } = require('./models');
+const cargarDatosIniciales = require('./seed');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -13,10 +15,12 @@ app.use(cors({ origin: CLIENT_URL }));
 app.use(express.json());
 
 app.use('/api', pruebaRoutes);
+app.use('/api/auth', authRoutes);
 
 const startServer = async () => {
   try {
     await sequelize.sync();
+    await cargarDatosIniciales();
 
     app.listen(PORT, () => {
       console.log(`Servidor escuchando en http://localhost:${PORT}`);

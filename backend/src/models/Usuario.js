@@ -1,4 +1,5 @@
 const { DataTypes } = require('sequelize');
+const bcrypt = require('bcryptjs');
 const sequelize = require('../db');
 
 const Usuario = sequelize.define('Usuario', {
@@ -16,7 +17,7 @@ const Usuario = sequelize.define('Usuario', {
     allowNull: false,
     unique: true
   },
-  contrasenia: {
+  password: {
     type: DataTypes.STRING,
     allowNull: false
   },
@@ -26,7 +27,20 @@ const Usuario = sequelize.define('Usuario', {
   }
 }, {
   tableName: 'usuarios',
-  timestamps: false
+  timestamps: false,
+  hooks: {
+    // Hashea la contraseña antes de guardar, tanto al crear como al modificar.
+    beforeSave: async (usuario) => {
+      if (usuario.changed('password')) {
+        usuario.password = await bcrypt.hash(usuario.password, 10);
+      }
+    }
+  }
 });
+
+// Compara una contraseña en texto plano contra el hash guardado.
+Usuario.prototype.compararPassword = function (passwordPlano) {
+  return bcrypt.compare(passwordPlano, this.password);
+};
 
 module.exports = Usuario;
