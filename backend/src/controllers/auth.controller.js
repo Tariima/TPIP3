@@ -76,4 +76,44 @@ const perfil = async (req, res) => {
   }
 };
 
-module.exports = { login, perfil };
+// POST /api/usuarios (Alta de ABM de usuarios)
+// Crea un nuevo empleado en el sistema
+const crearUsuario = async (req, res) => {
+  try {
+
+    const { nombreCompleto, email, password, rolId } = req.body;
+
+    // Validación básica (luego pueden sumarla a su archivo de validaciones)
+    if (!nombreCompleto || !email || !password) {
+      return res.status(400).json({ mensaje: 'Nombre, email y contraseña son obligatorios' });
+    }
+
+    // Comprobamos que el correo no esté repetido
+    const usuarioExistente = await Usuario.findOne({ where: { email } });
+    if (usuarioExistente) {
+      return res.status(400).json({ mensaje: 'El email ya está registrado' });
+    }
+
+    // Sequelize usará el hook beforeSave que vimos antes para encriptar la password
+    const nuevoUsuario = await Usuario.create({
+      nombreCompleto,
+      email,
+      password,
+      rolId: 2, // Por defecto le asignamos un rol (ej. 2 para mozo), si no lo envían
+    });
+
+    return res.status(201).json({
+      mensaje: 'Usuario creado con éxito',
+      usuario: {
+        id: nuevoUsuario.id,
+        nombreCompleto: nuevoUsuario.nombreCompleto,
+        email: nuevoUsuario.email
+      }
+    });
+  } catch (error) {
+    console.error('Error al crear usuario:', error);
+    return res.status(500).json({ mensaje: 'Error al registrar el usuario en el servidor' });
+  }
+};
+
+module.exports = { login, perfil, crearUsuario };

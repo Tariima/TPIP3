@@ -1,5 +1,5 @@
 const express = require('express');
-const { login, perfil } = require('../controllers/auth.controller');
+const { login, perfil, crearUsuario } = require('../controllers/auth.controller');
 const { verificarToken } = require('../middlewares/auth.middleware');
 
 const router = express.Router();
@@ -9,5 +9,8 @@ router.post('/login', login);
 
 // Perfil: ruta protegida, devuelve el usuario autenticado a partir del token.
 router.get('/perfil', verificarToken, perfil);
+
+// Registro: nueva ruta para el Alta del ABM de usuarios.
+router.post('/registro', crearUsuario);
 
 module.exports = router;

@@ -4,6 +4,7 @@ import './App.css';
 import Login from './components/auth/login/Login';
 import Home from './components/home/Home';
 import Protected from './components/routing/protected/Protected';
+import Registro from './components/auth/registro/registro';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       {/* Rutas que requieren sesion iniciada */}
       <Route element={<Protected />}>
         <Route path="/" element={<Home />} />
+        <Route path="/registro" element={<Registro />} />
       </Route>
 
       {/* Cualquier otra ruta redirige al inicio */}
