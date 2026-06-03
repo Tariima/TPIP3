@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { crearNuevoUsuario } from './registro.services';
-// import './Registro.css'; <-- Podés crear este archivo después para darle estilos
 
 const Registro = () => {
   const [formData, setFormData] = useState({
     nombreCompleto: '',
     email: '',
     password: '',
-    rolId: 2 // Por defecto: mozo
+    rolId: '',
   });
 
   const [mensaje, setMensaje] = useState({ texto: '', tipo: '' });
@@ -76,9 +75,9 @@ const Registro = () => {
         <div>
           <label>Rol del sistema:</label><br />
           <select name="rolId" value={formData.rolId} onChange={handleChange} style={{ width: '100%', padding: '8px' }}>
-            <option value={1}>Administrador</option>
-            <option value={2}>Mozo</option>
-            <option value={3}>Cocina</option>
+            <option value={1}>Super Admin</option>
+            <option value={2}>Admin</option>
+            <option value={3}>Cliente</option>
           </select>
         </div>
         <button type="submit" disabled={cargando} style={{ padding: '10px', backgroundColor: '#4f46e5', color: 'white', cursor: 'pointer' }}>

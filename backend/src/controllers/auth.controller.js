@@ -99,7 +99,7 @@ const crearUsuario = async (req, res) => {
       nombreCompleto,
       email,
       password,
-      rolId: 2, // Por defecto le asignamos un rol (ej. 2 para mozo), si no lo envían
+      rolId, // Por defecto le asignamos un rol (ej. 2 para mozo), si no lo envían
     });
 
     return res.status(201).json({
@@ -116,4 +116,76 @@ const crearUsuario = async (req, res) => {
   }
 };
 
-module.exports = { login, perfil, crearUsuario };
+// Lista todos los usuarios del sistema con sus respectivos roles (para la tabla del admin)
+const obtenerUsuarios = async (req, res) => {
+  try {
+    const usuarios = await Usuario.findAll({
+      attributes: ['id', 'nombreCompleto', 'email', 'activo', 'rolId'],
+      include: { model: Rol, attributes: ['nombre'] }
+    });
+    return res.json(usuarios);
+  } catch (error) {
+    console.error('Error al obtener usuarios:', error);
+    return res.status(500).json({ mensaje: 'Error en el servidor' });
+  }
+};
+
+// PUT /api/auth/usuarios/:id
+// Modifica los datos de un usuario, incluyendo su rol o su estado de activación
+const actualizarUsuario = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nombreCompleto, email, rolId, activo } = req.body;
+
+    const usuario = await Usuario.findByPk(id);
+    if (!usuario) {
+      return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    }
+
+    // Actualizamos solo los campos que el administrador haya enviado
+    if (nombreCompleto) usuario.nombreCompleto = nombreCompleto;
+    if (email) usuario.email = email;
+    if (rolId) usuario.rolId = rolId;
+    if (activo !== undefined) usuario.activo = activo;
+
+    await usuario.save();
+
+    return res.json({
+      mensaje: 'Usuario actualizado con éxito',
+      usuario: {
+        id: usuario.id,
+        nombreCompleto: usuario.nombreCompleto,
+        email: usuario.email,
+        rolId: usuario.rolId,
+        activo: usuario.activo
+      }
+    });
+  } catch (error) {
+    console.error('Error al actualizar usuario:', error);
+    return res.status(500).json({ mensaje: 'Error en el servidor' });
+  }
+};
+
+// DELETE /api/auth/usuarios/:id
+// Baja lógica: desactiva un usuario del sistema
+const eliminarUsuario = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const usuario = await Usuario.findByPk(id);
+
+    if (!usuario) {
+      return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    }
+
+    // Desactivamos al usuario en vez de borrarlo físicamente
+    usuario.activo = false;
+    await usuario.save();
+
+    return res.json({ mensaje: 'Usuario desactivado con éxito' });
+  } catch (error) {
+    console.error('Error al eliminar usuario:', error);
+    return res.status(500).json({ mensaje: 'Error en el servidor' });
+  }
+};
+
+module.exports = { login, perfil, crearUsuario, obtenerUsuarios, actualizarUsuario, eliminarUsuario };
