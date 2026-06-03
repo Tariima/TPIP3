@@ -1,36 +1,21 @@
 {
-  "name": "mi-pagina-react",
+  "name": "tpip3",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
   "dependencies": {
     "jwt-decode": "^4.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^7.16.0",
-    "react-scripts": "5.0.1"
+    "react-router-dom": "^7.16.0"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "dev": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.0.0",
+    "vite": "^8.0.0"
   }
 }
