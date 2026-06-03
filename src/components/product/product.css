@@ -1,0 +1,31 @@
+.product-card {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.contador-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.contador-btn {
+  width: 35px;
+  height: 35px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.contador-cantidad {
+  font-size: 18px;
+  font-weight: bold;
+  min-width: 25px;
+}
+
+.custom-btn {
+  width: 100%;
+}

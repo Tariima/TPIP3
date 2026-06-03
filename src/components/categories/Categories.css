@@ -1,0 +1,8 @@
+.categories-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background-color: #1a1a1a;
+}

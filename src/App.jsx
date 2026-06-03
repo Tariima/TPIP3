@@ -5,6 +5,8 @@ import Login from "./components/auth/login/Login";
 import Home from "./components/home/Home";
 import Protected from "./components/routing/protected/Protected";
 import Producto from "./components/product/Product";
+import CategoryItem from "./components/categoriesItem/CategoryItem";
+import Categories from "./components/categories/Categories";
 
 function App() {
   return (
@@ -19,7 +21,9 @@ function App() {
     //   {/* Cualquier otra ruta redirige al inicio */}
     //   <Route path="*" element={<Navigate to="/" replace />} />
     // </Routes>
-    <Producto></Producto>
+    <>
+      <Categories></Categories>
+    </>
   );
 }
 
