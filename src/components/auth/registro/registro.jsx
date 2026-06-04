@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { crearNuevoUsuario } from './registro.services';
+import { AuthContext } from '../../../services/auth/auth.context';
 
 const Registro = () => {
+  const {token} = useContext(AuthContext);
+
   const [formData, setFormData] = useState({
     nombreCompleto: '',
     email: '',
@@ -28,7 +31,7 @@ const Registro = () => {
 
     try {
       // Llamamos a la función limpia que importamos del servicio
-      await crearNuevoUsuario(formData);
+      await crearNuevoUsuario(formData, token);
       
       setMensaje({ texto: 'Usuario creado con éxito', tipo: 'exito' });
       setFormData({ nombreCompleto: '', email: '', password: '', rolId: 2 });
