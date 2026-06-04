@@ -3,25 +3,26 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { AuthContext } from '../../../services/auth/auth.context';
 import { isTokenValid } from '../../auth/auth.helpers';
 
-const AdminProtected = () => {
+const RoleProtected = ({ rolesPermitidos }) => {
   const { token, usuario } = useContext(AuthContext);
 
+  // 1. Si no hay token válido, al login
   if (!isTokenValid(token)) {
     return <Navigate to="/login" replace />;
   }
 
+  // 2. Esperamos a que el usuario cargue
   if (!usuario) {
     return <div style={{ padding: '20px', textAlign: 'center' }}>Verificando permisos...</div>;
   }
 
-  // Usamos el valor exacto que descubriste que viene de la base de datos
-  const esSuperAdmin = usuario.rol === 'super-admin';
-
-  if (!esSuperAdmin) {
+  // 3. Verificamos si el rol del usuario está dentro del arreglo de roles permitidos
+  if (!rolesPermitidos.includes(usuario.rol)) {
     return <Navigate to="/" replace />;
   }
 
+  // Si está autorizado, mostramos la ruta
   return <Outlet />;
 };
 
-export default AdminProtected;
+export default RoleProtected;
