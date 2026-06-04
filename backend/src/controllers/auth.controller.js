@@ -116,6 +116,18 @@ const crearUsuario = async (req, res) => {
   }
 };
 
+// GET /api/auth/roles
+// Devuelve los roles disponibles para poblar el combo del formulario (asi el front no hardcodea ids).
+const obtenerRoles = async (req, res) => {
+  try {
+    const roles = await Rol.findAll({ attributes: ['id', 'nombre'] });
+    return res.json(roles);
+  } catch (error) {
+    console.error('Error al obtener roles:', error);
+    return res.status(500).json({ mensaje: 'Error en el servidor' });
+  }
+};
+
 // Lista todos los usuarios del sistema con sus respectivos roles (para la tabla del admin)
 const obtenerUsuarios = async (req, res) => {
   try {
@@ -188,4 +200,4 @@ const eliminarUsuario = async (req, res) => {
   }
 };
 
-module.exports = { login, perfil, crearUsuario, obtenerUsuarios, actualizarUsuario, eliminarUsuario };
+module.exports = { login, perfil, crearUsuario, obtenerRoles, obtenerUsuarios, actualizarUsuario, eliminarUsuario };
