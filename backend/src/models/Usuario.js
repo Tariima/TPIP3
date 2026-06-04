@@ -24,6 +24,11 @@ const Usuario = sequelize.define('Usuario', {
   activo: {
     type: DataTypes.BOOLEAN,
     defaultValue: true
+  },
+  rolId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 2 // Por defecto mozo si nadie manda nada
   }
 }, {
   tableName: 'usuarios',
