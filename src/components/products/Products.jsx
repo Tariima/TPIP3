@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import "./Products.css";
 
 function Products() {
-  const { categoryName } = useParams();
+  const { accountId, categoryName } = useParams();
   const filteredProducts = products.filter(
     (product) => product.category === categoryName,
   );
@@ -12,7 +12,7 @@ function Products() {
   return (
     <div className="products-container">
       {filteredProducts.map((product) => (
-        <ProductItem key={product.id} product={product} />
+        <ProductItem key={product.id} product={product} accountId={accountId} />
       ))}
     </div>
   );

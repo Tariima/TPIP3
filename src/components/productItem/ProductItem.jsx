@@ -1,46 +1,31 @@
-import React, { useState } from "react";
-import { Card, Button } from "react-bootstrap";
+import React from "react";
 import "./ProductItem.css";
 
-function ProductItem({ product }) {
-  const [cantidad, setCantidad] = useState(1);
-
-  const incrementar = () => {
-    setCantidad(cantidad + 1);
+function ProductItem({ product, accountId }) {
+  const handleAddProduct = () => {
+    console.log(`Agregar producto a la cuenta ${accountId}`, product);
   };
-
-  const decrementar = () => {
-    if (cantidad > 1) {
-      setCantidad(cantidad - 1);
-    }
-  };
-
   return (
-    <Card className="product-card mx-auto" style={{ width: "18rem" }}>
-      <Card.Img variant="top" src={product.image} alt={product.name} />
+    <article className="product-card">
+      <div className="product-image-wrapper">
+        <img className="product-image" src={product.image} alt={product.name} />
+      </div>
 
-      <Card.Body className="text-center">
-        <Card.Title>{product.name}</Card.Title>
+      <div className="product-info">
+        <h3 className="product-name">{product.name}</h3>
 
-        <Card.Text>{product.description}</Card.Text>
+        {product.description && (
+          <p className="product-description">{product.description}</p>
+        )}
 
-        <h5>${product.price}</h5>
-
-        <div className="contador-container">
-          <button className="contador-btn" onClick={decrementar}>
-            -
-          </button>
-
-          <span className="contador-cantidad">{cantidad}</span>
-
-          <button className="contador-btn" onClick={incrementar}>
-            +
+        <div className="product-footer">
+          <span className="product-price">${product.price}</span>
+          <button className="product-button" onClick={handleAddProduct}>
+            Agregar
           </button>
         </div>
-
-        <Button className="custom-btn mt-3">Agregar al carrito</Button>
-      </Card.Body>
-    </Card>
+      </div>
+    </article>
   );
 }
 

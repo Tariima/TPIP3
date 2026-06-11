@@ -1,0 +1,103 @@
+.accounts-panel {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.accounts-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.accounts-header h2 {
+  font-size: 1.1rem;
+  color: #222222;
+  margin: 0 0 4px;
+}
+
+.accounts-header p {
+  font-size: 0.85rem;
+  color: #777777;
+  margin: 0;
+}
+
+.create-account-button {
+  border: none;
+  background: #1f1f1f;
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 9px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.create-account-button:active {
+  transform: scale(0.97);
+}
+
+.accounts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.account-card {
+  width: 100%;
+  border: 1px solid #e6e6e6;
+  background: #fafafa;
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  text-align: left;
+  transition: border 0.2s ease, background 0.2s ease, transform 0.1s ease;
+}
+
+.account-card:hover {
+  background: #f3f3f3;
+}
+
+.account-card:active {
+  transform: scale(0.99);
+}
+
+.account-card-active {
+  border-color: #1f1f1f;
+  background: #eeeeee;
+}
+
+.account-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #222222;
+}
+
+.account-items {
+  font-size: 0.8rem;
+  color: #777777;
+}
+
+@media (max-width: 480px) {
+  .accounts-panel {
+    padding: 14px;
+  }
+
+  .accounts-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .create-account-button {
+    width: 100%;
+  }
+}

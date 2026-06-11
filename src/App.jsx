@@ -6,6 +6,7 @@ import Home from "./components/home/Home";
 import Protected from "./components/routing/protected/Protected";
 import Categories from "./components/categories/Categories";
 import Products from "./components/products/Products";
+import AccountsPanel from "./components/accountPanel/AccountsPanel";
 
 function App() {
   return (
@@ -20,9 +21,9 @@ function App() {
       {/* Cualquier otra ruta redirige al inicio */}
       {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
 
-      <Route path="/category" element={<Categories />} />
-
-      <Route path="/category/:categoryName" element={<Products />} />
+      <Route path="/" element={<AccountsPanel />} />
+      <Route path="/category/:accountId" element={<Categories />} />
+      <Route path="/category/:accountId/:categoryName" element={<Products />} />
     </Routes>
   );
 }
