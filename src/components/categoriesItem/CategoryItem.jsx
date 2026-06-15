@@ -6,18 +6,18 @@ function CategoryItem({ category, accountId }) {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/category/${accountId}/${category.name.toLowerCase()}`);
+    navigate(`/category/${accountId}/${category.nombre.toLowerCase()}`);
   };
   return (
     <div
       className="category-item"
       onClick={handleClick}
       style={{
-        backgroundImage: `url(${category.image})`,
+        backgroundImage: `url(${category.imagen})`,
       }}
     >
       <div className="category-overlay">
-        <h2>{category.name}</h2>
+        <h2>{category.nombre}</h2>
       </div>
     </div>
   );

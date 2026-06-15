@@ -8,18 +8,22 @@ function ProductItem({ product, accountId }) {
   return (
     <article className="product-card">
       <div className="product-image-wrapper">
-        <img className="product-image" src={product.image} alt={product.name} />
+        <img
+          className="product-image"
+          src={product.imagen}
+          alt={product.nombre}
+        />
       </div>
 
       <div className="product-info">
-        <h3 className="product-name">{product.name}</h3>
+        <h3 className="product-name">{product.nombre}</h3>
 
-        {product.description && (
-          <p className="product-description">{product.description}</p>
+        {product.descripcion && (
+          <p className="product-description">{product.descripcion}</p>
         )}
 
         <div className="product-footer">
-          <span className="product-price">${product.price}</span>
+          <span className="product-price">${product.precio}</span>
           <button className="product-button" onClick={handleAddProduct}>
             Agregar
           </button>
