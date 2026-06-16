@@ -1,0 +1,44 @@
+import React, { useState } from 'react';
+import { Modal, Button, Form } from 'react-bootstrap';
+
+function QuantityModal({ show, handleClose, handleConfirm, productName }) {
+  const [quantity, setQuantity] = useState(1);
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    handleConfirm(quantity);
+    setQuantity(1); // Reset for next time
+  };
+
+  return (
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title>Agregar {productName}</Modal.Title>
+      </Modal.Header>
+      <Form onSubmit={onSubmit}>
+        <Modal.Body>
+          <Form.Group className="mb-3">
+            <Form.Label>¿Cuántas unidades quieres agregar?</Form.Label>
+            <Form.Control
+              type="number"
+              min="1"
+              value={quantity}
+              onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
+              autoFocus
+            />
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Cancelar
+          </Button>
+          <Button variant="primary" type="submit" style={{ backgroundColor: '#e67e22', border: 'none' }}>
+            Agregar al carrito
+          </Button>
+        </Modal.Footer>
+      </Form>
+    </Modal>
+  );
+}
+
+export default QuantityModal;
