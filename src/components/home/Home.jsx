@@ -19,6 +19,8 @@ function Home() {
     navigate('/login');
   };
 
+  const esSuperAdmin = usuario && usuario.rol === 'super-admin';
+
   return (
     <div className="App">
       <header className="App-header">
@@ -34,7 +36,31 @@ function Home() {
               Conectado como <strong>{usuario.nombreCompleto}</strong> ({usuario.rol})
             </p>
           )}
-          <button onClick={cerrarSesion}>Cerrar sesion</button>
+
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            {/* Botón exclusivo para Administradores */}
+            {esSuperAdmin && (
+              <button 
+                onClick={() => navigate('/admin/usuarios')}
+                style={{ backgroundColor: '#4f46e5', color: 'white', fontWeight: 'bold' }}
+              >
+                ⚙️ Panel de Gestión de Usuarios
+              </button>
+            )}
+
+            {/* Mostrar botón solo si es super-admin o admin */}
+            {(usuario?.rol === 'super-admin' || usuario?.rol === 'admin') && (
+              <button 
+                onClick={() => navigate('/admin/productos')}
+                style={{ backgroundColor: '#10b981', color: 'white', padding: '10px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+              >
+                Gestionar Menú
+              </button>
+            )}
+
+            <button onClick={cerrarSesion}>Cerrar sesion</button>
+          </div>
+          
         </section>
 
         <section>

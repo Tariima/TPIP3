@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const pruebaRoutes = require('./routes/prueba.routes');
 const authRoutes = require('./routes/auth.routes');
+const menuRoutes = require('./routes/menu.routes');
 const { sequelize } = require('./models');
 const cargarDatosIniciales = require('./seed');
 
@@ -16,6 +17,7 @@ app.use(express.json());
 
 app.use('/api', pruebaRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/menu', menuRoutes);
 
 const startServer = async () => {
   try {
