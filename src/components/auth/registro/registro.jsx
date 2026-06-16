@@ -1,5 +1,6 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { crearNuevoUsuario } from './registro.services';
+import { obtenerRoles } from '../../admin/admin.services';
 import { AuthContext } from '../../../services/auth/auth.context';
 
 const Registro = () => {
@@ -14,6 +15,14 @@ const Registro = () => {
 
   const [mensaje, setMensaje] = useState({ texto: '', tipo: '' });
   const [cargando, setCargando] = useState(false);
+  const [roles, setRoles] = useState([]);
+
+  // Traemos del backend solo los roles asignables al personal (sin 'cliente').
+  useEffect(() => {
+    obtenerRoles()
+      .then(setRoles)
+      .catch((error) => setMensaje({ texto: error.message, tipo: 'error' }));
+  }, []);
 
   const handleChange = (e) => {
     setFormData({
@@ -34,7 +43,7 @@ const Registro = () => {
       await crearNuevoUsuario(formData, token);
       
       setMensaje({ texto: 'Usuario creado con éxito', tipo: 'exito' });
-      setFormData({ nombreCompleto: '', email: '', password: '', rolId: 2 });
+      setFormData({ nombreCompleto: '', email: '', password: '', rolId: '' });
 
     } catch (error) {
       setMensaje({ texto: error.message, tipo: 'error' });
@@ -77,10 +86,11 @@ const Registro = () => {
         </div>
         <div>
           <label>Rol del sistema:</label><br />
-          <select name="rolId" value={formData.rolId} onChange={handleChange} style={{ width: '100%', padding: '8px' }}>
-            <option value={1}>Super Admin</option>
-            <option value={2}>Admin</option>
-            <option value={3}>Cliente</option>
+          <select name="rolId" value={formData.rolId} onChange={handleChange} required style={{ width: '100%', padding: '8px', textTransform: 'capitalize' }}>
+            <option value="">Seleccioná un rol</option>
+            {roles.map((rol) => (
+              <option key={rol.id} value={rol.id}>{rol.nombre}</option>
+            ))}
           </select>
         </div>
         <button type="submit" disabled={cargando} style={{ padding: '10px', backgroundColor: '#4f46e5', color: 'white', cursor: 'pointer' }}>

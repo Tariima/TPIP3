@@ -3,8 +3,6 @@ const { Rol } = require('../models');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secreto_desarrollo';
 
-// Verifica el token JWT enviado en el header Authorization: Bearer <token>.
-// Si es valido, agrega los datos del usuario a req.usuario y continua.
 const verificarToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
@@ -23,22 +21,24 @@ const verificarToken = (req, res, next) => {
   }
 };
 
-// Permite el paso solo si el usuario autenticado tiene el rol super-admin.
-// Se apoya en req.usuario (lo deja verificarToken), por lo que debe usarse SIEMPRE despues de el.
-// Busca el rol por id en la base en lugar de hardcodear el numero, asi no se rompe si cambia el orden del seed.
-const soloSuperAdmin = async (req, res, next) => {
-  try {
-    const rol = await Rol.findByPk(req.usuario.rolId);
+// NUEVO: Middleware dinámico que recibe un arreglo de roles permitidos
+const verificarRol = (rolesPermitidos) => {
+  return async (req, res, next) => {
+    try {
+      const rol = await Rol.findByPk(req.usuario.rolId);
 
-    if (!rol || rol.nombre !== 'super-admin') {
-      return res.status(403).json({ mensaje: 'Acceso restringido: se requiere rol super-admin' });
+      if (!rol || !rolesPermitidos.includes(rol.nombre)) {
+        return res.status(403).json({ 
+          mensaje: `Acceso denegado. Se requiere uno de los siguientes roles: ${rolesPermitidos.join(', ')}` 
+        });
+      }
+
+      next();
+    } catch (error) {
+      console.error('Error al verificar el rol:', error);
+      return res.status(500).json({ mensaje: 'Error en el servidor al verificar permisos' });
     }
-
-    next();
-  } catch (error) {
-    console.error('Error al verificar el rol:', error);
-    return res.status(500).json({ mensaje: 'Error en el servidor' });
-  }
+  };
 };
 
-module.exports = { verificarToken, soloSuperAdmin };
+module.exports = { verificarToken, verificarRol };
