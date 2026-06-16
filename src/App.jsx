@@ -14,6 +14,7 @@ import RoleProtected from "./components/routing/protected/RoleProtected";
 import Registro from "./components/auth/registro/registro";
 import AdminUsuarios from "./components/admin/AdminUsuarios";
 import MenuAdmin from "./components/admin/MenuAdmin";
+import MesasAdmin from "./components/admin/MesasAdmin";
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
           element={<RoleProtected rolesPermitidos={["super-admin", "admin"]} />}
         >
           <Route path="/admin/productos" element={<MenuAdmin />} />
+          <Route path="/admin/mesas" element={<MesasAdmin />} />
         </Route>
 
         {/* Cualquier otra ruta redirige al inicio */}

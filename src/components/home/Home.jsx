@@ -21,6 +21,9 @@ function Home() {
 
   const esSuperAdmin = usuario && usuario.rol === 'super-admin';
 
+  // validacion de roles administrativos
+  const esAdmin = usuario && (usuario.rol === 'super-admin' || usuario.rol === 'admin');
+
   return (
     <div className="App">
       <header className="App-header">
@@ -50,12 +53,22 @@ function Home() {
 
             {/* Mostrar botón solo si es super-admin o admin */}
             {(usuario?.rol === 'super-admin' || usuario?.rol === 'admin') && (
-              <button 
-                onClick={() => navigate('/admin/productos')}
-                style={{ backgroundColor: '#10b981', color: 'white', padding: '10px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-              >
-                Gestionar Menú
-              </button>
+              <>
+                <button 
+                  onClick={() => navigate('/admin/productos')}
+                  style={{ backgroundColor: '#10b981', color: 'white', padding: '10px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                >
+                  🍔 Gestionar Menú
+                </button>
+                
+                {/* NUEVO BOTÓN: Gestión de Mesas */}
+                <button 
+                  onClick={() => navigate('/admin/mesas')}
+                  style={{ backgroundColor: '#f59e0b', color: 'white', padding: '10px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                >
+                  🪑 Gestionar Mesas
+                </button>
+              </>
             )}
 
             <button onClick={cerrarSesion}>Cerrar sesion</button>
