@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import ProductItem from "../productItem/ProductItem";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import "./Products.css";
 import { obtenerProductos } from "../../services/api";
 
 const imagenProductoDefault = "https://picsum.photos/300/200";
 
 function Products() {
-  const { accountId, categoryName } = useParams();
+  const { mesaId, accountId, categoryName } = useParams();
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -27,9 +28,21 @@ function Products() {
 
   return (
     <div className="products-container">
-      {filteredProducts.map((product) => (
-        <ProductItem key={product.id} product={product} accountId={accountId} />
-      ))}
+      <header className="products-header">
+        <button className="back-button" onClick={() => navigate(-1)}>←</button>
+        <h2>{categoryName.charAt(0).toUpperCase() + categoryName.slice(1)}</h2>
+      </header>
+      <div className="products-grid">
+        {filteredProducts.map((product) => (
+          <ProductItem key={product.id} product={product} accountId={accountId} />
+        ))}
+      </div>
+      <button 
+        className="floating-cart-button" 
+        onClick={() => navigate(`/${mesaId}/cart/${accountId}`)}
+      >
+        🛒 Ver Carrito
+      </button>
     </div>
   );
 }

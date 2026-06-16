@@ -7,6 +7,8 @@ const Producto = require("./Producto");
 const Mesa = require("./Mesa");
 const SesionMesa = require("./SesionMesa");
 const Pedido = require("./Pedido");
+const Cuenta = require("./Cuenta");
+const CarritoItem = require("./CarritoItem");
 
 Rol.hasMany(Usuario, { foreignKey: "rolId" });
 Usuario.belongsTo(Rol, { foreignKey: "rolId" });
@@ -26,6 +28,15 @@ Pedido.belongsTo(SesionMesa, { foreignKey: "sesionMesaId" });
 Usuario.hasMany(Pedido, { foreignKey: "usuarioCreadorId" });
 Pedido.belongsTo(Usuario, { foreignKey: "usuarioCreadorId" });
 
+Mesa.hasMany(Cuenta, { foreignKey: "mesaId" });
+Cuenta.belongsTo(Mesa, { foreignKey: "mesaId" });
+
+Cuenta.hasMany(CarritoItem, { foreignKey: "cuentaId" });
+CarritoItem.belongsTo(Cuenta, { foreignKey: "cuentaId" });
+
+Producto.hasMany(CarritoItem, { foreignKey: "productoId" });
+CarritoItem.belongsTo(Producto, { foreignKey: "productoId" });
+
 module.exports = {
   sequelize,
   Rol,
@@ -35,4 +46,6 @@ module.exports = {
   Mesa,
   SesionMesa,
   Pedido,
+  Cuenta,
+  CarritoItem,
 };

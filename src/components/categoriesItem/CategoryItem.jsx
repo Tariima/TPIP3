@@ -1,12 +1,13 @@
 import React from "react";
 import "./CategoryItem.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 function CategoryItem({ category, accountId }) {
   const navigate = useNavigate();
+  const { mesaId } = useParams();
 
   const handleClick = () => {
-    navigate(`/category/${accountId}/${category.nombre.toLowerCase()}`);
+    navigate(`/${mesaId}/category/${accountId}/${category.nombre.toLowerCase()}`);
   };
   return (
     <div

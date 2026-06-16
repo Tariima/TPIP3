@@ -7,24 +7,31 @@ import Protected from "./components/routing/protected/Protected";
 import Categories from "./components/categories/Categories";
 import Products from "./components/products/Products";
 import AccountsPanel from "./components/accountPanel/AccountsPanel";
+import Cart from "./components/cart/Cart";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
-    <Routes>
-      {/* <Route path="/login" element={<Login />} /> */}
+    <>
+      <Routes>
+        {/* <Route path="/login" element={<Login />} /> */}
 
-      {/* Rutas que requieren sesion iniciada */}
-      {/* <Route element={<Protected />}>
-        <Route path="/" element={<Home />} />
-      </Route> */}
+        {/* Rutas que requieren sesion iniciada */}
+        {/* <Route element={<Protected />}>
+          <Route path="/" element={<Home />} />
+        </Route> */}
 
-      {/* Cualquier otra ruta redirige al inicio */}
-      {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
+        {/* Cualquier otra ruta redirige al inicio */}
+        {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
 
-      <Route path="/" element={<AccountsPanel />} />
-      <Route path="/category/:accountId" element={<Categories />} />
-      <Route path="/category/:accountId/:categoryName" element={<Products />} />
-    </Routes>
+        <Route path="/:mesaId" element={<AccountsPanel />} />
+        <Route path="/:mesaId/category/:accountId" element={<Categories />} />
+        <Route path="/:mesaId/category/:accountId/:categoryName" element={<Products />} />
+        <Route path="/:mesaId/cart/:accountId" element={<Cart />} />
+      </Routes>
+      <ToastContainer position="top-right" autoClose={2000} theme="dark" />
+    </>
   );
 }
 

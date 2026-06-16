@@ -1,47 +1,53 @@
-import React, { useState } from "react";
-import { initialAccounts } from "../test/accountMock";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { obtenerMesaPorNumero, obtenerCuentasMesa, crearCuentaMesa } from "../../services/api";
 import "./AccountsPanel.css";
 
-function AccountsPanel({ tableCode = "MESA-12", onSelectAccount }) {
-  const [accounts, setAccounts] = useState(initialAccounts);
-  const [selectedAccountId, setSelectedAccountId] = useState(
-    initialAccounts[0]?.id || null,
-  );
+function AccountsPanel() {
+  const { mesaId } = useParams(); // mesaId es el número de mesa de la URL
   const navigate = useNavigate();
+  const [mesa, setMesa] = useState(null);
+  const [accounts, setAccounts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleCreateAccount = () => {
-    const newAccount = {
-      id: Date.now(),
-      name: `Cuenta ${accounts.length + 1}`,
-      tableCode,
-      items: [],
+  useEffect(() => {
+    const cargarDatos = async () => {
+      try {
+        const mesaData = await obtenerMesaPorNumero(mesaId);
+        setMesa(mesaData);
+        const cuentasData = await obtenerCuentasMesa(mesaData.id);
+        setAccounts(cuentasData);
+      } catch (error) {
+        console.error("Error al cargar datos de la mesa:", error);
+      } finally {
+        setLoading(false);
+      }
     };
+    cargarDatos();
+  }, [mesaId]);
 
-    setAccounts([...accounts, newAccount]);
-    setSelectedAccountId(newAccount.id);
-
-    if (onSelectAccount) {
-      onSelectAccount(newAccount);
+  const handleCreateAccount = async () => {
+    try {
+      const nuevaCuenta = await crearCuentaMesa(mesa.id);
+      setAccounts([...accounts, nuevaCuenta]);
+    } catch (error) {
+      alert("Error al crear la cuenta");
     }
   };
 
   const handleSelectAccount = (account) => {
-    setSelectedAccountId(account.id);
-
-    if (onSelectAccount) {
-      onSelectAccount(account);
-    }
-
-    navigate(`/category/${account.id}`);
+    navigate(`/${mesaId}/category/${account.id}`);
   };
+
+  if (loading) return <div className="accounts-panel">Cargando mesa {mesaId}...</div>;
+  if (!mesa) return <div className="accounts-panel">La mesa {mesaId} no existe.</div>;
 
   return (
     <section className="accounts-panel">
       <div className="accounts-header">
         <div>
           <h2>Cuentas de la mesa</h2>
-          <p>Mesa: {tableCode}</p>
+          <p>Mesa Número: {mesa.numero}</p>
         </div>
 
         <button className="create-account-button" onClick={handleCreateAccount}>
@@ -50,20 +56,22 @@ function AccountsPanel({ tableCode = "MESA-12", onSelectAccount }) {
       </div>
 
       <div className="accounts-list">
-        {accounts.map((account) => (
-          <button
-            key={account.id}
-            className={`account-card ${
-              selectedAccountId === account.id ? "account-card-active" : ""
-            }`}
-            onClick={() => handleSelectAccount(account)}
-          >
-            <span className="account-name">{account.name}</span>
-            <span className="account-items">
-              {account.items.length} productos
-            </span>
-          </button>
-        ))}
+        {accounts.length === 0 ? (
+          <p>No hay cuentas abiertas. ¡Crea la primera!</p>
+        ) : (
+          accounts.map((account) => (
+            <button
+              key={account.id}
+              className="account-card"
+              onClick={() => handleSelectAccount(account)}
+            >
+              <span className="account-name">{account.nombre}</span>
+              <span className="account-items">
+                {account.estado}
+              </span>
+            </button>
+          ))
+        )}
       </div>
     </section>
   );

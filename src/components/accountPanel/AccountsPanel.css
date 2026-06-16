@@ -1,103 +1,85 @@
 .accounts-panel {
-  width: 100%;
-  background: #ffffff;
-  border: 1px solid #eeeeee;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  padding: 2rem 1.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+  min-height: 100vh;
 }
 
 .accounts-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 14px;
+  align-items: center;
+  margin-bottom: 3rem;
 }
 
 .accounts-header h2 {
-  font-size: 1.1rem;
-  color: #222222;
-  margin: 0 0 4px;
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin: 0;
+  background: linear-gradient(90deg, #fff, #888);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .accounts-header p {
-  font-size: 0.85rem;
-  color: #777777;
-  margin: 0;
+  color: var(--text-secondary);
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .create-account-button {
-  border: none;
-  background: #1f1f1f;
+  background-color: var(--accent);
   color: white;
-  font-size: 0.85rem;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: var(--radius);
   font-weight: 600;
-  padding: 9px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3);
 }
 
-.create-account-button:active {
-  transform: scale(0.97);
+.create-account-button:hover {
+  background-color: var(--accent-hover);
+  transform: translateY(-2px);
 }
 
 .accounts-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
 }
 
 .account-card {
-  width: 100%;
-  border: 1px solid #e6e6e6;
-  background: #fafafa;
-  border-radius: 10px;
-  padding: 12px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  padding: 1.5rem;
+  border-radius: var(--radius);
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
+  flex-direction: column;
+  align-items: flex-start;
   text-align: left;
-  transition: border 0.2s ease, background 0.2s ease, transform 0.1s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .account-card:hover {
-  background: #f3f3f3;
-}
-
-.account-card:active {
-  transform: scale(0.99);
-}
-
-.account-card-active {
-  border-color: #1f1f1f;
-  background: #eeeeee;
+  border-color: var(--accent);
+  background-color: var(--bg-card);
+  transform: translateY(-5px);
+  box-shadow: var(--shadow);
 }
 
 .account-name {
-  font-size: 0.95rem;
+  font-size: 1.2rem;
   font-weight: 700;
-  color: #222222;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
 }
 
 .account-items {
-  font-size: 0.8rem;
-  color: #777777;
-}
-
-@media (max-width: 480px) {
-  .accounts-panel {
-    padding: 14px;
-  }
-
-  .accounts-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .create-account-button {
-    width: 100%;
-  }
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
 }
