@@ -10,10 +10,10 @@ import AccountsPanel from "./components/accountPanel/AccountsPanel";
 import Cart from "./components/cart/Cart";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import RoleProtected from './components/routing/protected/RoleProtected';
-import Registro from './components/auth/registro/registro';
-import AdminUsuarios from './components/admin/AdminUsuarios';
-import MenuAdmin from './components/admin/MenuAdmin';
+import RoleProtected from "./components/routing/protected/RoleProtected";
+import Registro from "./components/auth/registro/registro";
+import AdminUsuarios from "./components/admin/AdminUsuarios";
+import MenuAdmin from "./components/admin/MenuAdmin";
 
 function App() {
   return (
@@ -25,30 +25,35 @@ function App() {
         {/* <Route element={<Protected />}>
           <Route path="/" element={<Home />} />
         </Route> */}
-      {/* Rutas para TODOS los logueados (super-admin, admin, cliente) */}
-      <Route element={<Protected />}>
-        <Route path="/" element={<Home />} />
+        {/* Rutas para TODOS los logueados (super-admin, admin, cliente) */}
+        <Route element={<Protected />}>
+          <Route path="/" element={<Home />} />
 
-        {/* Rutas compartidas, ej: ver menú, perfil, etc. */}
-      </Route>
+          {/* Rutas compartidas, ej: ver menú, perfil, etc. */}
+        </Route>
 
-      {/* Rutas SOLO para super-admin */}
-      <Route element={<RoleProtected rolesPermitidos={['super-admin']} />}>
-        <Route path="/registro" element={<Registro />} />
-        <Route path="/admin/usuarios" element={<AdminUsuarios />} />
-      </Route>
+        {/* Rutas SOLO para super-admin */}
+        <Route element={<RoleProtected rolesPermitidos={["super-admin"]} />}>
+          <Route path="/registro" element={<Registro />} />
+          <Route path="/admin/usuarios" element={<AdminUsuarios />} />
+        </Route>
 
-      {/* Rutas para super-admin Y admin */}
-      <Route element={<RoleProtected rolesPermitidos={['super-admin', 'admin']} />}>
-        <Route path="/admin/productos" element={<MenuAdmin />} />
-      </Route>
+        {/* Rutas para super-admin Y admin */}
+        <Route
+          element={<RoleProtected rolesPermitidos={["super-admin", "admin"]} />}
+        >
+          <Route path="/admin/productos" element={<MenuAdmin />} />
+        </Route>
 
         {/* Cualquier otra ruta redirige al inicio */}
         {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
-
+        <Route path="/login" element={<Login />} />
         <Route path="/:mesaId" element={<AccountsPanel />} />
         <Route path="/:mesaId/category/:accountId" element={<Categories />} />
-        <Route path="/:mesaId/category/:accountId/:categoryName" element={<Products />} />
+        <Route
+          path="/:mesaId/category/:accountId/:categoryName"
+          element={<Products />}
+        />
         <Route path="/:mesaId/cart/:accountId" element={<Cart />} />
       </Routes>
       <ToastContainer position="top-right" autoClose={2000} theme="dark" />
