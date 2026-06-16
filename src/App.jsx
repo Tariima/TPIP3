@@ -15,52 +15,48 @@ import Registro from "./components/auth/registro/registro";
 import AdminUsuarios from "./components/admin/AdminUsuarios";
 import MenuAdmin from "./components/admin/MenuAdmin";
 import MesasAdmin from "./components/admin/MesasAdmin";
+import ValidarMesa from "./cliente/ValidarMesa";
+
 
 function App() {
   return (
     <>
       <Routes>
-        {/* <Route path="/login" element={<Login />} /> */}
+        <Route path="/login" element={<Login />} />
 
-        {/* Rutas que requieren sesion iniciada */}
-        {/* <Route element={<Protected />}>
-          <Route path="/" element={<Home />} />
-        </Route> */}
-        {/* Rutas para TODOS los logueados (super-admin, admin, cliente) */}
+        {/* Rutas compartidas para todo el personal logueado */}
         <Route element={<Protected />}>
           <Route path="/" element={<Home />} />
-
-          {/* Rutas compartidas, ej: ver menú, perfil, etc. */}
         </Route>
 
         {/* Rutas SOLO para super-admin */}
-        <Route element={<RoleProtected rolesPermitidos={["super-admin"]} />}>
+        <Route element={<RoleProtected rolesPermitidos={['super-admin']} />}>
           <Route path="/registro" element={<Registro />} />
           <Route path="/admin/usuarios" element={<AdminUsuarios />} />
         </Route>
 
         {/* Rutas para super-admin Y admin */}
-        <Route
-          element={<RoleProtected rolesPermitidos={["super-admin", "admin"]} />}
-        >
+        <Route element={<RoleProtected rolesPermitidos={['super-admin', 'admin']} />}>
           <Route path="/admin/productos" element={<MenuAdmin />} />
           <Route path="/admin/mesas" element={<MesasAdmin />} />
         </Route>
 
-        {/* Cualquier otra ruta redirige al inicio */}
-        {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/:mesaId" element={<AccountsPanel />} />
+        {/*RUTAS PÚBLICAS DEL CLIENTE (CARTA QR)*/}
+            
+        {/* 1. Al escanear el QR, el cliente entra primero a validar el PIN */}
+        <Route path="/:numero" element={<ValidarMesa />} />
+        
+        {/* 2. Si el PIN es correcto, es redirigido al panel de cuentas de esa mesa */}
+        <Route path="/:mesaId/cuentas" element={<AccountsPanel />} />
+        
+        {/* 3. El resto del flujo que armó el equipo para la compra */}
         <Route path="/:mesaId/category/:accountId" element={<Categories />} />
-        <Route
-          path="/:mesaId/category/:accountId/:categoryName"
-          element={<Products />}
-        />
+        <Route path="/:mesaId/category/:accountId/:categoryName" element={<Products />} />
         <Route path="/:mesaId/cart/:accountId" element={<Cart />} />
+
       </Routes>
       <ToastContainer position="top-right" autoClose={2000} theme="dark" />
     </>
   );
 }
-
 export default App;

@@ -25,6 +25,31 @@ router.get("/mesas/numero/:numero", async (req, res) => {
   }
 });
 
+// Validacion de PIN de acceso (Ruta Pública para clientes)
+router.post("/mesas/numero/:numero/validar", async (req, res) => {
+  try {
+    const { numero } = req.params;
+    const { pin } = req.body;
+    
+    const mesa = await Mesa.findOne({ where: { numero } });
+    
+    if (!mesa) return res.status(404).json({ mensaje: "Mesa no encontrada" });
+    
+    // Validaciones de seguridad
+    if (mesa.estado !== 'ocupada') {
+      return res.status(403).json({ mensaje: "La mesa no está abierta. Por favor, llamá al mozo." });
+    }
+    if (mesa.pin !== pin) {
+      return res.status(401).json({ mensaje: "PIN incorrecto" });
+    }
+
+    res.json({ mensaje: "Acceso concedido", mesaId: mesa.id });
+  } catch (error) {
+    console.error("Error validando PIN:", error);
+    res.status(500).json({ mensaje: "Error al validar el acceso" });
+  }
+});
+
 // --- RUTAS DE ESCRITURA (ABM Protegido para Administradores) ---
 
 // Crear Mesa con PIN automático
