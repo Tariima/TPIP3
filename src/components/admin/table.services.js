@@ -37,3 +37,21 @@ export const eliminarMesa = async (id) => {
   if (!res.ok) throw new Error('Error al eliminar la mesa');
   return res.json();
 };
+
+export const abrirMesa = async (id) => {
+  const res = await fetch(`${API_URL}/api/mesas/${id}/abrir`, {
+    method: 'POST',
+    headers: getHeaders()
+  });
+  if (!res.ok) throw new Error('Error al abrir la mesa');
+  return res.json();
+};
+
+export const cerrarMesa = async (id) => {
+  const res = await fetch(`${API_URL}/api/mesas/${id}/cerrar`, {
+    method: 'POST',
+    headers: getHeaders()
+  });
+  if (!res.ok) throw new Error('Error al cerrar la mesa');
+  return res.json();
+};
