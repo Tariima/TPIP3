@@ -99,7 +99,7 @@ const AdminUsuarios = () => {
                 </button>
                 {u.activo && (
                   <button onClick={() => handleBaja(u.id)} style={{ backgroundColor: '#ef4444', color: 'white', cursor: 'pointer', padding: '5px 10px', border: 'none', borderRadius: '3px' }}>
-                    Eliminar {/* <-- 4. Le cambiamos el nombre visual al botón */}
+                    Eliminar 
                   </button>
                 )}
               </td>

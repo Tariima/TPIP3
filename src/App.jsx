@@ -13,6 +13,7 @@ import "react-toastify/dist/ReactToastify.css";
 import RoleProtected from './components/routing/protected/RoleProtected';
 import Registro from './components/auth/registro/registro';
 import AdminUsuarios from './components/admin/AdminUsuarios';
+import MenuAdmin from './components/admin/MenuAdmin';
 
 function App() {
   return (
@@ -37,11 +38,10 @@ function App() {
         <Route path="/admin/usuarios" element={<AdminUsuarios />} />
       </Route>
 
-      {/* Ejemplo futuro: Rutas para super-admin Y admin (pero no clientes) */}
-      {/* <Route element={<RoleProtected rolesPermitidos={['super-admin', 'admin']} />}>
+      {/* Rutas para super-admin Y admin */}
+      <Route element={<RoleProtected rolesPermitidos={['super-admin', 'admin']} />}>
         <Route path="/admin/productos" element={<MenuAdmin />} />
       </Route>
-      */}
 
         {/* Cualquier otra ruta redirige al inicio */}
         {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
