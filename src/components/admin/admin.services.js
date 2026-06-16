@@ -8,6 +8,16 @@ const obtenerConfigHeaders = () => {
   };
 };
 
+export const obtenerRoles = async () => {
+  const response = await fetch(`${API_URL}/api/auth/roles`, {
+    method: 'GET',
+    headers: obtenerConfigHeaders()
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.mensaje || 'Error al obtener roles');
+  return data;
+};
+
 export const listarUsuarios = async () => {
   const response = await fetch(`${API_URL}/api/auth/usuarios`, {
     method: 'GET',

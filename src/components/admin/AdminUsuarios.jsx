@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { listarUsuarios, modificarUsuario, desactivarUsuario } from './admin.services'; // <-- Import actualizado a tu estructura
+import { listarUsuarios, modificarUsuario, desactivarUsuario, obtenerRoles } from './admin.services'; // <-- Import actualizado a tu estructura
 
 const AdminUsuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [error, setError] = useState('');
   const [exito, setExito] = useState('');
   const [usuarioEditando, setUsuarioEditando] = useState(null);
+  const [roles, setRoles] = useState([]);
 
   const navigate = useNavigate();
 
@@ -21,6 +22,7 @@ const AdminUsuarios = () => {
 
   useEffect(() => {
     cargarUsuarios();
+    obtenerRoles().then(setRoles).catch((err) => setError(err.message));
   }, []);
 
   const handleBaja = async (id) => {
@@ -128,13 +130,14 @@ const AdminUsuarios = () => {
             />
 
             <label>Rol del Sistema:</label>
-            <select 
-              value={usuarioEditando.rolId} 
+            <select
+              value={usuarioEditando.rolId}
               onChange={(e) => setUsuarioEditando({ ...usuarioEditando, rolId: e.target.value })}
+              style={{ textTransform: 'capitalize' }}
             >
-              <option value={1}>Super Admin</option>
-              <option value={2}>Admin</option>
-              <option value={3}>Cliente</option>
+              {roles.map((rol) => (
+                <option key={rol.id} value={rol.id}>{rol.nombre}</option>
+              ))}
             </select>
 
             <label>Estado de Cuenta:</label>

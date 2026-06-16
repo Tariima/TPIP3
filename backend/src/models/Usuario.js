@@ -28,7 +28,7 @@ const Usuario = sequelize.define('Usuario', {
   rolId: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: 2 // Por defecto mozo si nadie manda nada
+    defaultValue: 3 // Por defecto 'cliente' (rol de MENOR privilegio, id 3 en seed.js) si no se envía rolId
   }
 }, {
   tableName: 'usuarios',

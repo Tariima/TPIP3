@@ -19,8 +19,6 @@ function Home() {
     navigate('/login');
   };
 
-const esSuperAdmin = usuario && usuario.rol === 'super-admin';
-
   return (
     <div className="App">
       <header className="App-header">
@@ -36,20 +34,7 @@ const esSuperAdmin = usuario && usuario.rol === 'super-admin';
               Conectado como <strong>{usuario.nombreCompleto}</strong> ({usuario.rol})
             </p>
           )}
-
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-            {/* Botón exclusivo para Administradores */}
-            {esSuperAdmin && (
-              <button 
-                onClick={() => navigate('/admin/usuarios')}
-                style={{ backgroundColor: '#4f46e5', color: 'white', fontWeight: 'bold' }}
-              >
-                ⚙️ Panel de Gestión de Usuarios
-              </button>
-            )}
-
-            <button onClick={cerrarSesion}>Cerrar sesion</button>
-          </div>
+          <button onClick={cerrarSesion}>Cerrar sesion</button>
         </section>
 
         <section>

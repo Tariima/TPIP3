@@ -16,7 +16,7 @@ function App() {
       {/* Rutas para TODOS los logueados (super-admin, admin, cliente) */}
       <Route element={<Protected />}>
         <Route path="/" element={<Home />} />
-        
+
         {/* Rutas compartidas, ej: ver menú, perfil, etc. */}
       </Route>
 
@@ -29,7 +29,7 @@ function App() {
       {/* Ejemplo futuro: Rutas para super-admin Y admin (pero no clientes) */}
       {/* <Route element={<RoleProtected rolesPermitidos={['super-admin', 'admin']} />}>
         <Route path="/admin/productos" element={<MenuAdmin />} />
-      </Route> 
+      </Route>
       */}
 
       {/* Cualquier otra ruta redirige al inicio */}
