@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { Op } = require('sequelize');
 const { Usuario, Rol } = require('../models');
 const { validarLogin } = require('../validations/auth.validations');
 
@@ -99,7 +100,7 @@ const crearUsuario = async (req, res) => {
       nombreCompleto,
       email,
       password,
-      rolId, // Por defecto le asignamos un rol (ej. 2 para mozo), si no lo envían
+      rolId, // Si no se envía, el modelo aplica el default 'cliente' (menor privilegio); ver Usuario.js
     });
 
     return res.status(201).json({
@@ -117,10 +118,14 @@ const crearUsuario = async (req, res) => {
 };
 
 // GET /api/auth/roles
-// Devuelve los roles disponibles para poblar el combo del formulario (asi el front no hardcodea ids).
+// Devuelve los roles asignables al personal para poblar el combo del formulario (asi el front no hardcodea ids).
+// Excluye 'cliente': los clientes no son cuentas que se den de alta desde el ABM de usuarios (entran por QR/PIN).
 const obtenerRoles = async (req, res) => {
   try {
-    const roles = await Rol.findAll({ attributes: ['id', 'nombre'] });
+    const roles = await Rol.findAll({
+      attributes: ['id', 'nombre'],
+      where: { nombre: { [Op.ne]: 'cliente' } }
+    });
     return res.json(roles);
   } catch (error) {
     console.error('Error al obtener roles:', error);

@@ -10,6 +10,9 @@ import AccountsPanel from "./components/accountPanel/AccountsPanel";
 import Cart from "./components/cart/Cart";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import RoleProtected from './components/routing/protected/RoleProtected';
+import Registro from './components/auth/registro/registro';
+import AdminUsuarios from './components/admin/AdminUsuarios';
 
 function App() {
   return (
@@ -21,6 +24,24 @@ function App() {
         {/* <Route element={<Protected />}>
           <Route path="/" element={<Home />} />
         </Route> */}
+      {/* Rutas para TODOS los logueados (super-admin, admin, cliente) */}
+      <Route element={<Protected />}>
+        <Route path="/" element={<Home />} />
+
+        {/* Rutas compartidas, ej: ver menú, perfil, etc. */}
+      </Route>
+
+      {/* Rutas SOLO para super-admin */}
+      <Route element={<RoleProtected rolesPermitidos={['super-admin']} />}>
+        <Route path="/registro" element={<Registro />} />
+        <Route path="/admin/usuarios" element={<AdminUsuarios />} />
+      </Route>
+
+      {/* Ejemplo futuro: Rutas para super-admin Y admin (pero no clientes) */}
+      {/* <Route element={<RoleProtected rolesPermitidos={['super-admin', 'admin']} />}>
+        <Route path="/admin/productos" element={<MenuAdmin />} />
+      </Route>
+      */}
 
         {/* Cualquier otra ruta redirige al inicio */}
         {/* <Route path="*" element={<Navigate to="/" replace />} /> */}

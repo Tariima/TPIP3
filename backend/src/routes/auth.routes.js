@@ -1,21 +1,18 @@
 const express = require('express');
 const { login, perfil, crearUsuario, obtenerRoles, obtenerUsuarios, actualizarUsuario, eliminarUsuario } = require('../controllers/auth.controller');
-const { verificarToken, soloSuperAdmin } = require('../middlewares/auth.middleware');
+const { verificarToken, verificarRol } = require('../middlewares/auth.middleware'); // <-- Import actualizado
 
 const router = express.Router();
 
-// Login: valida credenciales y devuelve un token.
 router.post('/login', login);
-
-// Perfil: ruta protegida, devuelve el usuario autenticado a partir del token.
 router.get('/perfil', verificarToken, perfil);
 
-// --- ABM de usuarios (solo super-admin) ---
-// Todas pasan primero por verificarToken (sesion valida) y luego por soloSuperAdmin (rol correcto).
-router.get('/roles', verificarToken, soloSuperAdmin, obtenerRoles);              // Roles para el combo
-router.post('/registro', verificarToken, soloSuperAdmin, crearUsuario);          // Alta
-router.get('/usuarios', verificarToken, soloSuperAdmin, obtenerUsuarios);        // Listar todos
-router.put('/usuarios/:id', verificarToken, soloSuperAdmin, actualizarUsuario);  // Editar datos y rol
-router.delete('/usuarios/:id', verificarToken, soloSuperAdmin, eliminarUsuario); // Baja logica (desactivar)
+// --- Rutas protegidas por Roles ---
+// Usamos verificarRol(['super-admin']) para que solo ellos pasen
+router.get('/roles', verificarToken, verificarRol(['super-admin']), obtenerRoles);
+router.post('/registro', verificarToken, verificarRol(['super-admin']), crearUsuario);
+router.get('/usuarios', verificarToken, verificarRol(['super-admin']), obtenerUsuarios);
+router.put('/usuarios/:id', verificarToken, verificarRol(['super-admin']), actualizarUsuario);
+router.delete('/usuarios/:id', verificarToken, verificarRol(['super-admin']), eliminarUsuario);
 
 module.exports = router;
