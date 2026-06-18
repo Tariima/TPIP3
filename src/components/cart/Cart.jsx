@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { obtenerCarrito, actualizarCantidad, eliminarDelCarrito } from "../../services/cart/cart.services";
+import { sesionMesaValida } from "../../services/mesa/mesa.session";
 import DeleteConfirmModal from "../common/DeleteConfirmModal";
 import { toast } from "react-toastify";
 import "./Cart.css";
@@ -19,6 +20,8 @@ function Cart() {
       setItems(data);
     } catch (error) {
       console.error(error);
+      // Si se perdio la sesion de mesa (token rechazado), volvemos al PIN.
+      if (!sesionMesaValida()) navigate(`/${mesaId}`);
     } finally {
       setLoading(false);
     }

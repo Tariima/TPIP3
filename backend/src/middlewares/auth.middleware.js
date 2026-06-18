@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { Rol } = require('../models');
+const { Rol, Mesa, SesionMesa } = require('../models');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secreto_desarrollo';
 
@@ -21,7 +21,7 @@ const verificarToken = (req, res, next) => {
   }
 };
 
-// NUEVO: Middleware dinámico que recibe un arreglo de roles permitidos
+//Middleware dinámico que recibe un arreglo de roles permitidos
 const verificarRol = (rolesPermitidos) => {
   return async (req, res, next) => {
     try {
@@ -41,4 +41,49 @@ const verificarRol = (rolesPermitidos) => {
   };
 };
 
-module.exports = { verificarToken, verificarRol };
+const verificarMesaToken = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ mensaje: 'No se proporciono un token de mesa' });
+  }
+
+  const token = authHeader.split(' ')[1];
+
+  try {
+    const datos = jwt.verify(token, JWT_SECRET);
+
+    if (datos.tipo !== 'mesa') {
+      return res.status(401).json({ mensaje: 'Token de mesa invalido' });
+    }
+
+    const mesa = await Mesa.findByPk(datos.mesaId);
+    if (!mesa || mesa.estado !== 'ocupada') {
+      return res.status(403).json({ mensaje: 'La mesa no esta habilitada' });
+    }
+
+    const sesionMesa = await SesionMesa.findOne({
+      where: {
+        id: datos.sesionMesaId,
+        mesaId: datos.mesaId,
+        estado: 'abierta',
+      },
+    });
+
+    if (!sesionMesa) {
+      return res.status(403).json({ mensaje: 'La sesion de mesa no esta activa' });
+    }
+
+    req.mesaCliente = {
+      mesaId: datos.mesaId,
+      numero: datos.numero,
+      sesionMesaId: datos.sesionMesaId,
+    };
+
+    next();
+  } catch (error) {
+    return res.status(401).json({ mensaje: 'Token de mesa invalido o expirado' });
+  }
+};
+
+module.exports = { verificarToken, verificarRol, verificarMesaToken };

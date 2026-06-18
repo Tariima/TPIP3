@@ -1,5 +1,14 @@
+import { mesaAuthHeader, limpiarSesionMesa } from "./mesa/mesa.session";
+
 export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 export const API_BASE_URL = `${API_URL}/api`;
+
+// Si el backend rechaza el token de mesa, limpiamos la sesion para forzar el PIN.
+const verificarAcceso = (response) => {
+  if (response.status === 401 || response.status === 403) {
+    limpiarSesionMesa();
+  }
+};
 
 export const obtenerPruebaBackend = async () => {
   const respuesta = await fetch(`${API_BASE_URL}/prueba`);
@@ -26,15 +35,24 @@ export const obtenerMesaPorNumero = async (numero) => {
 };
 
 export const obtenerCuentasMesa = async (mesaId) => {
-  const respuesta = await fetch(`${API_BASE_URL}/mesas/${mesaId}/cuentas`);
-  if (!respuesta.ok) throw new Error("Error al obtener cuentas");
+  const respuesta = await fetch(`${API_BASE_URL}/mesas/${mesaId}/cuentas`, {
+    headers: { ...mesaAuthHeader() },
+  });
+  if (!respuesta.ok) {
+    verificarAcceso(respuesta);
+    throw new Error("Error al obtener cuentas");
+  }
   return respuesta.json();
 };
 
 export const crearCuentaMesa = async (mesaId) => {
   const respuesta = await fetch(`${API_BASE_URL}/mesas/${mesaId}/cuentas`, {
     method: "POST",
+    headers: { ...mesaAuthHeader() },
   });
-  if (!respuesta.ok) throw new Error("Error al crear cuenta");
+  if (!respuesta.ok) {
+    verificarAcceso(respuesta);
+    throw new Error("Error al crear cuenta");
+  }
   return respuesta.json();
 };

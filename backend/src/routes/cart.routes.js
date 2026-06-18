@@ -1,16 +1,34 @@
 const express = require("express");
 const { Cuenta, Producto, CarritoItem } = require("../models");
+const { verificarMesaToken } = require("../middlewares/auth.middleware");
 
 const router = express.Router();
 
-// 1. Obtener todos los productos en el carrito de una cuenta específica
-router.get("/cuentas/:cuentaId/items", async (req, res) => {
+const obtenerCuentaDeMesa = async (cuentaId, mesaId) => {
+  return Cuenta.findOne({
+    where: {
+      id: cuentaId,
+      mesaId,
+      estado: "abierta",
+    },
+  });
+};
+
+// 1. Obtener todos los productos en el carrito de una cuenta especifica
+router.get("/cuentas/:cuentaId/items", verificarMesaToken, async (req, res) => {
   try {
     const { cuentaId } = req.params;
+    const cuenta = await obtenerCuentaDeMesa(cuentaId, req.mesaCliente.mesaId);
+
+    if (!cuenta) {
+      return res.status(403).json({ mensaje: "La cuenta no pertenece a esta mesa" });
+    }
+
     const items = await CarritoItem.findAll({
       where: { cuentaId },
-      include: [{ model: Producto }], // Incluimos los datos del producto (nombre, precio, etc.)
+      include: [{ model: Producto }],
     });
+
     res.json(items);
   } catch (error) {
     res.status(500).json({ mensaje: "Error al obtener los items del carrito", error: error.message });
@@ -18,17 +36,21 @@ router.get("/cuentas/:cuentaId/items", async (req, res) => {
 });
 
 // 2. Agregar un producto al carrito
-router.post("/cuentas/:cuentaId/items", async (req, res) => {
+router.post("/cuentas/:cuentaId/items", verificarMesaToken, async (req, res) => {
   try {
     const { cuentaId } = req.params;
     const { productoId, cantidad } = req.body;
+
+    const cuenta = await obtenerCuentaDeMesa(cuentaId, req.mesaCliente.mesaId);
+    if (!cuenta) {
+      return res.status(403).json({ mensaje: "La cuenta no pertenece a esta mesa" });
+    }
 
     const producto = await Producto.findByPk(productoId);
     if (!producto) {
       return res.status(404).json({ mensaje: "Producto no encontrado" });
     }
 
-    // Buscamos si el producto ya existe en el carrito de esta cuenta
     let item = await CarritoItem.findOne({
       where: { cuentaId, productoId },
     });
@@ -36,12 +58,10 @@ router.post("/cuentas/:cuentaId/items", async (req, res) => {
     const cantAgregar = cantidad || 1;
 
     if (item) {
-      // Si ya existe, aumentamos la cantidad y recalculamos el subtotal
       item.cantidad += cantAgregar;
       item.subtotal = item.cantidad * item.precioUnitario;
       await item.save();
     } else {
-      // Si no existe, creamos el registro nuevo
       item = await CarritoItem.create({
         cuentaId,
         productoId,
@@ -57,20 +77,31 @@ router.post("/cuentas/:cuentaId/items", async (req, res) => {
   }
 });
 
-// 3. Actualizar la cantidad de un item (ej: botones + o -)
-router.patch("/cuentas/:cuentaId/items/:itemId", async (req, res) => {
+// 3. Actualizar la cantidad de un item
+router.patch("/cuentas/:cuentaId/items/:itemId", verificarMesaToken, async (req, res) => {
   try {
-    const { itemId } = req.params;
+    const { cuentaId, itemId } = req.params;
     const { cantidad } = req.body;
 
-    const item = await CarritoItem.findByPk(itemId);
+    const cuenta = await obtenerCuentaDeMesa(cuentaId, req.mesaCliente.mesaId);
+    if (!cuenta) {
+      return res.status(403).json({ mensaje: "La cuenta no pertenece a esta mesa" });
+    }
+
+    const item = await CarritoItem.findOne({
+      where: {
+        id: itemId,
+        cuentaId,
+      },
+    });
+
     if (!item) {
       return res.status(404).json({ mensaje: "Item no encontrado" });
     }
 
     if (cantidad <= 0) {
       await item.destroy();
-      return res.json({ mensaje: "Item eliminado por cantidad zero" });
+      return res.json({ mensaje: "Item eliminado por cantidad cero" });
     }
 
     item.cantidad = cantidad;
@@ -84,10 +115,21 @@ router.patch("/cuentas/:cuentaId/items/:itemId", async (req, res) => {
 });
 
 // 4. Eliminar un producto del carrito
-router.delete("/cuentas/:cuentaId/items/:itemId", async (req, res) => {
+router.delete("/cuentas/:cuentaId/items/:itemId", verificarMesaToken, async (req, res) => {
   try {
-    const { itemId } = req.params;
-    const item = await CarritoItem.findByPk(itemId);
+    const { cuentaId, itemId } = req.params;
+
+    const cuenta = await obtenerCuentaDeMesa(cuentaId, req.mesaCliente.mesaId);
+    if (!cuenta) {
+      return res.status(403).json({ mensaje: "La cuenta no pertenece a esta mesa" });
+    }
+
+    const item = await CarritoItem.findOne({
+      where: {
+        id: itemId,
+        cuentaId,
+      },
+    });
 
     if (!item) {
       return res.status(404).json({ mensaje: "Item no encontrado" });

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { listarMesas, guardarMesa, eliminarMesa, abrirMesa, cerrarMesa } from './table.services';
+import { listarMesas, guardarMesa, regenerarPin, eliminarMesa, abrirMesa, cerrarMesa } from './table.services';
 
 const MesasAdmin = () => {
   const [mesas, setMesas] = useState([]);
@@ -35,6 +35,16 @@ const MesasAdmin = () => {
     if (!window.confirm('¿Confirmás que querés eliminar esta mesa del sistema?')) return;
     try {
       await eliminarMesa(id);
+      cargarDatos();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleRegenerarPin = async (mesa) => {
+    if (!window.confirm(`¿Regenerar el PIN de la mesa #${mesa.numero}? Esto invalidará el acceso del cliente actual.`)) return;
+    try {
+      await regenerarPin(mesa);
       cargarDatos();
     } catch (err) {
       setError(err.message);
@@ -91,6 +101,7 @@ const MesasAdmin = () => {
             <tbody>
               {mesas.map((m) => {
                 const qrUrl = `${baseUrl}/${m.numero}`;
+                const qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrUrl)}`;
                 return (
                   <tr key={m.id} style={{ borderBottom: '1px solid #eee', opacity: m.activa ? 1 : 0.5 }}>
                     <td style={{ padding: '10px', fontWeight: 'bold', fontSize: '1.2em' }}>#{m.numero}</td>
@@ -103,15 +114,39 @@ const MesasAdmin = () => {
                         {m.estado.toUpperCase()}
                       </span>
                     </td>
-                    <td style={{ padding: '10px', fontFamily: 'monospace', fontSize: '1.2em', letterSpacing: '2px' }}>{m.pin}</td>
                     <td style={{ padding: '10px' }}>
-                      <a href={qrUrl} target="_blank" rel="noreferrer">
-                        <img 
-                          src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(qrUrl)}`} 
-                          alt={`QR Mesa ${m.numero}`} 
-                          title="Hacer clic para probar URL"
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'flex-start' }}>
+                        <span style={{ fontFamily: 'monospace', fontSize: '1.2em', letterSpacing: '2px' }}>{m.pin}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleRegenerarPin(m)}
+                          title="Generar un PIN nuevo e invalidar el acceso actual"
+                          style={{ backgroundColor: '#f59e0b', color: 'white', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8em' }}>
+                          🔄 Nuevo PIN
+                        </button>
+                      </div>
+                    </td>
+                    <td style={{ padding: '10px' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'center' }}>
+                        <img
+                          src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(qrUrl)}`}
+                          alt={`QR Mesa ${m.numero}`}
                         />
-                      </a>
+                        <button
+                          type="button"
+                          onClick={() => window.open(qrImgUrl, '_blank', 'noopener')}
+                          title="Abrir el código QR en grande para mostrarlo o imprimirlo"
+                          style={{ backgroundColor: '#4f46e5', color: 'white', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8em', width: '100%' }}>
+                          Abrir QR
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => window.open(qrUrl, '_blank', 'noopener')}
+                          title="Entrar a la mesa como cliente (pantalla de PIN)"
+                          style={{ backgroundColor: '#0ea5e9', color: 'white', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8em', width: '100%' }}>
+                          Ir a mesa
+                        </button>
+                      </div>
                     </td>
                     <td style={{ padding: '10px' }}>
                         {m.estado === 'disponible' ? (
@@ -130,7 +165,7 @@ const MesasAdmin = () => {
                     </td>
 
                     <td style={{ padding: '10px', display: 'flex', gap: '5px', flexDirection: 'column' }}>
-                      <button onClick={() => setMesaEditando({ ...m, generarNuevoPin: false })} style={{ cursor: 'pointer' }}>Editar</button>
+                      <button onClick={() => setMesaEditando({ ...m })} style={{ cursor: 'pointer' }}>Editar</button>
                       <button onClick={() => handleEliminar(m.id)} style={{ backgroundColor: '#ef4444', color: 'white', border: 'none', cursor: 'pointer' }}>Borrar</button>
                     </td>
                   </tr>
@@ -161,14 +196,6 @@ const MesasAdmin = () => {
                     <input type="checkbox" checked={mesaEditando.activa} onChange={(e) => setMesaEditando({...mesaEditando, activa: e.target.checked})} />
                     Mesa Activa (Habilitada en salón)
                   </label>
-
-                  <div style={{ backgroundColor: '#fee2e2', padding: '10px', borderRadius: '5px', marginTop: '10px' }}>
-                    <label style={{ display: 'flex', gap: '5px', color: '#b91c1c', cursor: 'pointer', fontWeight: 'bold' }}>
-                      <input type="checkbox" checked={mesaEditando.generarNuevoPin} onChange={(e) => setMesaEditando({...mesaEditando, generarNuevoPin: e.target.checked})} />
-                      Regenerar PIN de seguridad
-                    </label>
-                    <p style={{ margin: '5px 0 0 0', fontSize: '0.8em', color: '#7f1d1d' }}>Marcá esta opción si ingresó un cliente nuevo y necesitás invalidar la sesión anterior.</p>
-                  </div>
                 </>
               )}
 
