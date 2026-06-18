@@ -34,8 +34,8 @@ const obtenerProductos = async (req, res) => {
 
 const crearProducto = async (req, res) => {
   try {
-    const { nombre, descripcion, precio, categoriaId } = req.body;
-    const nuevoProducto = await Producto.create({ nombre, descripcion, precio, categoriaId });
+    const { nombre, descripcion, precio, categoriaId, imagen } = req.body;
+    const nuevoProducto = await Producto.create({ nombre, descripcion, precio, categoriaId, imagen });
     res.status(201).json(nuevoProducto);
   } catch (error) {
     res.status(500).json({ mensaje: 'Error al crear producto' });
@@ -45,12 +45,12 @@ const crearProducto = async (req, res) => {
 const actualizarProducto = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, descripcion, precio, disponible, categoriaId } = req.body;
+    const { nombre, descripcion, precio, disponible, categoriaId, imagen } = req.body;
     
     const producto = await Producto.findByPk(id);
     if (!producto) return res.status(404).json({ mensaje: 'Producto no encontrado' });
 
-    await producto.update({ nombre, descripcion, precio, disponible, categoriaId });
+    await producto.update({ nombre, descripcion, precio, disponible, categoriaId, imagen });
     res.json(producto);
   } catch (error) {
     res.status(500).json({ mensaje: 'Error al actualizar producto' });

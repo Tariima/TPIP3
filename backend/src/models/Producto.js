@@ -18,6 +18,10 @@ const Producto = sequelize.define('Producto', {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false
   },
+  imagen: {
+    type: DataTypes.STRING, // Campo para la URL de la img
+    allowNull: true
+  },
   disponible: {
     type: DataTypes.BOOLEAN,
     defaultValue: true

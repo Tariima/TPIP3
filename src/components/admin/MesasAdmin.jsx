@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { listarMesas, guardarMesa, eliminarMesa } from './table.services';
+import { listarMesas, guardarMesa, eliminarMesa, abrirMesa, cerrarMesa } from './table.services';
 
 const MesasAdmin = () => {
   const [mesas, setMesas] = useState([]);
@@ -41,6 +41,25 @@ const MesasAdmin = () => {
     }
   };
 
+  const handleAbrir = async (id) => {
+    try {
+      await abrirMesa(id);
+      cargarDatos(); // Recarga para ver el nuevo PIN y estado
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleCerrar = async (id) => {
+    if (!window.confirm('¿Seguro que querés cerrar la mesa? Esto bloqueará nuevos pedidos.')) return;
+    try {
+      await cerrarMesa(id);
+      cargarDatos();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   return (
     <div style={{ padding: '20px', maxWidth: '1000px', margin: '0 auto' }}>
       <h2>Gestión de Mesas y Códigos QR</h2>
@@ -66,6 +85,7 @@ const MesasAdmin = () => {
                 <th style={{ padding: '10px' }}>PIN Cliente</th>
                 <th style={{ padding: '10px' }}>QR</th>
                 <th style={{ padding: '10px' }}>Acciones</th>
+                <th style={{ padding: '10px' }}>Control de Sesión</th>
               </tr>
             </thead>
             <tbody>
@@ -93,6 +113,22 @@ const MesasAdmin = () => {
                         />
                       </a>
                     </td>
+                    <td style={{ padding: '10px' }}>
+                        {m.estado === 'disponible' ? (
+                        <button 
+                        onClick={() => handleAbrir(m.id)}
+                        style={{ backgroundColor: '#10b981', color: 'white', padding: '6px 12px', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
+                        🟢 Abrir Mesa
+                        </button>
+                    ) : (
+                        <button 
+                        onClick={() => handleCerrar(m.id)}
+                        style={{ backgroundColor: '#f43f5e', color: 'white', padding: '6px 12px', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
+                        🔴 Cerrar Mesa
+                        </button>
+                    )}
+                    </td>
+
                     <td style={{ padding: '10px', display: 'flex', gap: '5px', flexDirection: 'column' }}>
                       <button onClick={() => setMesaEditando({ ...m, generarNuevoPin: false })} style={{ cursor: 'pointer' }}>Editar</button>
                       <button onClick={() => handleEliminar(m.id)} style={{ backgroundColor: '#ef4444', color: 'white', border: 'none', cursor: 'pointer' }}>Borrar</button>

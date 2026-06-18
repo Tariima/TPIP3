@@ -72,7 +72,7 @@ const handleGuardarProducto = async (e) => {
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
             <h3>Productos</h3>
             <button 
-              onClick={() => setProductoEditando({ nombre: '', descripcion: '', precio: '', categoriaId: '', disponible: true })}
+              onClick={() => setProductoEditando({ nombre: '', descripcion: '', precio: '', categoriaId: '', disponible: true, imagen: '' })}
               style={{ backgroundColor: '#10b981', color: 'white', padding: '8px 12px', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
               + Nuevo Producto
             </button>
@@ -80,6 +80,7 @@ const handleGuardarProducto = async (e) => {
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ backgroundColor: '#f3f4f6', textAlign: 'left', borderBottom: '2px solid #ccc' }}>
+                <th style={{ padding: '10px' }}>Imagen</th>
                 <th style={{ padding: '10px' }}>Nombre</th>
                 <th style={{ padding: '10px' }}>Precio</th>
                 <th style={{ padding: '10px' }}>Categoría</th>
@@ -90,6 +91,13 @@ const handleGuardarProducto = async (e) => {
             <tbody>
               {productos.map((p) => (
                 <tr key={p.id} style={{ borderBottom: '1px solid #eee' }}>
+                  <td style={{ padding: '10px' }}>
+                    {p.imagen ? (
+                      <img src={p.imagen} alt={p.nombre} style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }} />
+                    ) : (
+                      <div style={{ width: '50px', height: '50px', backgroundColor: '#e5e7eb', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', color: '#6b7280' }}>Sin foto</div>
+                    )}
+                  </td>
                   <td style={{ padding: '10px' }}>{p.nombre}</td>
                   <td style={{ padding: '10px' }}>${p.precio}</td>
                   <td style={{ padding: '10px' }}>{categorias.find(c => c.id === p.categoriaId)?.nombre || `ID guardado: ${p.categoriaId}`}</td>
@@ -116,6 +124,7 @@ const handleGuardarProducto = async (e) => {
               <form onSubmit={handleGuardarProducto} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <input type="text" placeholder="Nombre" value={productoEditando.nombre} onChange={(e) => setProductoEditando({...productoEditando, nombre: e.target.value})} required />
                 <input type="number" placeholder="Precio" value={productoEditando.precio} onChange={(e) => setProductoEditando({...productoEditando, precio: e.target.value})} required />
+                <input type="text" placeholder="URL de la imagen (ej: https://...)" value={productoEditando.imagen || ''} onChange={(e) => setProductoEditando({...productoEditando, imagen: e.target.value})} />
                 <textarea placeholder="Descripción" value={productoEditando.descripcion} onChange={(e) => setProductoEditando({...productoEditando, descripcion: e.target.value})} />
                 
                 <select value={productoEditando.categoriaId} onChange={(e) => setProductoEditando({...productoEditando, categoriaId: e.target.value})} required>
