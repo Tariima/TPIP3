@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { obtenerMesaPorNumero, obtenerCuentasMesa, crearCuentaMesa } from "../../services/api";
+import { sesionMesaValida } from "../../services/mesa/mesa.session";
 import "./AccountsPanel.css";
 
 function AccountsPanel() {
@@ -19,6 +20,8 @@ function AccountsPanel() {
         setAccounts(cuentasData);
       } catch (error) {
         console.error("Error al cargar datos de la mesa:", error);
+        // Si se perdio la sesion de mesa (token rechazado), volvemos al PIN.
+        if (!sesionMesaValida()) navigate(`/${mesaId}`);
       } finally {
         setLoading(false);
       }
@@ -31,6 +34,7 @@ function AccountsPanel() {
       const nuevaCuenta = await crearCuentaMesa(mesa.id);
       setAccounts([...accounts, nuevaCuenta]);
     } catch (error) {
+      if (!sesionMesaValida()) return navigate(`/${mesaId}`);
       alert("Error al crear la cuenta");
     }
   };

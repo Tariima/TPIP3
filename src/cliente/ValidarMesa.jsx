@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { guardarSesionMesa } from '../services/mesa/mesa.session';
 
 const ValidarMesa = () => {
   const { numero } = useParams(); // Obtenemos numero desde la URL
@@ -22,11 +23,14 @@ const ValidarMesa = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.mensaje);
 
-      // Si el PIN es correcto, se guarda la sesión en el navegador (sessionStorage se borra al cerrar la pestaña)
-      sessionStorage.setItem('mesa_activa', numero);
-      sessionStorage.setItem('mesa_id', data.mesaId);
-      
-      // Redirige al cliente a la vista pública de los productos
+      // Si el PIN es correcto, se guarda la sesión temporal de mesa (token incluido).
+      guardarSesionMesa({
+        mesaToken: data.mesaToken,
+        mesaId: data.mesaId,
+        numero,
+      });
+
+      // Redirige al cliente al panel de cuentas de esa mesa.
       navigate(`/${numero}/cuentas`)
     } catch (err) {
       setError(err.message);

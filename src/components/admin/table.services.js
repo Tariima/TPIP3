@@ -29,6 +29,18 @@ export const guardarMesa = async (mesa) => {
   return res.json();
 };
 
+// Regenera el PIN de una mesa sin tener que abrir el formulario de edición.
+// Reutiliza el PUT existente conservando los datos actuales de la mesa.
+export const regenerarPin = async (mesa) => {
+  return guardarMesa({
+    id: mesa.id,
+    numero: mesa.numero,
+    estado: mesa.estado,
+    activa: mesa.activa,
+    generarNuevoPin: true,
+  });
+};
+
 export const eliminarMesa = async (id) => {
   const res = await fetch(`${API_URL}/api/mesas/${id}`, {
     method: 'DELETE',

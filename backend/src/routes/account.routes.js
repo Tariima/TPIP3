@@ -1,10 +1,15 @@
 const express = require("express");
 const { Mesa, Cuenta } = require("../models");
+const { verificarMesaToken } = require("../middlewares/auth.middleware");
 
 const router = express.Router();
 
-router.get("/mesas/:mesaId/cuentas", async (req, res) => {
+router.get("/mesas/:mesaId/cuentas", verificarMesaToken, async (req, res) => {
   const { mesaId } = req.params;
+
+  if (Number(mesaId) !== req.mesaCliente.mesaId) {
+    return res.status(403).json({ mensaje: "No tenes permiso para ver esta mesa" });
+  }
 
   const cuentas = await Cuenta.findAll({
     where: {
@@ -16,8 +21,12 @@ router.get("/mesas/:mesaId/cuentas", async (req, res) => {
   res.json(cuentas);
 });
 
-router.post("/mesas/:mesaId/cuentas", async (req, res) => {
+router.post("/mesas/:mesaId/cuentas", verificarMesaToken, async (req, res) => {
   const { mesaId } = req.params;
+
+  if (Number(mesaId) !== req.mesaCliente.mesaId) {
+    return res.status(403).json({ mensaje: "No tenes permiso para crear cuentas en esta mesa" });
+  }
 
   const mesa = await Mesa.findByPk(mesaId);
 

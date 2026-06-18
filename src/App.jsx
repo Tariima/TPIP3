@@ -16,6 +16,7 @@ import AdminUsuarios from "./components/admin/AdminUsuarios";
 import MenuAdmin from "./components/admin/MenuAdmin";
 import MesasAdmin from "./components/admin/MesasAdmin";
 import ValidarMesa from "./cliente/ValidarMesa";
+import MesaProtected from "./components/routing/protected/MesaProtected";
 
 
 function App() {
@@ -43,16 +44,16 @@ function App() {
 
         {/*RUTAS PÚBLICAS DEL CLIENTE (CARTA QR)*/}
             
-        {/* 1. Al escanear el QR, el cliente entra primero a validar el PIN */}
+        {/* 1. Al escanear el QR, el cliente entra primero a validar el PIN (pública) */}
         <Route path="/:numero" element={<ValidarMesa />} />
-        
-        {/* 2. Si el PIN es correcto, es redirigido al panel de cuentas de esa mesa */}
-        <Route path="/:mesaId/cuentas" element={<AccountsPanel />} />
-        
-        {/* 3. El resto del flujo que armó el equipo para la compra */}
-        <Route path="/:mesaId/category/:accountId" element={<Categories />} />
-        <Route path="/:mesaId/category/:accountId/:categoryName" element={<Products />} />
-        <Route path="/:mesaId/cart/:accountId" element={<Cart />} />
+
+        {/* 2. Resto del flujo del cliente: requiere sesión de mesa validada por PIN */}
+        <Route element={<MesaProtected />}>
+          <Route path="/:numero/cuentas" element={<AccountsPanel />} />
+          <Route path="/:mesaId/category/:accountId" element={<Categories />} />
+          <Route path="/:mesaId/category/:accountId/:categoryName" element={<Products />} />
+          <Route path="/:mesaId/cart/:accountId" element={<Cart />} />
+        </Route>
 
       </Routes>
       <ToastContainer position="top-right" autoClose={2000} theme="dark" />
