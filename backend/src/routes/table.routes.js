@@ -1,8 +1,26 @@
 const express = require("express");
+const jwt = require("jsonwebtoken");
 const { Mesa, SesionMesa } = require("../models");
 const { verificarToken, verificarRol } = require("../middlewares/auth.middleware");
 
 const router = express.Router();
+const JWT_SECRET = process.env.JWT_SECRET || "secreto_desarrollo";
+const MESA_TOKEN_EXPIRES = process.env.MESA_TOKEN_EXPIRES || "8h";
+
+const generarPinMesa = () => Math.floor(1000 + Math.random() * 9000).toString();
+
+const generarMesaToken = (mesa, sesionMesa) => {
+  return jwt.sign(
+    {
+      tipo: "mesa",
+      mesaId: mesa.id,
+      numero: mesa.numero,
+      sesionMesaId: sesionMesa.id,
+    },
+    JWT_SECRET,
+    { expiresIn: MESA_TOKEN_EXPIRES },
+  );
+};
 
 // RUTAS DE LECTURA (Abiertas o para otros roles) 
 router.get("/mesas", async (req, res) => {
@@ -43,7 +61,25 @@ router.post("/mesas/numero/:numero/validar", async (req, res) => {
       return res.status(401).json({ mensaje: "PIN incorrecto" });
     }
 
-    res.json({ mensaje: "Acceso concedido", mesaId: mesa.id });
+    const sesionMesa = await SesionMesa.findOne({
+      where: {
+        mesaId: mesa.id,
+        estado: "abierta",
+      },
+    });
+
+    if (!sesionMesa) {
+      return res.status(403).json({ mensaje: "La mesa no tiene una sesion abierta" });
+    }
+
+    const mesaToken = generarMesaToken(mesa, sesionMesa);
+
+    res.json({
+      mensaje: "Acceso concedido",
+      mesaId: mesa.id,
+      numero: mesa.numero,
+      mesaToken,
+    });
   } catch (error) {
     console.error("Error validando PIN:", error);
     res.status(500).json({ mensaje: "Error al validar el acceso" });
@@ -57,7 +93,7 @@ router.post("/mesas", verificarToken, verificarRol(['super-admin', 'admin']), as
   try {
     const { numero } = req.body;
     // Generamos PIN de 4 dígitos
-    const pinAleatorio = Math.floor(1000 + Math.random() * 9000).toString();
+    const pinAleatorio = generarPinMesa();
     
     const mesa = await Mesa.create({ numero, pin: pinAleatorio });
     res.status(201).json(mesa);
@@ -78,7 +114,7 @@ router.put("/mesas/:id", verificarToken, verificarRol(['super-admin', 'admin']),
 
     let nuevoPin = mesa.pin;
     if (generarNuevoPin) {
-      nuevoPin = Math.floor(1000 + Math.random() * 9000).toString();
+      nuevoPin = generarPinMesa();
     }
 
     await mesa.update({ numero, estado, activa, pin: nuevoPin });
@@ -114,14 +150,15 @@ router.post("/mesas/:id/abrir", verificarToken, async (req, res) => {
     if (mesa.estado === 'ocupada') return res.status(400).json({ mensaje: "La mesa ya está abierta" });
 
     // Generamos un PIN seguro de 4 dígitos
-    const nuevoPin = Math.floor(1000 + Math.random() * 9000).toString();
+    const nuevoPin = generarPinMesa();
     
     // Actualizamos la mesa
     await mesa.update({ estado: 'ocupada', pin: nuevoPin });
 
     // Creamos el registro de la sesión 
     await SesionMesa.create({ 
-      MesaId: mesa.id, 
+      mesaId: mesa.id,
+      usuarioAperturaId: req.usuario.id,
       estado: 'abierta',
       fechaApertura: new Date()
     });
@@ -146,7 +183,7 @@ router.post("/mesas/:id/cerrar", verificarToken, async (req, res) => {
 
     // Buscamos la sesión que estaba abierta para esta mesa y la cerramos
     const sesionAbierta = await SesionMesa.findOne({ 
-      where: { MesaId: mesa.id, estado: 'abierta' } 
+      where: { mesaId: mesa.id, estado: 'abierta' }
     });
     
     if (sesionAbierta) {
