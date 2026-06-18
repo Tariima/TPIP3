@@ -44,7 +44,7 @@ const MesasAdmin = () => {
   const handleAbrir = async (id) => {
     try {
       await abrirMesa(id);
-      cargarDatos(); // Recargamos para ver el nuevo PIN y estado
+      cargarDatos(); // Recarga para ver el nuevo PIN y estado
     } catch (err) {
       setError(err.message);
     }

@@ -19,7 +19,7 @@ const Producto = sequelize.define('Producto', {
     allowNull: false
   },
   imagen: {
-    type: DataTypes.STRING, // <-- Nuevo campo para la URL de la imagen
+    type: DataTypes.STRING, // Campo para la URL de la img
     allowNull: true
   },
   disponible: {

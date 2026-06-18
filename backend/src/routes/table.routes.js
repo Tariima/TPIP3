@@ -4,7 +4,7 @@ const { verificarToken, verificarRol } = require("../middlewares/auth.middleware
 
 const router = express.Router();
 
-// --- RUTAS DE LECTURA (Abiertas o para otros roles, mantenemos las del equipo) ---
+// RUTAS DE LECTURA (Abiertas o para otros roles) 
 router.get("/mesas", async (req, res) => {
   try {
     const mesas = await Mesa.findAll();
@@ -50,7 +50,7 @@ router.post("/mesas/numero/:numero/validar", async (req, res) => {
   }
 });
 
-// --- RUTAS DE ESCRITURA (ABM Protegido para Administradores) ---
+// RUTAS DE ESCRITURA (ABM Protegido para Administradores)
 
 // Crear Mesa con PIN automático
 router.post("/mesas", verificarToken, verificarRol(['super-admin', 'admin']), async (req, res) => {
@@ -67,7 +67,7 @@ router.post("/mesas", verificarToken, verificarRol(['super-admin', 'admin']), as
   }
 });
 
-// Actualizar Mesa (y regenerar PIN opcionalmente)
+// Actualizar Mesa y regenerar PIN opcionalmente
 router.put("/mesas/:id", verificarToken, verificarRol(['super-admin', 'admin']), async (req, res) => {
   try {
     const { id } = req.params;
@@ -119,7 +119,7 @@ router.post("/mesas/:id/abrir", verificarToken, async (req, res) => {
     // Actualizamos la mesa
     await mesa.update({ estado: 'ocupada', pin: nuevoPin });
 
-    // Creamos el registro de la sesión (Asume que Sequelize creó la relación MesaId)
+    // Creamos el registro de la sesión 
     await SesionMesa.create({ 
       MesaId: mesa.id, 
       estado: 'abierta',
