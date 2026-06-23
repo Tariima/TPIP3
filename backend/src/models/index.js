@@ -7,6 +7,7 @@ const Producto = require("./Producto");
 const Mesa = require("./Mesa");
 const SesionMesa = require("./SesionMesa");
 const Pedido = require("./Pedido");
+const PedidoItem = require("./PedidoItem");
 const Cuenta = require("./Cuenta");
 const CarritoItem = require("./CarritoItem");
 
@@ -28,6 +29,12 @@ Pedido.belongsTo(SesionMesa, { foreignKey: "sesionMesaId" });
 Usuario.hasMany(Pedido, { foreignKey: "usuarioCreadorId" });
 Pedido.belongsTo(Usuario, { foreignKey: "usuarioCreadorId" });
 
+Pedido.hasMany(PedidoItem, { foreignKey: "pedidoId" });
+PedidoItem.belongsTo(Pedido, { foreignKey: "pedidoId" });
+
+Producto.hasMany(PedidoItem, { foreignKey: "productoId" });
+PedidoItem.belongsTo(Producto, { foreignKey: "productoId" });
+
 Mesa.hasMany(Cuenta, { foreignKey: "mesaId" });
 Cuenta.belongsTo(Mesa, { foreignKey: "mesaId" });
 
@@ -46,6 +53,7 @@ module.exports = {
   Mesa,
   SesionMesa,
   Pedido,
+  PedidoItem,
   Cuenta,
   CarritoItem,
 };

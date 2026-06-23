@@ -5,7 +5,7 @@ import { sesionMesaValida } from "../../services/mesa/mesa.session";
 import "./AccountsPanel.css";
 
 function AccountsPanel() {
-  const { mesaId } = useParams(); // mesaId es el número de mesa de la URL
+  const { numero: mesaId } = useParams(); // la ruta usa :numero; lo tomamos como mesaId
   const navigate = useNavigate();
   const [mesa, setMesa] = useState(null);
   const [accounts, setAccounts] = useState([]);

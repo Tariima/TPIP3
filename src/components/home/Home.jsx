@@ -62,11 +62,19 @@ function Home() {
                 </button>
                 
                 {/* NUEVO BOTÓN: Gestión de Mesas */}
-                <button 
+                <button
                   onClick={() => navigate('/admin/mesas')}
                   style={{ backgroundColor: '#f59e0b', color: 'white', padding: '10px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
                 >
                   🪑 Gestionar Mesas
+                </button>
+
+                {/* NUEVO BOTÓN: Panel de Pedidos */}
+                <button
+                  onClick={() => navigate('/admin/pedidos')}
+                  style={{ backgroundColor: '#ec4899', color: 'white', padding: '10px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                >
+                  📋 Panel de Pedidos
                 </button>
               </>
             )}

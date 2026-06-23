@@ -10,6 +10,7 @@ const productRoutes = require("./routes/product.routes");
 const accountRoutes = require("./routes/account.routes");
 const tableRoutes = require("./routes/table.routes");
 const cartRoutes = require("./routes/cart.routes");
+const orderRoutes = require("./routes/order.routes");
 const { sequelize } = require("./models");
 const cargarDatosIniciales = require("./seed");
 
@@ -28,6 +29,7 @@ app.use("/api/productos", productRoutes);
 app.use("/api", accountRoutes);
 app.use("/api", tableRoutes);
 app.use("/api", cartRoutes);
+app.use("/api", orderRoutes);
 
 const startServer = async () => {
   try {

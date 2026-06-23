@@ -56,3 +56,17 @@ export const eliminarDelCarrito = async (cuentaId, itemId) => {
   }
   return response.json();
 };
+
+// Confirma el carrito y lo convierte en un pedido para el personal.
+export const confirmarPedido = async (cuentaId, notas) => {
+  const response = await fetch(`${API_BASE_URL}/cuentas/${cuentaId}/confirmar`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...mesaAuthHeader() },
+    body: JSON.stringify({ notas }),
+  });
+  if (!response.ok) {
+    verificarAcceso(response);
+    throw new Error("Error al confirmar el pedido");
+  }
+  return response.json();
+};

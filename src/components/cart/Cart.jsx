@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { obtenerCarrito, actualizarCantidad, eliminarDelCarrito } from "../../services/cart/cart.services";
+import { obtenerCarrito, actualizarCantidad, eliminarDelCarrito, confirmarPedido } from "../../services/cart/cart.services";
 import { sesionMesaValida } from "../../services/mesa/mesa.session";
 import DeleteConfirmModal from "../common/DeleteConfirmModal";
 import { toast } from "react-toastify";
@@ -13,6 +13,8 @@ function Cart() {
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
+  const [notas, setNotas] = useState("");
+  const [enviando, setEnviando] = useState(false);
 
   const cargarCarrito = async () => {
     try {
@@ -64,6 +66,20 @@ function Cart() {
     }
   };
 
+  const handleConfirmarPedido = async () => {
+    setEnviando(true);
+    try {
+      await confirmarPedido(accountId, notas);
+      setNotas("");
+      toast.success("¡Pedido confirmado! Ya lo recibió el personal.");
+      cargarCarrito();
+    } catch (error) {
+      toast.error("Error al confirmar el pedido");
+    } finally {
+      setEnviando(false);
+    }
+  };
+
   const total = items.reduce((sum, item) => sum + parseFloat(item.subtotal), 0);
 
   if (loading) return <div className="cart-container">Cargando carrito...</div>;
@@ -101,11 +117,19 @@ function Cart() {
 
       {items.length > 0 && (
         <footer className="cart-footer">
+          <textarea
+            className="cart-notas"
+            placeholder="Comentarios para la cocina (opcional)"
+            value={notas}
+            onChange={(e) => setNotas(e.target.value)}
+          />
           <div className="total-section">
             <span>Total:</span>
             <span className="total-amount">${total.toFixed(2)}</span>
           </div>
-          <button className="checkout-button">Confirmar Pedido</button>
+          <button className="checkout-button" onClick={handleConfirmarPedido} disabled={enviando}>
+            {enviando ? "Enviando..." : "Confirmar Pedido"}
+          </button>
         </footer>
       )}
 
