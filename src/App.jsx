@@ -15,6 +15,7 @@ import Registro from "./components/auth/registro/registro";
 import AdminUsuarios from "./components/admin/AdminUsuarios";
 import MenuAdmin from "./components/admin/MenuAdmin";
 import MesasAdmin from "./components/admin/MesasAdmin";
+import PedidosPanel from "./components/admin/PedidosPanel";
 import ValidarMesa from "./cliente/ValidarMesa";
 import MesaProtected from "./components/routing/protected/MesaProtected";
 
@@ -40,6 +41,7 @@ function App() {
         <Route element={<RoleProtected rolesPermitidos={['super-admin', 'admin']} />}>
           <Route path="/admin/productos" element={<MenuAdmin />} />
           <Route path="/admin/mesas" element={<MesasAdmin />} />
+          <Route path="/admin/pedidos" element={<PedidosPanel />} />
         </Route>
 
         {/*RUTAS PÚBLICAS DEL CLIENTE (CARTA QR)*/}
