@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { listarMesas, guardarMesa, regenerarPin, eliminarMesa, abrirMesa, cerrarMesa } from './table.services';
+import { validarMesa } from './mesas.validations';
 
 const MesasAdmin = () => {
   const [mesas, setMesas] = useState([]);
@@ -22,6 +23,15 @@ const MesasAdmin = () => {
 
   const handleGuardar = async (e) => {
     e.preventDefault();
+    setError('');
+
+    // Validacion en el formulario antes de llamar al backend.
+    const validacion = validarMesa(mesaEditando);
+    if (validacion.error) {
+      setError(validacion.mensaje);
+      return;
+    }
+
     try {
       await guardarMesa(mesaEditando);
       setMesaEditando(null);

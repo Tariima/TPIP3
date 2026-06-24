@@ -1,4 +1,5 @@
 const { Producto, Categoria } = require('../models');
+const { validarProducto, validarCategoria } = require('../validations/menu.validations');
 
 // CATEGORÍAS
 const obtenerCategorias = async (req, res) => {
@@ -12,6 +13,11 @@ const obtenerCategorias = async (req, res) => {
 
 const crearCategoria = async (req, res) => {
   try {
+    const validacion = validarCategoria(req.body);
+    if (validacion.error) {
+      return res.status(400).json({ mensaje: validacion.mensaje });
+    }
+
     const { nombre, descripcion } = req.body;
     const nuevaCategoria = await Categoria.create({ nombre, descripcion });
     res.status(201).json(nuevaCategoria);
@@ -34,6 +40,11 @@ const obtenerProductos = async (req, res) => {
 
 const crearProducto = async (req, res) => {
   try {
+    const validacion = validarProducto(req.body);
+    if (validacion.error) {
+      return res.status(400).json({ mensaje: validacion.mensaje });
+    }
+
     const { nombre, descripcion, precio, categoriaId, imagen } = req.body;
     const nuevoProducto = await Producto.create({ nombre, descripcion, precio, categoriaId, imagen });
     res.status(201).json(nuevoProducto);
@@ -45,8 +56,14 @@ const crearProducto = async (req, res) => {
 const actualizarProducto = async (req, res) => {
   try {
     const { id } = req.params;
+
+    const validacion = validarProducto(req.body);
+    if (validacion.error) {
+      return res.status(400).json({ mensaje: validacion.mensaje });
+    }
+
     const { nombre, descripcion, precio, disponible, categoriaId, imagen } = req.body;
-    
+
     const producto = await Producto.findByPk(id);
     if (!producto) return res.status(404).json({ mensaje: 'Producto no encontrado' });
 

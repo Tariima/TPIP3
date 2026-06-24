@@ -2,6 +2,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const { Mesa, SesionMesa } = require("../models");
 const { verificarToken, verificarRol } = require("../middlewares/auth.middleware");
+const { validarMesa } = require("../validations/mesas.validations");
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "secreto_desarrollo";
@@ -91,6 +92,11 @@ router.post("/mesas/numero/:numero/validar", async (req, res) => {
 // Crear Mesa con PIN automático
 router.post("/mesas", verificarToken, verificarRol(['super-admin', 'admin']), async (req, res) => {
   try {
+    const validacion = validarMesa(req.body);
+    if (validacion.error) {
+      return res.status(400).json({ mensaje: validacion.mensaje });
+    }
+
     const { numero } = req.body;
     // Generamos PIN de 4 dígitos
     const pinAleatorio = generarPinMesa();

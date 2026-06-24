@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { crearNuevoUsuario } from './registro.services';
 import { obtenerRoles } from '../../admin/admin.services';
+import { validarUsuario } from '../../admin/usuarios.validations';
 import { AuthContext } from '../../../services/auth/auth.context';
 
 const Registro = () => {
@@ -33,8 +34,16 @@ const Registro = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setCargando(true);
     setMensaje({ texto: '', tipo: '' });
+
+    // Validacion en el formulario antes de llamar al backend.
+    const validacion = validarUsuario(formData);
+    if (validacion.error) {
+      setMensaje({ texto: validacion.mensaje, tipo: 'error' });
+      return;
+    }
+
+    setCargando(true);
 
     formData.rolId = parseInt(formData.rolId, 10);
 

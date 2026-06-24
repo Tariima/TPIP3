@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { listarUsuarios, modificarUsuario, desactivarUsuario, obtenerRoles } from './admin.services'; // <-- Import actualizado a tu estructura
+import { validarUsuario } from './usuarios.validations';
 
 const AdminUsuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
@@ -38,6 +39,15 @@ const AdminUsuarios = () => {
 
   const handleGuardarCambios = async (e) => {
     e.preventDefault();
+    setError('');
+
+    // Validacion en el formulario antes de llamar al backend (en edicion no se pide contraseña).
+    const validacion = validarUsuario(usuarioEditando, true);
+    if (validacion.error) {
+      setError(validacion.mensaje);
+      return;
+    }
+
     try {
       await modificarUsuario(usuarioEditando.id, {
         nombreCompleto: usuarioEditando.nombreCompleto,
