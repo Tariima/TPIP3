@@ -67,6 +67,12 @@ function Cart() {
   };
 
   const handleConfirmarPedido = async () => {
+    // No se puede confirmar un pedido con el carrito vacio.
+    if (items.length === 0) {
+      toast.error("El carrito está vacío, agregá productos antes de confirmar");
+      return;
+    }
+
     setEnviando(true);
     try {
       await confirmarPedido(accountId, notas);

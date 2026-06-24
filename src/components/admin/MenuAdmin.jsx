@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { listarProductos, listarCategorias, guardarProducto, eliminarProducto, crearCategoria } from './menu.services';
+import { validarProducto, validarCategoria } from './menu.validations';
 
 const MenuAdmin = () => {
   const [productos, setProductos] = useState([]);
@@ -24,6 +25,15 @@ const MenuAdmin = () => {
 
 const handleGuardarProducto = async (e) => {
     e.preventDefault();
+    setError('');
+
+    // Validacion en el formulario antes de llamar al backend.
+    const validacion = validarProducto(productoEditando);
+    if (validacion.error) {
+      setError(validacion.mensaje);
+      return;
+    }
+
     try {
       // Aseguramos que los IDs y valores numéricos no viajen como texto
       const productoFormateado = {
@@ -52,6 +62,15 @@ const handleGuardarProducto = async (e) => {
 
   const handleCrearCategoria = async (e) => {
     e.preventDefault();
+    setError('');
+
+    // Validacion en el formulario antes de llamar al backend.
+    const validacion = validarCategoria(nuevaCategoria);
+    if (validacion.error) {
+      setError(validacion.mensaje);
+      return;
+    }
+
     try {
       await crearCategoria(nuevaCategoria);
       setNuevaCategoria({ nombre: '', descripcion: '' });

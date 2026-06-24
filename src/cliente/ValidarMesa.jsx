@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { guardarSesionMesa } from '../services/mesa/mesa.session';
+import { validarPin } from '../components/admin/mesas.validations';
 
 const ValidarMesa = () => {
   const { numero } = useParams(); // Obtenemos numero desde la URL
@@ -11,7 +12,14 @@ const ValidarMesa = () => {
   const handleValidar = async (e) => {
     e.preventDefault();
     setError('');
-    
+
+    // Validacion del PIN antes de llamar al backend.
+    const validacion = validarPin(pin);
+    if (validacion.error) {
+      setError(validacion.mensaje);
+      return;
+    }
+
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
       const res = await fetch(`${API_URL}/api/mesas/numero/${numero}/validar`, {

@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
 const { Usuario, Rol } = require('../models');
 const { validarLogin } = require('../validations/auth.validations');
+const { validarCrearUsuario, validarActualizarUsuario } = require('../validations/usuarios.validations');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secreto_desarrollo';
 const JWT_EXPIRES = process.env.JWT_EXPIRES || '8h';
@@ -82,12 +83,12 @@ const perfil = async (req, res) => {
 const crearUsuario = async (req, res) => {
   try {
 
-    const { nombreCompleto, email, password, rolId } = req.body;
-
-    // Validación básica (luego pueden sumarla a su archivo de validaciones)
-    if (!nombreCompleto || !email || !password) {
-      return res.status(400).json({ mensaje: 'Nombre, email y contraseña son obligatorios' });
+    const validacion = validarCrearUsuario(req.body);
+    if (validacion.error) {
+      return res.status(400).json({ mensaje: validacion.mensaje });
     }
+
+    const { nombreCompleto, email, password, rolId } = req.body;
 
     // Comprobamos que el correo no esté repetido
     const usuarioExistente = await Usuario.findOne({ where: { email } });
@@ -153,6 +154,11 @@ const actualizarUsuario = async (req, res) => {
   try {
     const { id } = req.params;
     const { nombreCompleto, email, rolId, activo } = req.body;
+
+    const validacion = validarActualizarUsuario(req.body);
+    if (validacion.error) {
+      return res.status(400).json({ mensaje: validacion.mensaje });
+    }
 
     const usuario = await Usuario.findByPk(id);
     if (!usuario) {
