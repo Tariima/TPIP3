@@ -10,6 +10,10 @@ function AccountsPanel() {
   const [mesa, setMesa] = useState(null);
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [accountName, setAccountName] = useState("");
+  const [creatingAccount, setCreatingAccount] = useState(false);
+  const [modalError, setModalError] = useState("");
 
   useEffect(() => {
     const cargarDatos = async () => {
@@ -29,13 +33,38 @@ function AccountsPanel() {
     cargarDatos();
   }, [mesaId]);
 
-  const handleCreateAccount = async () => {
+  const openCreateModal = () => {
+    setAccountName("");
+    setModalError("");
+    setShowCreateModal(true);
+  };
+
+  const closeCreateModal = () => {
+    if (creatingAccount) return;
+    setShowCreateModal(false);
+    setModalError("");
+  };
+
+  const handleCreateAccount = async (event) => {
+    event.preventDefault();
+    const nombre = accountName.trim();
+
+    if (!nombre) {
+      setModalError("Ingresá un nombre para la cuenta");
+      return;
+    }
+
     try {
-      const nuevaCuenta = await crearCuentaMesa(mesa.id);
+      setCreatingAccount(true);
+      const nuevaCuenta = await crearCuentaMesa(mesa.id, nombre);
       setAccounts([...accounts, nuevaCuenta]);
+      setShowCreateModal(false);
+      setAccountName("");
     } catch (error) {
       if (!sesionMesaValida()) return navigate(`/${mesaId}`);
-      alert("Error al crear la cuenta");
+      setModalError("Error al crear la cuenta");
+    } finally {
+      setCreatingAccount(false);
     }
   };
 
@@ -54,7 +83,7 @@ function AccountsPanel() {
           <p>Mesa Número: {mesa.numero}</p>
         </div>
 
-        <button className="create-account-button" onClick={handleCreateAccount}>
+        <button className="create-account-button" onClick={openCreateModal}>
           Crear cuenta
         </button>
       </div>
@@ -77,6 +106,36 @@ function AccountsPanel() {
           ))
         )}
       </div>
+
+      {showCreateModal && (
+        <div className="account-modal-backdrop">
+          <div className="account-modal">
+            <h3>Nueva cuenta</h3>
+            <p>Ingresá un nombre para identificar esta cuenta.</p>
+
+            <form onSubmit={handleCreateAccount}>
+              <input
+                type="text"
+                value={accountName}
+                onChange={(e) => setAccountName(e.target.value)}
+                placeholder="Ej: Familia Perez"
+                autoFocus
+              />
+
+              {modalError && <span className="account-modal-error">{modalError}</span>}
+
+              <div className="account-modal-actions">
+                <button type="button" onClick={closeCreateModal} disabled={creatingAccount}>
+                  Cancelar
+                </button>
+                <button type="submit" disabled={creatingAccount}>
+                  {creatingAccount ? "Creando..." : "Crear cuenta"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

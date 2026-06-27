@@ -45,10 +45,11 @@ export const obtenerCuentasMesa = async (mesaId) => {
   return respuesta.json();
 };
 
-export const crearCuentaMesa = async (mesaId) => {
+export const crearCuentaMesa = async (mesaId, nombre) => {
   const respuesta = await fetch(`${API_BASE_URL}/mesas/${mesaId}/cuentas`, {
     method: "POST",
-    headers: { ...mesaAuthHeader() },
+    headers: { "Content-Type": "application/json", ...mesaAuthHeader() },
+    body: JSON.stringify({ nombre }),
   });
   if (!respuesta.ok) {
     verificarAcceso(respuesta);
