@@ -1,14 +1,17 @@
 :root {
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #161616;
-  --bg-card: #1f1f1f;
-  --accent: #e67e22;
-  --accent-hover: #d35400;
-  --text-primary: #ffffff;
-  --text-secondary: #b0b0b0;
-  --border-color: #2a2a2a;
-  --radius: 16px;
-  --shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  --bg-primary: #f3f4f6;
+  --bg-secondary: #ffffff;
+  --bg-card: #f9fafb;
+  --accent: #4f46e5;
+  --accent-hover: #4338ca;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --border-color: #d1d5db;
+  --danger: #ef4444;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --radius: 10px;
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 body {
@@ -79,5 +82,5 @@ button:active {
 
 .form-control:focus {
   border-color: var(--accent) !important;
-  box-shadow: 0 0 0 0.25rem rgba(230, 126, 34, 0.25) !important;
+  box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.2) !important;
 }

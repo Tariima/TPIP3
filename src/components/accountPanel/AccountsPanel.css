@@ -16,9 +16,7 @@
   font-size: 1.8rem;
   font-weight: 800;
   margin: 0;
-  background: linear-gradient(90deg, #fff, #888);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--text-primary);
 }
 
 .accounts-header p {
@@ -36,7 +34,7 @@
   padding: 0.8rem 1.5rem;
   border-radius: var(--radius);
   font-weight: 600;
-  box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3);
+  box-shadow: var(--shadow);
 }
 
 .create-account-button:hover {
@@ -64,7 +62,7 @@
 
 .account-card:hover {
   border-color: var(--accent);
-  background-color: var(--bg-card);
+  background-color: var(--bg-secondary);
   transform: translateY(-5px);
   box-shadow: var(--shadow);
 }
@@ -79,7 +77,7 @@
 .account-items {
   font-size: 0.85rem;
   color: var(--text-secondary);
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: var(--bg-card);
   padding: 0.3rem 0.8rem;
   border-radius: 20px;
 }

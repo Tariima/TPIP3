@@ -21,7 +21,7 @@
 .back-button {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
-  color: white;
+  color: var(--text-primary);
   width: 45px;
   height: 45px;
   border-radius: 50%;
@@ -33,8 +33,9 @@
 }
 
 .back-button:hover {
-  background-color: var(--bg-card);
+  background-color: var(--bg-secondary);
   border-color: var(--accent);
+  box-shadow: var(--shadow);
 }
 
 .categories-grid {
@@ -61,7 +62,7 @@
   padding: 1rem 2.5rem;
   font-size: 1.1rem;
   font-weight: 700;
-  box-shadow: 0 10px 30px rgba(230, 126, 34, 0.4);
+  box-shadow: var(--shadow);
   z-index: 1000;
   backdrop-filter: blur(10px);
 }
@@ -69,5 +70,5 @@
 .floating-cart-button:hover {
   background-color: var(--accent-hover);
   transform: translateX(-50%) translateY(-3px);
-  box-shadow: 0 15px 40px rgba(230, 126, 34, 0.5);
+  box-shadow: 0 8px 18px rgba(79, 70, 229, 0.25);
 }

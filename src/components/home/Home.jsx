@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../services/auth/auth.context';
 import { obtenerPruebaBackend } from '../../services/api';
+import '../admin/AdminLayout.css';
 
 function Home() {
   const { usuario, handleUserLogout } = useContext(AuthContext);
@@ -25,13 +26,15 @@ function Home() {
   const esAdmin = usuario && (usuario.rol === 'super-admin' || usuario.rol === 'admin');
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>TPIP3</h1>
-        <p>Estructura base con React, Node y Express.</p>
+    <div className="admin-page admin-page-narrow">
+      <header className="admin-header">
+        <div>
+          <h1 className="admin-title">Panel del Bar</h1>
+          <p className="admin-subtitle">Gestion de menu, mesas, pedidos y usuarios.</p>
+        </div>
       </header>
 
-      <main className="App-main">
+      <main className="admin-card">
         <section>
           <h2>Sesion</h2>
           {usuario && (
@@ -40,14 +43,14 @@ function Home() {
             </p>
           )}
 
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <div className="admin-actions">
             {/* Botón exclusivo para Administradores */}
             {esSuperAdmin && (
               <button 
                 onClick={() => navigate('/admin/usuarios')}
-                style={{ backgroundColor: '#4f46e5', color: 'white', fontWeight: 'bold' }}
+                className="admin-button admin-button-primary"
               >
-                ⚙️ Panel de Gestión de Usuarios
+                Gestionar usuarios
               </button>
             )}
 
@@ -56,43 +59,41 @@ function Home() {
               <>
                 <button 
                   onClick={() => navigate('/admin/productos')}
-                  style={{ backgroundColor: '#10b981', color: 'white', padding: '10px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                  className="admin-button admin-button-primary"
                 >
-                  🍔 Gestionar Menú
+                  Gestionar menu
                 </button>
                 
                 {/* NUEVO BOTÓN: Gestión de Mesas */}
                 <button
                   onClick={() => navigate('/admin/mesas')}
-                  style={{ backgroundColor: '#f59e0b', color: 'white', padding: '10px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                  className="admin-button admin-button-primary"
                 >
-                  🪑 Gestionar Mesas
+                  Gestionar mesas
                 </button>
 
                 {/* NUEVO BOTÓN: Panel de Pedidos */}
                 <button
                   onClick={() => navigate('/admin/pedidos')}
-                  style={{ backgroundColor: '#ec4899', color: 'white', padding: '10px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                  className="admin-button admin-button-primary"
                 >
-                  📋 Panel de Pedidos
+                  Panel de pedidos
                 </button>
               </>
             )}
 
-            <button onClick={cerrarSesion}>Cerrar sesion</button>
+            <button className="admin-button admin-button-secondary" onClick={cerrarSesion}>
+              Cerrar sesion
+            </button>
           </div>
           
         </section>
 
         <section>
           <h2>Backend</h2>
-          <p>{estadoBackend}</p>
+          <p className="admin-muted">{estadoBackend}</p>
         </section>
       </main>
-
-      <footer className="App-footer">
-        <p>Programacion 3 - TUP</p>
-      </footer>
     </div>
   );
 }
