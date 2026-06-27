@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { listarUsuarios, modificarUsuario, desactivarUsuario, obtenerRoles } from './admin.services'; // <-- Import actualizado a tu estructura
 import { validarUsuario } from './usuarios.validations';
+import './AdminLayout.css';
 
 const AdminUsuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
@@ -64,64 +65,71 @@ const AdminUsuarios = () => {
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '900px', margin: '0 auto' }}>
-      <h2>Panel de Gestión de Usuarios</h2>
+    <div className="admin-page admin-page-narrow">
+      <header className="admin-header">
+        <div>
+          <h2 className="admin-title">Gestion de usuarios</h2>
+          <p className="admin-subtitle">Administra accesos y roles del personal.</p>
+        </div>
 
       {/* 3. Botón para ir a crear un usuario nuevo */}
-      <div style={{ marginBottom: '20px', textAlign: 'right' }}>
         <button 
           onClick={() => navigate('/registro')} 
-          style={{ backgroundColor: '#10b981', color: 'white', padding: '10px 15px', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}
+          className="admin-button admin-button-primary"
         >
-          + Crear Nuevo Usuario
+          Crear usuario
         </button>
-      </div>
+      </header>
 
-      {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
-      {exito && <div style={{ color: 'green', marginBottom: '10px' }}>{exito}</div>}
+      {error && <div className="admin-message admin-message-error">{error}</div>}
+      {exito && <div className="admin-message admin-message-success">{exito}</div>}
 
-      <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
+      <div className="admin-card admin-table-wrapper">
+      <table className="admin-table">
         <thead>
-          <tr style={{ backgroundColor: '#f3f4f6', textAlign: 'left', borderBottom: '2px solid #ccc' }}>
-            <th style={{ padding: '10px' }}>Nombre</th>
-            <th style={{ padding: '10px' }}>Email</th>
-            <th style={{ padding: '10px' }}>Rol</th>
-            <th style={{ padding: '10px' }}>Estado</th>
-            <th style={{ padding: '10px' }}>Acciones</th>
+          <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           {usuarios.map((u) => (
-            <tr key={u.id} style={{ borderBottom: '1px solid #eee' }}>
-              <td style={{ padding: '10px' }}>{u.nombreCompleto}</td>
-              <td style={{ padding: '10px' }}>{u.email}</td>
-              <td style={{ padding: '10px', textTransform: 'capitalize' }}>
+            <tr key={u.id}>
+              <td>{u.nombreCompleto}</td>
+              <td>{u.email}</td>
+              <td style={{ textTransform: 'capitalize' }}>
                 {u.Rol ? u.Rol.nombre : `ID: ${u.rolId}`}
               </td>
-              <td style={{ padding: '10px' }}>
-                <span style={{ color: u.activo ? 'green' : 'red', fontWeight: 'bold' }}>
+              <td>
+                <span className={`admin-badge ${u.activo ? 'admin-badge-success' : 'admin-badge-danger'}`}>
                   {u.activo ? 'Activo' : 'Inactivo'}
                 </span>
               </td>
-              <td style={{ padding: '10px', gap: '5px', display: 'flex' }}>
-                <button onClick={() => setUsuarioEditando({ ...u })} style={{ cursor: 'pointer', padding: '5px 10px' }}>
+              <td>
+                <div className="admin-actions">
+                <button onClick={() => setUsuarioEditando({ ...u })} className="admin-button admin-button-secondary">
                   Editar
                 </button>
                 {u.activo && (
-                  <button onClick={() => handleBaja(u.id)} style={{ backgroundColor: '#ef4444', color: 'white', cursor: 'pointer', padding: '5px 10px', border: 'none', borderRadius: '3px' }}>
+                  <button onClick={() => handleBaja(u.id)} className="admin-button admin-button-danger">
                     Eliminar 
                   </button>
                 )}
+                </div>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      </div>
 
       {usuarioEditando && (
-        <div style={{ marginTop: '30px', padding: '20px', border: '1px solid #4f46e5', borderRadius: '8px', backgroundColor: '#f9fafb' }}>
+        <div className="admin-card" style={{ marginTop: '22px' }}>
           <h3>Editar Usuario: {usuarioEditando.nombreCompleto}</h3>
-          <form onSubmit={handleGuardarCambios} style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxWidth: '400px' }}>
+          <form onSubmit={handleGuardarCambios} className="admin-form" style={{ maxWidth: '420px' }}>
             
             <label>Nombre Completo:</label>
             <input 
@@ -159,11 +167,11 @@ const AdminUsuarios = () => {
               <option value={false}>Inactivo (Suspendido)</option>
             </select>
 
-            <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-              <button type="submit" style={{ backgroundColor: '#4f46e5', color: 'white', padding: '8px 15px', cursor: 'pointer' }}>
+            <div className="admin-form-row">
+              <button type="submit" className="admin-button admin-button-primary">
                 Guardar Cambios
               </button>
-              <button type="button" onClick={() => setUsuarioEditando(null)} style={{ padding: '8px 15px', cursor: 'pointer' }}>
+              <button type="button" onClick={() => setUsuarioEditando(null)} className="admin-button admin-button-secondary">
                 Cancelar
               </button>
             </div>

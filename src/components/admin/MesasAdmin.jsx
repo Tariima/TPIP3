@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { listarMesas, guardarMesa, regenerarPin, eliminarMesa, abrirMesa, cerrarMesa } from './table.services';
 import { validarMesa } from './mesas.validations';
+import './AdminLayout.css';
 
 const MesasAdmin = () => {
   const [mesas, setMesas] = useState([]);
@@ -81,31 +82,38 @@ const MesasAdmin = () => {
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1000px', margin: '0 auto' }}>
-      <h2>Gestión de Mesas y Códigos QR</h2>
-      {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
+    <div className="admin-page">
+      <header className="admin-header">
+        <div>
+          <h2 className="admin-title">Gestion de mesas</h2>
+          <p className="admin-subtitle">Administra mesas, PIN de acceso y codigos QR.</p>
+        </div>
+      </header>
 
-      <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+      {error && <div className="admin-message admin-message-error">{error}</div>}
+
+      <div className={`admin-layout ${mesaEditando ? '' : 'admin-layout-single'}`}>
         
         {/* LISTADO DE MESAS */}
-        <div style={{ flex: 2 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+        <div className="admin-card">
+          <div className="admin-section-header">
             <h3>Plano del Salón</h3>
             <button 
               onClick={() => setMesaEditando({ numero: '' })}
-              style={{ backgroundColor: '#10b981', color: 'white', padding: '8px 12px', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-              + Agregar Mesa
+              className="admin-button admin-button-primary">
+              Agregar mesa
             </button>
           </div>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <div className="admin-table-wrapper">
+          <table className="admin-table admin-table-compact">
             <thead>
-              <tr style={{ backgroundColor: '#f3f4f6', textAlign: 'left', borderBottom: '2px solid #ccc' }}>
-                <th style={{ padding: '10px' }}>Mesa</th>
-                <th style={{ padding: '10px' }}>Estado</th>
-                <th style={{ padding: '10px' }}>PIN Cliente</th>
-                <th style={{ padding: '10px' }}>QR</th>
-                <th style={{ padding: '10px' }}>Acciones</th>
-                <th style={{ padding: '10px' }}>Control de Sesión</th>
+              <tr>
+                <th>Mesa</th>
+                <th>Estado</th>
+                <th>PIN cliente</th>
+                <th>QR</th>
+                <th>Sesion</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -113,31 +121,27 @@ const MesasAdmin = () => {
                 const qrUrl = `${baseUrl}/${m.numero}`;
                 const qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrUrl)}`;
                 return (
-                  <tr key={m.id} style={{ borderBottom: '1px solid #eee', opacity: m.activa ? 1 : 0.5 }}>
-                    <td style={{ padding: '10px', fontWeight: 'bold', fontSize: '1.2em' }}>#{m.numero}</td>
-                    <td style={{ padding: '10px' }}>
-                      <span style={{ 
-                        padding: '4px 8px', borderRadius: '4px', fontSize: '0.9em',
-                        backgroundColor: m.estado === 'disponible' ? '#d1fae5' : '#fee2e2',
-                        color: m.estado === 'disponible' ? '#065f46' : '#991b1b'
-                      }}>
+                  <tr key={m.id} style={{ opacity: m.activa ? 1 : 0.5 }}>
+                    <td><strong>#{m.numero}</strong></td>
+                    <td>
+                      <span className={`admin-badge ${m.estado === 'disponible' ? 'admin-badge-success' : 'admin-badge-danger'}`}>
                         {m.estado.toUpperCase()}
                       </span>
                     </td>
-                    <td style={{ padding: '10px' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'flex-start' }}>
-                        <span style={{ fontFamily: 'monospace', fontSize: '1.2em', letterSpacing: '2px' }}>{m.pin}</span>
+                    <td>
+                      <div className="admin-actions admin-actions-column">
+                        <span className="admin-pin">{m.pin}</span>
                         <button
                           type="button"
                           onClick={() => handleRegenerarPin(m)}
                           title="Generar un PIN nuevo e invalidar el acceso actual"
-                          style={{ backgroundColor: '#f59e0b', color: 'white', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8em' }}>
-                          🔄 Nuevo PIN
+                          className="admin-button admin-button-warning">
+                          Nuevo PIN
                         </button>
                       </div>
                     </td>
-                    <td style={{ padding: '10px' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'center' }}>
+                    <td>
+                      <div className="admin-qr-cell">
                         <img
                           src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(qrUrl)}`}
                           alt={`QR Mesa ${m.numero}`}
@@ -146,58 +150,65 @@ const MesasAdmin = () => {
                           type="button"
                           onClick={() => window.open(qrImgUrl, '_blank', 'noopener')}
                           title="Abrir el código QR en grande para mostrarlo o imprimirlo"
-                          style={{ backgroundColor: '#4f46e5', color: 'white', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8em', width: '100%' }}>
+                          className="admin-button admin-button-primary">
                           Abrir QR
                         </button>
                         <button
                           type="button"
                           onClick={() => window.open(qrUrl, '_blank', 'noopener')}
                           title="Entrar a la mesa como cliente (pantalla de PIN)"
-                          style={{ backgroundColor: '#0ea5e9', color: 'white', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8em', width: '100%' }}>
+                          className="admin-button admin-button-secondary">
                           Ir a mesa
                         </button>
                       </div>
                     </td>
-                    <td style={{ padding: '10px' }}>
+                    <td>
                         {m.estado === 'disponible' ? (
-                        <button 
-                        onClick={() => handleAbrir(m.id)}
-                        style={{ backgroundColor: '#10b981', color: 'white', padding: '6px 12px', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
-                        🟢 Abrir Mesa
-                        </button>
+                        <div className="admin-actions admin-actions-column">
+                          <button 
+                          onClick={() => handleAbrir(m.id)}
+                          className="admin-button admin-button-success">
+                          Abrir mesa
+                          </button>
+                        </div>
                     ) : (
-                        <button 
-                        onClick={() => handleCerrar(m.id)}
-                        style={{ backgroundColor: '#f43f5e', color: 'white', padding: '6px 12px', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
-                        🔴 Cerrar Mesa
-                        </button>
+                        <div className="admin-actions admin-actions-column">
+                          <button 
+                          onClick={() => handleCerrar(m.id)}
+                          className="admin-button admin-button-danger">
+                          Cerrar mesa
+                          </button>
+                        </div>
                     )}
                     </td>
 
-                    <td style={{ padding: '10px', display: 'flex', gap: '5px', flexDirection: 'column' }}>
-                      <button onClick={() => setMesaEditando({ ...m })} style={{ cursor: 'pointer' }}>Editar</button>
-                      <button onClick={() => handleEliminar(m.id)} style={{ backgroundColor: '#ef4444', color: 'white', border: 'none', cursor: 'pointer' }}>Borrar</button>
+                    <td>
+                      <div className="admin-actions admin-actions-column">
+                        <button onClick={() => setMesaEditando({ ...m })} className="admin-button admin-button-secondary">Editar</button>
+                        <button onClick={() => handleEliminar(m.id)} className="admin-button admin-button-danger">Borrar</button>
+                      </div>
                     </td>
                   </tr>
                 );
               })}
             </tbody>
           </table>
+          </div>
         </div>
 
         {/* FORMULARIO LATERAL */}
         {mesaEditando && (
-          <div style={{ flex: 1, padding: '15px', border: '1px solid #4f46e5', borderRadius: '8px', backgroundColor: '#f9fafb' }}>
+          <div className="admin-card">
             <h4>{mesaEditando.id ? `Editar Mesa #${mesaEditando.numero}` : 'Nueva Mesa'}</h4>
-            <form onSubmit={handleGuardar} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <form onSubmit={handleGuardar} className="admin-form">
               
-              <label style={{fontWeight: 'bold'}}>Número de Mesa:</label>
-              <input type="number" value={mesaEditando.numero} onChange={(e) => setMesaEditando({...mesaEditando, numero: e.target.value})} required disabled={!!mesaEditando.id} style={{padding: '5px'}}/>
+              <label>Número de Mesa:</label>
+              <input type="number" value={mesaEditando.numero} onChange={(e) => setMesaEditando({...mesaEditando, numero: e.target.value})} required disabled={!!mesaEditando.id} />
               
               {mesaEditando.id && (
                 <>
-                  <label style={{fontWeight: 'bold', marginTop: '10px'}}>Estado actual:</label>
-                  <select value={mesaEditando.estado} onChange={(e) => setMesaEditando({...mesaEditando, estado: e.target.value})} style={{padding: '5px'}}>
+                  <label>Estado actual:</label>
+                  <select value={mesaEditando.estado} onChange={(e) => setMesaEditando({...mesaEditando, estado: e.target.value})}>
                     <option value="disponible">Disponible (Libre)</option>
                     <option value="ocupada">Ocupada</option>
                   </select>
@@ -209,9 +220,9 @@ const MesasAdmin = () => {
                 </>
               )}
 
-              <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
-                <button type="submit" style={{ backgroundColor: '#4f46e5', color: 'white', border: 'none', padding: '8px', flex: 1, cursor: 'pointer', borderRadius: '4px' }}>Guardar</button>
-                <button type="button" onClick={() => setMesaEditando(null)} style={{ padding: '8px', flex: 1, cursor: 'pointer', borderRadius: '4px', border: '1px solid #ccc' }}>Cancelar</button>
+              <div className="admin-form-row">
+                <button type="submit" className="admin-button admin-button-primary">Guardar</button>
+                <button type="button" onClick={() => setMesaEditando(null)} className="admin-button admin-button-secondary">Cancelar</button>
               </div>
             </form>
           </div>

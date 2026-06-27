@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { listarProductos, listarCategorias, guardarProducto, eliminarProducto, crearCategoria } from './menu.services';
 import { validarProducto, validarCategoria } from './menu.validations';
+import './AdminLayout.css';
 
 const MenuAdmin = () => {
   const [productos, setProductos] = useState([]);
@@ -81,66 +82,77 @@ const handleGuardarProducto = async (e) => {
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1000px', margin: '0 auto' }}>
-      <h2>Gestión del Menú</h2>
-      {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
+    <div className="admin-page">
+      <header className="admin-header">
+        <div>
+          <h2 className="admin-title">Gestion del menu</h2>
+          <p className="admin-subtitle">Carga productos, categorias, precios e imagenes.</p>
+        </div>
+      </header>
+      {error && <div className="admin-message admin-message-error">{error}</div>}
 
-      <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+      <div className="admin-layout">
         {/* TABLA DE PRODUCTOS */}
-        <div style={{ flex: 2 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+        <div className="admin-card">
+          <div className="admin-section-header">
             <h3>Productos</h3>
             <button 
               onClick={() => setProductoEditando({ nombre: '', descripcion: '', precio: '', categoriaId: '', disponible: true, imagen: '' })}
-              style={{ backgroundColor: '#10b981', color: 'white', padding: '8px 12px', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-              + Nuevo Producto
+              className="admin-button admin-button-primary">
+              Nuevo producto
             </button>
           </div>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <div className="admin-table-wrapper">
+          <table className="admin-table">
             <thead>
-              <tr style={{ backgroundColor: '#f3f4f6', textAlign: 'left', borderBottom: '2px solid #ccc' }}>
-                <th style={{ padding: '10px' }}>Imagen</th>
-                <th style={{ padding: '10px' }}>Nombre</th>
-                <th style={{ padding: '10px' }}>Precio</th>
-                <th style={{ padding: '10px' }}>Categoría</th>
-                <th style={{ padding: '10px' }}>Estado</th>
-                <th style={{ padding: '10px' }}>Acciones</th>
+              <tr>
+                <th>Imagen</th>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Categoría</th>
+                <th>Estado</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {productos.map((p) => (
-                <tr key={p.id} style={{ borderBottom: '1px solid #eee' }}>
-                  <td style={{ padding: '10px' }}>
+                <tr key={p.id}>
+                  <td>
                     {p.imagen ? (
                       <img src={p.imagen} alt={p.nombre} style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }} />
                     ) : (
                       <div style={{ width: '50px', height: '50px', backgroundColor: '#e5e7eb', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', color: '#6b7280' }}>Sin foto</div>
                     )}
                   </td>
-                  <td style={{ padding: '10px' }}>{p.nombre}</td>
-                  <td style={{ padding: '10px' }}>${p.precio}</td>
-                  <td style={{ padding: '10px' }}>{categorias.find(c => c.id === p.categoriaId)?.nombre || `ID guardado: ${p.categoriaId}`}</td>
-                  <td style={{ padding: '10px', color: p.disponible ? 'green' : 'red', fontWeight: 'bold' }}>
-                    {p.disponible ? 'Disponible' : 'Agotado'}
+                  <td>{p.nombre}</td>
+                  <td>${p.precio}</td>
+                  <td>{categorias.find(c => c.id === p.categoriaId)?.nombre || `ID guardado: ${p.categoriaId}`}</td>
+                  <td>
+                    <span className={`admin-badge ${p.disponible ? 'admin-badge-success' : 'admin-badge-danger'}`}>
+                      {p.disponible ? 'Disponible' : 'Agotado'}
+                    </span>
                   </td>
-                  <td style={{ padding: '10px', display: 'flex', gap: '5px' }}>
-                    <button onClick={() => setProductoEditando(p)} style={{ cursor: 'pointer' }}>Editar</button>
-                    <button onClick={() => handleEliminarProducto(p.id)} style={{ backgroundColor: '#ef4444', color: 'white', border: 'none', cursor: 'pointer' }}>Borrar</button>
+                  <td>
+                    <div className="admin-actions">
+                      <button onClick={() => setProductoEditando(p)} className="admin-button admin-button-secondary">Editar</button>
+                      <button onClick={() => handleEliminarProducto(p.id)} className="admin-button admin-button-danger">Borrar</button>
+                    </div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          </div>
         </div>
 
         {/* PANEL LATERAL: FORMULARIOS */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           
           {/* Formulario Producto */}
           {productoEditando && (
-            <div style={{ padding: '15px', border: '1px solid #4f46e5', borderRadius: '8px', backgroundColor: '#f9fafb' }}>
+            <div className="admin-card">
               <h4>{productoEditando.id ? 'Editar Producto' : 'Nuevo Producto'}</h4>
-              <form onSubmit={handleGuardarProducto} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <form onSubmit={handleGuardarProducto} className="admin-form">
                 <input type="text" placeholder="Nombre" value={productoEditando.nombre} onChange={(e) => setProductoEditando({...productoEditando, nombre: e.target.value})} required />
                 <input type="number" placeholder="Precio" value={productoEditando.precio} onChange={(e) => setProductoEditando({...productoEditando, precio: e.target.value})} required />
                 <input type="text" placeholder="URL de la imagen (ej: https://...)" value={productoEditando.imagen || ''} onChange={(e) => setProductoEditando({...productoEditando, imagen: e.target.value})} />
@@ -156,20 +168,20 @@ const handleGuardarProducto = async (e) => {
                   Disponible
                 </label>
 
-                <div style={{ display: 'flex', gap: '10px' }}>
-                  <button type="submit" style={{ backgroundColor: '#4f46e5', color: 'white', border: 'none', padding: '8px', flex: 1, cursor: 'pointer' }}>Guardar</button>
-                  <button type="button" onClick={() => setProductoEditando(null)} style={{ padding: '8px', flex: 1, cursor: 'pointer' }}>Cancelar</button>
+                <div className="admin-form-row">
+                  <button type="submit" className="admin-button admin-button-primary">Guardar</button>
+                  <button type="button" onClick={() => setProductoEditando(null)} className="admin-button admin-button-secondary">Cancelar</button>
                 </div>
               </form>
             </div>
           )}
 
           {/* Formulario Categoría */}
-          <div style={{ padding: '15px', border: '1px solid #ccc', borderRadius: '8px' }}>
+          <div className="admin-card">
             <h4>Nueva Categoría</h4>
-            <form onSubmit={handleCrearCategoria} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <form onSubmit={handleCrearCategoria} className="admin-form">
               <input type="text" placeholder="Nombre" value={nuevaCategoria.nombre} onChange={(e) => setNuevaCategoria({...nuevaCategoria, nombre: e.target.value})} required />
-              <button type="submit" style={{ backgroundColor: '#282c34', color: 'white', border: 'none', padding: '8px', cursor: 'pointer' }}>Crear Categoría</button>
+              <button type="submit" className="admin-button admin-button-primary">Crear categoría</button>
             </form>
           </div>
 
