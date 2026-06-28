@@ -45,6 +45,7 @@ router.post("/cuentas/:cuentaId/confirmar", verificarMesaToken, async (req, res)
       notas: notas || null,
       total,
       sesionMesaId: req.mesaCliente.sesionMesaId,
+      cuentaId: cuenta.id,
     });
 
     for (const item of itemsCarrito) {
@@ -64,6 +65,37 @@ router.post("/cuentas/:cuentaId/confirmar", verificarMesaToken, async (req, res)
     res.status(201).json({ mensaje: "Pedido confirmado", pedidoId: pedido.id });
   } catch (error) {
     res.status(500).json({ mensaje: "Error al confirmar el pedido", error: error.message });
+  }
+});
+
+// CLIENTE: obtener los pedidos confirmados de la sesión actual de su mesa.
+router.get("/pedidos/cliente", verificarMesaToken, async (req, res) => {
+  try {
+    const pedidos = await Pedido.findAll({
+      where: { sesionMesaId: req.mesaCliente.sesionMesaId },
+      include: [
+        { model: PedidoItem },
+        { model: Cuenta } 
+      ],
+      order: [["id", "DESC"]],
+    });
+
+    // Mapeamos armando el nombre inteligentemente
+    const pedidosConNombre = pedidos.map(p => {
+      let nombreAUsar = p.cuentaId ? `Cuenta ${p.cuentaId}` : "Cuenta desconocida";
+      if (p.Cuenta) {
+        // Si tiene nombre lo usamos, sino armamos "Cuenta + ID"
+        nombreAUsar = p.Cuenta.nombre ? p.Cuenta.nombre : `Cuenta ${p.Cuenta.id}`;
+      }
+      return {
+        ...p.toJSON(),
+        nombreCuenta: nombreAUsar
+      };
+    });
+
+    res.json(pedidosConNombre);
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error al obtener tus pedidos", error: error.message });
   }
 });
 

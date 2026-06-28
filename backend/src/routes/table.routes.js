@@ -1,6 +1,6 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
-const { Mesa, SesionMesa } = require("../models");
+const { Mesa, SesionMesa, Cuenta } = require("../models");
 const { verificarToken, verificarRol } = require("../middlewares/auth.middleware");
 const { validarMesa } = require("../validations/mesas.validations");
 
@@ -198,6 +198,12 @@ router.post("/mesas/:id/cerrar", verificarToken, async (req, res) => {
         fechaCierre: new Date() 
       });
     }
+
+    // Cerramos todas las cuentas que quedaron abiertas en esta mesa
+    await Cuenta.update(
+      { estado: 'cerrada' }, 
+      { where: { mesaId: mesa.id, estado: 'abierta' } }
+    );
 
     res.json({ mensaje: "Mesa cerrada correctamente", mesa });
   } catch (error) {

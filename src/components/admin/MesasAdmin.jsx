@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { listarMesas, guardarMesa, regenerarPin, eliminarMesa, abrirMesa, cerrarMesa } from './table.services';
 import { validarMesa } from './mesas.validations';
 import './AdminLayout.css';
 
 const MesasAdmin = () => {
+  const navigate = useNavigate();
   const [mesas, setMesas] = useState([]);
   const [error, setError] = useState('');
   const [mesaEditando, setMesaEditando] = useState(null);
@@ -88,6 +90,12 @@ const MesasAdmin = () => {
           <h2 className="admin-title">Gestion de mesas</h2>
           <p className="admin-subtitle">Administra mesas, PIN de acceso y codigos QR.</p>
         </div>
+        <button
+          onClick={() => navigate('/')}
+          className="admin-button admin-button-secondary"
+        >
+          ← Volver al inicio
+        </button>
       </header>
 
       {error && <div className="admin-message admin-message-error">{error}</div>}

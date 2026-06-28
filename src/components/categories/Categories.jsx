@@ -25,7 +25,7 @@ function Categories() {
   return (
     <div className="categories-container">
       <header className="categories-header">
-        <button className="back-button" onClick={() => navigate(`/${mesaId}`)}>←</button>
+        <button className="back-button" onClick={() => navigate(`/${mesaId}/cuentas`)}>←</button>
         <h2>Categorías</h2>
       </header>
       <div className="categories-grid">

@@ -23,6 +23,10 @@ const Pedido = sequelize.define('Pedido', {
   total: {
     type: DataTypes.DECIMAL(10, 2),
     defaultValue: 0
+  },
+  cuentaId: {
+    type: DataTypes.INTEGER,
+    allowNull: true 
   }
 }, {
   tableName: 'pedidos',

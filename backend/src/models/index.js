@@ -44,6 +44,9 @@ CarritoItem.belongsTo(Cuenta, { foreignKey: "cuentaId" });
 Producto.hasMany(CarritoItem, { foreignKey: "productoId" });
 CarritoItem.belongsTo(Producto, { foreignKey: "productoId" });
 
+Cuenta.hasMany(Pedido, { foreignKey: "cuentaId" });
+Pedido.belongsTo(Cuenta, { foreignKey: "cuentaId" });
+
 module.exports = {
   sequelize,
   Rol,

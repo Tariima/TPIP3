@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { crearNuevoUsuario } from './registro.services';
 import { obtenerRoles } from '../../admin/admin.services';
 import { validarUsuario } from '../../admin/usuarios.validations';
@@ -6,6 +7,7 @@ import { AuthContext } from '../../../services/auth/auth.context';
 
 const Registro = () => {
   const {token} = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     nombreCompleto: '',
@@ -63,6 +65,12 @@ const Registro = () => {
 
   return (
     <div style={{ maxWidth: '400px', margin: '20px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}>
+      <button
+        onClick={() => navigate('/admin/usuarios')}
+        style={{ background: 'none', border: 'none', color: '#4f46e5', fontSize: '1em', cursor: 'pointer', padding: 0, marginBottom: '10px' }}
+      >
+        ← Volver a usuarios
+      </button>
       <h2>Registrar Nuevo Empleado</h2>
       
       {mensaje.texto && (
