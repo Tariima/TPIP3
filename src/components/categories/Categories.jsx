@@ -17,7 +17,12 @@ function Categories() {
   return (
     <div className="categories-container">
       <header className="categories-header">
-        <button className="back-button" onClick={() => navigate(`/${mesaId}/cuentas`)}>←</button>
+        <button
+          className="back-button"
+          onClick={() => navigate(`/${mesaId}/cuentas`)}
+        >
+          ←
+        </button>
         <h2>Categorías</h2>
       </header>
       <div className="categories-grid">
@@ -30,8 +35,8 @@ function Categories() {
           />
         ))}
       </div>
-      <button 
-        className="floating-cart-button" 
+      <button
+        className="floating-cart-button"
         onClick={() => navigate(`/${mesaId}/cart/${accountId}`)}
       >
         Ver Carrito
