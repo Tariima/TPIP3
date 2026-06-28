@@ -1,43 +1,46 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { listarMisPedidos } from '../services/api';
+import { listarMisPedidos, obtenerMesaPorNumero, obtenerCuentasMesa } from '../services/api';
 
 const MisPedidos = () => {
   const { numero } = useParams();
   const navigate = useNavigate();
   const [pedidos, setPedidos] = useState([]);
+  const [cuentas, setCuentas] = useState([]); // Nueva variable para guardar las cuentas
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const cargar = async () => {
+    const cargarDatos = async () => {
       try {
-        const data = await listarMisPedidos();
-        setPedidos(data);
+        // 1. Traemos los pedidos de la base de datos
+        const dataPedidos = await listarMisPedidos();
+        setPedidos(dataPedidos);
+
+        // 2. Traemos las cuentas activas (Igual que hace el AccountsPanel)
+        const mesaData = await obtenerMesaPorNumero(numero);
+        const cuentasData = await obtenerCuentasMesa(mesaData.id);
+        setCuentas(cuentasData);
       } catch (err) {
         setError(err.message);
       }
     };
-    cargar();
-  }, []);
+    cargarDatos();
+  }, [numero]);
 
-  // 1. Obtenemos los IDs únicos de esta mesa y los ordenamos de menor a mayor
-  const cuentasIds = [...new Set(pedidos.map(p => p.cuentaId))]
-    .filter(id => id !== null)
-    .sort((a, b) => a - b);
-
-  // 2. Agrupamos los pedidos por cuenta
+  // Agrupamos cruzando los datos: Pedidos + Cuentas
   const resumen = pedidos.reduce((acc, p) => {
-    // Averiguamos qué posición visual le toca a este ID (le sumamos 1 porque los arrays empiezan en 0)
-    const numeroVisual = cuentasIds.indexOf(p.cuentaId) + 1;
     
-    // Armamos el nombre: Si la BD manda un nombre real lo usamos, sino usamos nuestro número visual
-    const nombre = p.Cuenta?.nombre || (p.cuentaId ? `Cuenta ${numeroVisual}` : "Cuenta sin nombre"); 
+    // MAGIA ACÁ: Buscamos el ID del pedido dentro de las cuentas activas que trajimos
+    const cuentaReal = cuentas.find(c => c.id === p.cuentaId);
     
-    if (!acc[nombre]) {
-      acc[nombre] = { total: 0, items: [] };
+    // Si la encuentra, obligamos al sistema a usar su nombre exacto (Ej: "Cuenta 1"). 
+    const nombreFinal = cuentaReal ? cuentaReal.nombre : (p.Cuenta?.nombre || `Cuenta ${p.cuentaId}`); 
+    
+    if (!acc[nombreFinal]) {
+      acc[nombreFinal] = { total: 0, items: [] };
     }
-    acc[nombre].total += Number(p.total);
-    acc[nombre].items.push(p);
+    acc[nombreFinal].total += Number(p.total);
+    acc[nombreFinal].items.push(p);
     return acc;
   }, {});
 
@@ -47,10 +50,9 @@ const MisPedidos = () => {
     <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
       <h2>Mesa {numero} - Mis Pedidos</h2>
 
-      {/* DETALLE POR CUENTA */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '30px' }}>
         {Object.entries(resumen)
-          .sort(([nombreA], [nombreB]) => nombreA.localeCompare(nombreB))
+          .sort(([nombreA], [nombreB]) => nombreA.localeCompare(nombreB, undefined, { numeric: true }))
           .map(([nombreCuenta, datos]) => (
           <div key={nombreCuenta} style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '15px' }}>
             <h3 style={{ borderBottom: '1px solid #ddd', paddingBottom: '10px' }}>
@@ -69,7 +71,6 @@ const MisPedidos = () => {
         ))}
       </div>
 
-      {/* TOTAL Mesa */}
       <div style={{ background: '#4f46e5', color: 'white', padding: '15px', borderRadius: '8px', textAlign: 'center' }}>
         <p style={{ margin: 0, fontSize: '0.8em' }}>TOTAL DE LA MESA</p>
         <h2 style={{ margin: 0 }}>${totalMesa.toFixed(2)}</h2>

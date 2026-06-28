@@ -82,7 +82,7 @@ router.get("/pedidos/cliente", verificarMesaToken, async (req, res) => {
 
     // Mapeamos armando el nombre inteligentemente
     const pedidosConNombre = pedidos.map(p => {
-      let nombreAUsar = "Cuenta eliminada";
+      let nombreAUsar = p.cuentaId ? `Cuenta ${p.cuentaId}` : "Cuenta desconocida";
       if (p.Cuenta) {
         // Si tiene nombre lo usamos, sino armamos "Cuenta + ID"
         nombreAUsar = p.Cuenta.nombre ? p.Cuenta.nombre : `Cuenta ${p.Cuenta.id}`;
@@ -93,7 +93,7 @@ router.get("/pedidos/cliente", verificarMesaToken, async (req, res) => {
       };
     });
 
-    res.json(pedidos);
+    res.json(pedidosConNombre);
   } catch (error) {
     res.status(500).json({ mensaje: "Error al obtener tus pedidos", error: error.message });
   }
