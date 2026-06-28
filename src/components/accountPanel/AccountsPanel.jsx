@@ -30,8 +30,17 @@ function AccountsPanel() {
   }, [mesaId]);
 
   const handleCreateAccount = async () => {
+    // Desplegamos el prompt pidiendo el nombre
+    const nombreIngresado = window.prompt("Ingresá tu nombre (o dejalo vacío para usar el automático):");
+
+    // Si el usuario hace clic en "Cancelar", no hacemos nada
+    if (nombreIngresado === null) {
+      return; 
+    }
+
     try {
-      const nuevaCuenta = await crearCuentaMesa(mesa.id);
+      // Le pasamos a nuestra API el nombre que escribió el cliente
+      const nuevaCuenta = await crearCuentaMesa(mesa.id, nombreIngresado);
       setAccounts([...accounts, nuevaCuenta]);
     } catch (error) {
       if (!sesionMesaValida()) return navigate(`/${mesaId}`);

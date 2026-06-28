@@ -60,9 +60,20 @@ const MisPedidos = () => {
             </h3>
             {datos.items.map((pedido, index) => (
               <div key={pedido.id} style={{ marginBottom: '10px',paddingBottom: '10px',borderBottom: index !== datos.items.length - 1 ? '1px dashed #eee' : 'none' }}>
-                <ul style={{ paddingLeft: '20px', margin: 0 }}>
+                <ul style={{ paddingLeft: '20px', margin: 0, paddingRight: '10px' }}>
                   {pedido.PedidoItems.map(item => (
-                    <li key={item.id}>{item.cantidad}x {item.nombreProducto}</li>
+                    <li key={item.id} style={{ marginBottom: '8px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span>{item.cantidad}x {item.nombreProducto}</span>
+                        <strong>${Number(item.subtotal).toFixed(2)}</strong>
+                      </div>
+                      {/* Muestra precio unitario solo si se pidio mas de 1  */}
+                      {item.cantidad > 1 && (
+                        <div style={{ fontSize: '0.85em', color: '#666' }}>
+                          (${Number(item.precioUnitario).toFixed(2)} c/u)
+                        </div>
+                      )}
+                    </li>
                   ))}
                 </ul>
               </div>
