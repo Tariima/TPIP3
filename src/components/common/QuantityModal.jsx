@@ -1,6 +1,6 @@
 // modal que pregunta cuantas unidades agregar antes de meter el producto al carrito
-import React, { useState } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
+import React, { useState } from "react";
+import { Modal, Button, Form } from "react-bootstrap";
 
 function QuantityModal({ show, handleClose, handleConfirm, productName }) {
   const [quantity, setQuantity] = useState(1);
@@ -9,7 +9,7 @@ function QuantityModal({ show, handleClose, handleConfirm, productName }) {
   const onSubmit = (e) => {
     e.preventDefault();
     handleConfirm(quantity);
-    setQuantity(1); // reset for next time
+    setQuantity(1);
   };
 
   return (
@@ -34,7 +34,11 @@ function QuantityModal({ show, handleClose, handleConfirm, productName }) {
           <Button variant="secondary" onClick={handleClose}>
             Cancelar
           </Button>
-          <Button variant="primary" type="submit" style={{ backgroundColor: 'var(--accent)', border: 'none' }}>
+          <Button
+            variant="primary"
+            type="submit"
+            style={{ backgroundColor: "var(--accent)", border: "none" }}
+          >
             Agregar al carrito
           </Button>
         </Modal.Footer>
