@@ -2,9 +2,7 @@
 
 Este proyecto busca resolver una necesidad comun en bares: agilizar la atencion de las mesas y facilitar que los clientes puedan hacer pedidos durante toda la noche sin depender tanto de la presencia constante de un mozo.
 
-La idea principal es que cada mesa tenga un codigo QR. Al escanearlo, el cliente puede ver las opciones disponibles y realizar pedidos desde su celular. Del lado del bar, el sistema permitiria organizar mejor esos pedidos y reducir tiempos de espera, tanto para el personal como para los clientes.
-
-En esta primera etapa se dejo armada la estructura base del proyecto, separando el frontend y el backend, y verificando que ambas partes puedan comunicarse entre si.
+La idea principal es que cada mesa tenga un codigo QR. Al escanearlo, el cliente puede ver la carta y hacer pedidos desde su celular. Del lado del bar, el sistema permite organizar esos pedidos y reducir tiempos de espera, tanto para el personal como para los clientes.
 
 ## Objetivo del proyecto
 
@@ -17,37 +15,76 @@ Crear una aplicacion para la gestion de bares donde:
 
 ## Tecnologias utilizadas
 
-- React (con Vite como build tool y dev server) para el frontend.
-- Node.js con Express para el backend.
-- Variables de entorno para configurar la conexion entre cliente y servidor.
+Frontend:
 
-## Estructura inicial
+- React (con Vite como build tool y dev server).
+- React Router para el ruteo y manejo de SPA.
+- React Bootstrap y CSS propio para los estilos.
+- react-toastify para los avisos al usuario.
+- Context API para el estado global (usuario logueado y sesion de la mesa).
+
+Backend:
+
+- Node.js con Express.
+- Sequelize como ORM y SQLite como base de datos.
+- JWT (jsonwebtoken) para la autenticacion y bcryptjs para encriptar las contraseñas.
+
+## Funcionalidades
+
+Para el cliente (entra escaneando el QR de la mesa):
+
+- Escanea el QR, ingresa el PIN que le da el mozo y entra a la carta de esa mesa.
+- Mira las categorias y los productos, arma su carrito y confirma el pedido.
+- Puede ver el historial de pedidos de la mesa, separado por cuenta.
+
+Para el personal / admin (entra con login):
+
+- ABM de productos y de categorias (con imagen).
+- ABM de mesas: crear, editar, borrar, abrir y cerrar la mesa, y generar el PIN y el QR.
+- Panel de pedidos para ver lo que piden las mesas e ir cambiando el estado de cada uno.
+
+Para el super-admin:
+
+- Todas las funciones anteriores.
+- ABM de usuarios, incluyendo el cambio de rol.
+
+Otras cosas que tiene la app:
+
+- Tres roles distintos (super-admin, admin y cliente) con las rutas protegidas segun corresponda.
+- Validacion en los formularios con su aviso al usuario cuando algo esta mal.
+- Modo claro y modo oscuro.
+
+## Estructura del proyecto
 
 ```txt
 TPIP3/
   backend/
     src/
+      controllers/
+      middlewares/
+      models/
       routes/
+      validations/
+      db.js
+      seed.js
       server.js
     package.json
-    .env.example
   src/
+    cliente/
+    components/
     services/
-      api.js
     App.jsx
-    App.css
     main.jsx
     index.css
   index.html
   vite.config.js
-  .env.example
   package.json
   README.md
 ```
 
 ## Como correr el proyecto
 
-Para correr el proyecto hay que levantar el backend y el frontend en dos terminales distintas.
+Hay que levantar el backend y el frontend en dos terminales distintas.
 
 ### Backend
 
@@ -57,16 +94,13 @@ npm install
 npm run dev
 ```
 
-El servidor queda disponible en:
+El servidor queda corriendo en `http://localhost:3001`.
+
+La base de datos (SQLite) se crea sola la primera vez que arranca. Ademas se carga un usuario admin por defecto para poder entrar:
 
 ```txt
-http://localhost:3001
-```
-
-Ruta de prueba:
-
-```txt
-http://localhost:3001/api/prueba
+email: admin@tpip3.com
+contraseña: admin123
 ```
 
 ### Frontend
@@ -78,17 +112,13 @@ npm install
 npm run dev
 ```
 
-La aplicacion queda disponible en:
-
-```txt
-http://localhost:3000
-```
+La aplicacion queda disponible en `http://localhost:3000`.
 
 ## Flujo de trabajo
 
-Para organizar el desarrollo vamos a usar el flujo de feature branches.
+Para organizar el desarrollo usamos el flujo de feature branches.
 
-Cada cambio se va a trabajar en una rama propia, separada de la rama principal. La rama tiene que tener un nombre claro que indique el tipo de trabajo y una breve descripcion.
+Cada cambio se trabaja en una rama propia, separada de la rama principal. La rama tiene que tener un nombre claro que indique el tipo de trabajo y una breve descripcion.
 
 Convencion para nombrar ramas:
 
@@ -111,12 +141,6 @@ style/mejorar-estilos-app
 ```
 
 Una vez terminado el trabajo en la rama, se revisa y se integra a la rama principal.
-
-## Estado actual
-
-Por ahora el proyecto cuenta con la estructura inicial y una ruta de prueba para comprobar que el frontend se conecta correctamente con el backend.
-
-Cuando ambas partes estan corriendo, la pantalla muestra un mensaje indicando que la conexion entre frontend y backend funciona.
 
 ## Integrantes
 
