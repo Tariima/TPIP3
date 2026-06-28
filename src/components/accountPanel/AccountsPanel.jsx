@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { obtenerMesaPorNumero, obtenerCuentasMesa, crearCuentaMesa } from "../../services/api";
-import { sesionMesaValida } from "../../services/mesa/mesa.session";
+import { MesaContext } from "../../services/mesa/mesa.context";
 import "./AccountsPanel.css";
 
 function AccountsPanel() {
   const { numero: mesaId } = useParams(); // la ruta usa :numero; lo tomamos como mesaId
   const navigate = useNavigate();
+  const { cerrarSesionMesa } = useContext(MesaContext);
   const [mesa, setMesa] = useState(null);
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,7 +26,10 @@ function AccountsPanel() {
       } catch (error) {
         console.error("Error al cargar datos de la mesa:", error);
         // Si se perdio la sesion de mesa (token rechazado), volvemos al PIN.
-        if (!sesionMesaValida()) navigate(`/${mesaId}`);
+        if (error.sesionExpirada) {
+          cerrarSesionMesa();
+          navigate(`/${mesaId}`);
+        }
       } finally {
         setLoading(false);
       }
@@ -61,7 +65,10 @@ function AccountsPanel() {
       setShowCreateModal(false);
       setAccountName("");
     } catch (error) {
-      if (!sesionMesaValida()) return navigate(`/${mesaId}`);
+      if (error.sesionExpirada) {
+        cerrarSesionMesa();
+        return navigate(`/${mesaId}`);
+      }
       setModalError("Error al crear la cuenta");
     } finally {
       setCreatingAccount(false);
@@ -90,7 +97,7 @@ function AccountsPanel() {
           Mis pedidos
         </button>
       </div>
-      
+
 
       <div className="accounts-list">
         {accounts.length === 0 ? (

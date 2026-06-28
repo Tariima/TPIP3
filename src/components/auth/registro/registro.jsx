@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { crearNuevoUsuario } from './registro.services';
 import { obtenerRoles } from '../../admin/admin.services';
 import { validarUsuario } from '../../admin/usuarios.validations';
@@ -7,6 +8,7 @@ import '../../admin/AdminLayout.css';
 
 const Registro = () => {
   const {token} = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     nombreCompleto: '',
@@ -64,7 +66,14 @@ const Registro = () => {
 
   return (
     <div className="admin-page admin-page-narrow">
-    <div className="admin-card" style={{ maxWidth: '420px', margin: '0 auto' }}>
+      <div className="admin-card" style={{ maxWidth: '420px', margin: '0 auto' }}>
+      <button
+        onClick={() => navigate('/admin/usuarios')}
+        className="admin-button admin-button-secondary"
+        style={{ marginBottom: '15px' }}
+      >
+        ← Volver a usuarios
+      </button>
       <h2>Registrar Nuevo Empleado</h2>
       
       {mensaje.texto && (
@@ -108,7 +117,7 @@ const Registro = () => {
           {cargando ? 'Guardando...' : 'Crear Usuario'}
         </button>
       </form>
-    </div>
+      </div>
     </div>
   );
 };

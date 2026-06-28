@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { listarPedidos, actualizarEstadoPedido, eliminarPedido, ESTADOS_PEDIDO } from './order.services';
 import './AdminLayout.css';
 
@@ -11,6 +12,7 @@ const claseEstado = {
 };
 
 const PedidosPanel = () => {
+  const navigate = useNavigate();
   const [pedidos, setPedidos] = useState([]);
   const [error, setError] = useState('');
 
@@ -51,11 +53,18 @@ const PedidosPanel = () => {
           <h2 className="admin-title">Panel de pedidos</h2>
           <p className="admin-subtitle">Seguimiento de pedidos realizados por las mesas.</p>
         </div>
-        <button
-          onClick={cargarDatos}
-          className="admin-button admin-button-primary">
-          Actualizar
-        </button>
+        <div className="admin-actions">
+          <button
+            onClick={() => navigate('/')}
+            className="admin-button admin-button-secondary">
+            ← Volver al inicio
+          </button>
+          <button
+            onClick={cargarDatos}
+            className="admin-button admin-button-primary">
+            Actualizar
+          </button>
+        </div>
       </header>
 
       {error && <div className="admin-message admin-message-error">{error}</div>}

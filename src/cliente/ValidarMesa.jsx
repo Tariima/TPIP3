@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { guardarSesionMesa } from '../services/mesa/mesa.session';
+import { MesaContext } from '../services/mesa/mesa.context';
 import { validarPin } from '../components/admin/mesas.validations';
 import './ValidarMesa.css';
 
 const ValidarMesa = () => {
   const { numero } = useParams(); // Obtenemos numero desde la URL
   const navigate = useNavigate();
+  const { iniciarSesionMesa } = useContext(MesaContext);
   const [pin, setPin] = useState('');
   const [error, setError] = useState('');
 
@@ -32,8 +33,8 @@ const ValidarMesa = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.mensaje);
 
-      // Si el PIN es correcto, se guarda la sesión temporal de mesa (token incluido).
-      guardarSesionMesa({
+      // Si el PIN es correcto, se inicia la sesión global de mesa (token incluido).
+      iniciarSesionMesa({
         mesaToken: data.mesaToken,
         mesaId: data.mesaId,
         numero,

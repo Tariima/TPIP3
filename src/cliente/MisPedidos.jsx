@@ -49,7 +49,12 @@ const MisPedidos = () => {
 
   return (
     <div className="mis-pedidos-page">
-      <h2>Mesa {numero} - Mis Pedidos</h2>
+      <header className="mis-pedidos-header">
+        <button className="mis-pedidos-back" onClick={() => navigate(`/${numero}/cuentas`)}>
+          ←
+        </button>
+        <h2>Mesa {numero} - Mis Pedidos</h2>
+      </header>
 
       <div className="mis-pedidos-list">
         {Object.entries(resumen)
