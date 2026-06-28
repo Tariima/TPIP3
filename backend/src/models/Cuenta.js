@@ -1,3 +1,4 @@
+// modelo de cuenta, sirve para dividir el consumo de una mesa entre varias personas
 const { DataTypes } = require("sequelize");
 const sequelize = require("../db");
 
@@ -15,7 +16,7 @@ const Cuenta = sequelize.define(
     },
     estado: {
       type: DataTypes.STRING,
-      defaultValue: "abierta",
+      defaultValue: "abierta", // abierta mientras se le pueden seguir cargando pedidos
     },
   },
   {

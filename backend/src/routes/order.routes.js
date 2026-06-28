@@ -1,3 +1,4 @@
+// rutas de pedidos: el cliente confirma el carrito y el personal los gestiona en cocina
 const express = require("express");
 const {
   Cuenta,
@@ -12,11 +13,11 @@ const { verificarMesaToken, verificarToken, verificarRol } = require("../middlew
 
 const router = express.Router();
 
-// Estados validos por los que pasa un pedido en la cocina/barra.
+// estados validos por los que pasa un pedido en la cocina/barra.
 const ESTADOS_PEDIDO = ["pendiente", "en preparacion", "listo", "entregado", "cancelado"];
 
-// CLIENTE: confirma el carrito de una cuenta y lo convierte en un pedido.
-// Toma los items del carrito, crea el pedido con su detalle y vacia el carrito.
+// cliente: confirma el carrito de una cuenta y lo convierte en un pedido.
+// toma los items del carrito, crea el pedido con su detalle y vacia el carrito.
 router.post("/cuentas/:cuentaId/confirmar", verificarMesaToken, async (req, res) => {
   try {
     const { cuentaId } = req.params;
@@ -37,6 +38,7 @@ router.post("/cuentas/:cuentaId/confirmar", verificarMesaToken, async (req, res)
       return res.status(400).json({ mensaje: "El carrito esta vacio" });
     }
 
+    // sumo todos los subtotales del carrito para guardar el total del pedido
     const total = itemsCarrito.reduce((suma, item) => suma + Number(item.subtotal), 0);
 
     const pedido = await Pedido.create({
@@ -59,7 +61,7 @@ router.post("/cuentas/:cuentaId/confirmar", verificarMesaToken, async (req, res)
       });
     }
 
-    // Vaciamos el carrito: ya quedo registrado como pedido.
+    // vaciamos el carrito: ya quedo registrado como pedido.
     await CarritoItem.destroy({ where: { cuentaId } });
 
     res.status(201).json({ mensaje: "Pedido confirmado", pedidoId: pedido.id });
@@ -68,7 +70,7 @@ router.post("/cuentas/:cuentaId/confirmar", verificarMesaToken, async (req, res)
   }
 });
 
-// CLIENTE: obtener los pedidos confirmados de la sesión actual de su mesa.
+// cliente: obtener los pedidos confirmados de la sesion actual de su mesa.
 router.get("/pedidos/cliente", verificarMesaToken, async (req, res) => {
   try {
     const pedidos = await Pedido.findAll({
@@ -80,11 +82,11 @@ router.get("/pedidos/cliente", verificarMesaToken, async (req, res) => {
       order: [["id", "DESC"]],
     });
 
-    // Mapeamos armando el nombre inteligentemente
+    // mapeamos armando el nombre inteligentemente
     const pedidosConNombre = pedidos.map(p => {
       let nombreAUsar = p.cuentaId ? `Cuenta ${p.cuentaId}` : "Cuenta desconocida";
       if (p.Cuenta) {
-        // Si tiene nombre lo usamos, sino armamos "Cuenta + ID"
+        // si tiene nombre lo usamos, sino armamos "cuenta + id"
         nombreAUsar = p.Cuenta.nombre ? p.Cuenta.nombre : `Cuenta ${p.Cuenta.id}`;
       }
       return {
@@ -99,7 +101,7 @@ router.get("/pedidos/cliente", verificarMesaToken, async (req, res) => {
   }
 });
 
-// PERSONAL: lista todos los pedidos con su mesa, productos y estado.
+// personal: lista todos los pedidos con su mesa, productos y estado.
 router.get("/pedidos", verificarToken, verificarRol(["super-admin", "admin"]), async (req, res) => {
   try {
     const pedidos = await Pedido.findAll({
@@ -113,7 +115,7 @@ router.get("/pedidos", verificarToken, verificarRol(["super-admin", "admin"]), a
       ],
     });
 
-    // Aplanamos la respuesta para que el panel reciba solo lo que necesita.
+    // aplanamos la respuesta para que el panel reciba solo lo que necesita.
     const respuesta = pedidos.map((pedido) => ({
       id: pedido.id,
       estado: pedido.estado,
@@ -134,7 +136,7 @@ router.get("/pedidos", verificarToken, verificarRol(["super-admin", "admin"]), a
   }
 });
 
-// PERSONAL: actualiza el estado de un pedido (pendiente, en preparacion, etc.).
+// personal: actualiza el estado de un pedido (pendiente, en preparacion, etc.).
 router.patch("/pedidos/:id/estado", verificarToken, verificarRol(["super-admin", "admin"]), async (req, res) => {
   try {
     const { id } = req.params;
@@ -158,7 +160,7 @@ router.patch("/pedidos/:id/estado", verificarToken, verificarRol(["super-admin",
   }
 });
 
-// PERSONAL: elimina un pedido junto con su detalle.
+// personal: elimina un pedido junto con su detalle.
 router.delete("/pedidos/:id", verificarToken, verificarRol(["super-admin", "admin"]), async (req, res) => {
   try {
     const { id } = req.params;

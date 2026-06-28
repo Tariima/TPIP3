@@ -1,3 +1,4 @@
+// arma todas las rutas de la app y separa las del personal de las del cliente
 import { Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -26,13 +27,15 @@ function App() {
     <>
       <ThemeToggle />
       <Routes>
+        {/* el login es la unica ruta libre, el resto va protegido */}
         <Route path="/login" element={<Login />} />
 
-        {/* Rutas del personal */}
+        {/* rutas del personal */}
         <Route element={<Protected />}>
           <Route path="/" element={<Home />} />
         </Route>
 
+        {/* estas rutas solo las puede ver el super-admin */}
         <Route element={<RoleProtected rolesPermitidos={['super-admin']} />}>
           <Route path="/registro" element={<Registro />} />
           <Route path="/admin/usuarios" element={<AdminUsuarios />} />
@@ -44,8 +47,9 @@ function App() {
           <Route path="/admin/pedidos" element={<PedidosPanel />} />
         </Route>
 
-        {/* Rutas del cliente (carta por QR) */}
+        {/* rutas del cliente (carta por qr) */}
         <Route path="/:numero" element={<ValidarMesa />} />
+        {/* lo que cuelga de aca pide la sesion de mesa validada por pin */}
         <Route element={<MesaProtected />}>
           <Route path="/:numero/cuentas" element={<AccountsPanel />} />
           <Route path="/:mesaId/category/:accountId" element={<Categories />} />

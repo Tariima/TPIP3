@@ -1,3 +1,4 @@
+// modelo del pedido, es el carrito ya confirmado que va a la cocina con su estado y total
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
 
@@ -15,7 +16,7 @@ const Pedido = sequelize.define('Pedido', {
   estado: {
     type: DataTypes.STRING,
     allowNull: false,
-    defaultValue: 'pendiente'
+    defaultValue: 'pendiente' // arranca pendiente y el personal lo va cambiando hasta entregarlo
   },
   notas: {
     type: DataTypes.TEXT

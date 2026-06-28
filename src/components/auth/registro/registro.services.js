@@ -1,3 +1,4 @@
+// servicio que manda al backend los datos del nuevo empleado para crearlo
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 export const crearNuevoUsuario = async (formData, token) => {
@@ -9,6 +10,7 @@ export const crearNuevoUsuario = async (formData, token) => {
     headers: {
       'Content-Type': 'application/json',
 
+      // mando el token del admin logueado asi el back valida que tenga permiso
       'Authorization': `Bearer ${token}`
 
     },

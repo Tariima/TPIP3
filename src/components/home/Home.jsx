@@ -1,3 +1,4 @@
+// panel principal del bar, desde aca el admin entra a las distintas secciones
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../services/auth/auth.context';
@@ -9,6 +10,7 @@ function Home() {
   const navigate = useNavigate();
   const [estadoBackend, setEstadoBackend] = useState('Conectando con el backend...');
 
+  // pego al backend al cargar para chequear que este conectado
   useEffect(() => {
     obtenerPruebaBackend()
       .then((data) => setEstadoBackend(data.mensaje))
@@ -44,7 +46,8 @@ function Home() {
           )}
 
           <div className="admin-actions">
-            {/* Botón exclusivo para Administradores */}
+            {/* gestionar usuarios solo lo ve el super-admin */}
+            {/* boton exclusivo para administradores */}
             {esSuperAdmin && (
               <button 
                 onClick={() => navigate('/admin/usuarios')}
@@ -54,7 +57,7 @@ function Home() {
               </button>
             )}
 
-            {/* Mostrar botón solo si es super-admin o admin */}
+            {/* mostrar boton solo si es super-admin o admin */}
             {(usuario?.rol === 'super-admin' || usuario?.rol === 'admin') && (
               <>
                 <button 
@@ -64,7 +67,7 @@ function Home() {
                   Gestionar menu
                 </button>
                 
-                {/* NUEVO BOTÓN: Gestión de Mesas */}
+                {/* nuevo boton: gestion de mesas */}
                 <button
                   onClick={() => navigate('/admin/mesas')}
                   className="admin-button admin-button-primary"
@@ -72,7 +75,7 @@ function Home() {
                   Gestionar mesas
                 </button>
 
-                {/* NUEVO BOTÓN: Panel de Pedidos */}
+                {/* nuevo boton: panel de pedidos */}
                 <button
                   onClick={() => navigate('/admin/pedidos')}
                   className="admin-button admin-button-primary"

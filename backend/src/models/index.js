@@ -1,3 +1,4 @@
+// junta todos los modelos y define las relaciones entre ellos, despues los exporta juntos
 const sequelize = require("../db");
 
 const Rol = require("./Rol");
@@ -11,12 +12,14 @@ const PedidoItem = require("./PedidoItem");
 const Cuenta = require("./Cuenta");
 const CarritoItem = require("./CarritoItem");
 
+// un rol puede tener muchos usuarios pero cada usuario tiene un solo rol
 Rol.hasMany(Usuario, { foreignKey: "rolId" });
 Usuario.belongsTo(Rol, { foreignKey: "rolId" });
 
 Categoria.hasMany(Producto, { foreignKey: "categoriaId" });
 Producto.belongsTo(Categoria, { foreignKey: "categoriaId" });
 
+// una mesa va guardando varias sesiones a lo largo del tiempo (cada apertura es una sesion)
 Mesa.hasMany(SesionMesa, { foreignKey: "mesaId" });
 SesionMesa.belongsTo(Mesa, { foreignKey: "mesaId" });
 
@@ -38,6 +41,7 @@ PedidoItem.belongsTo(Producto, { foreignKey: "productoId" });
 Mesa.hasMany(Cuenta, { foreignKey: "mesaId" });
 Cuenta.belongsTo(Mesa, { foreignKey: "mesaId" });
 
+// el carrito de una cuenta es el conjunto de items que todavia no se confirmaron en un pedido
 Cuenta.hasMany(CarritoItem, { foreignKey: "cuentaId" });
 CarritoItem.belongsTo(Cuenta, { foreignKey: "cuentaId" });
 

@@ -1,3 +1,4 @@
+// tarjeta de una categoria, al tocarla lleva a los productos de esa categoria
 import React from "react";
 import "./CategoryItem.css";
 import { useNavigate, useParams } from "react-router-dom";
@@ -7,8 +8,10 @@ function CategoryItem({ category, accountId }) {
   const { mesaId } = useParams();
 
   const handleClick = () => {
+    // armo la ruta con el nombre en minuscula porque asi se filtra despues
     navigate(`/${mesaId}/category/${accountId}/${category.nombre.toLowerCase()}`);
   };
+  // si la categoria tiene imagen la pongo de fondo, sino queda sin fondo
   return (
     <div
       className="category-item"

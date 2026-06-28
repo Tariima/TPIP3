@@ -1,3 +1,4 @@
+// pantalla del admin para cargar y editar el menu: productos y categorias
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { listarProductos, listarCategorias, guardarProducto, eliminarProducto, guardarCategoria } from './menu.services';
@@ -10,10 +11,11 @@ const MenuAdmin = () => {
   const [categorias, setCategorias] = useState([]);
   const [error, setError] = useState('');
 
-  // Formularios (null = cerrado, igual que en productos)
+  // formularios (null = cerrado, igual que en productos)
   const [productoEditando, setProductoEditando] = useState(null);
   const [categoriaEditando, setCategoriaEditando] = useState(null);
 
+  // traigo productos y categorias en paralelo asi la tabla carga mas rapdio
   const cargarDatos = async () => {
     try {
       const [prods, cats] = await Promise.all([listarProductos(), listarCategorias()]);
@@ -30,7 +32,7 @@ const MenuAdmin = () => {
     e.preventDefault();
     setError('');
 
-    // Validacion en el formulario antes de llamar al backend.
+    // validacion en el formulario antes de llamar al backend.
     const validacion = validarProducto(productoEditando);
     if (validacion.error) {
       setError(validacion.mensaje);
@@ -38,7 +40,7 @@ const MenuAdmin = () => {
     }
 
     try {
-      // Aseguramos que los IDs y valores numéricos no viajen como texto
+      // aseguramos que los ids y valores numericos no viajen como texto
       const productoFormateado = {
         ...productoEditando,
         categoriaId: parseInt(productoEditando.categoriaId, 10),
@@ -67,7 +69,7 @@ const MenuAdmin = () => {
     e.preventDefault();
     setError('');
 
-    // Validacion en el formulario antes de llamar al backend.
+    // validacion en el formulario antes de llamar al backend.
     const validacion = validarCategoria(categoriaEditando);
     if (validacion.error) {
       setError(validacion.mensaje);
@@ -99,7 +101,7 @@ const MenuAdmin = () => {
       </header>
       {error && <div className="admin-message admin-message-error">{error}</div>}
 
-      {/* PRODUCTOS */}
+      {/* productos */}
       <div className={`admin-layout ${productoEditando ? '' : 'admin-layout-single'}`}>
         <div className="admin-card">
           <div className="admin-section-header">
@@ -134,6 +136,7 @@ const MenuAdmin = () => {
                     </td>
                     <td>{p.nombre}</td>
                     <td>${p.precio}</td>
+                    {/* busco el nombre de la categoria por el id, si no la encuentro muestro el id pelado */}
                     <td>{categorias.find(c => c.id === p.categoriaId)?.nombre || `ID guardado: ${p.categoriaId}`}</td>
                     <td>
                       <span className={`admin-badge ${p.disponible ? 'admin-badge-success' : 'admin-badge-danger'}`}>
@@ -153,7 +156,7 @@ const MenuAdmin = () => {
           </div>
         </div>
 
-        {/* Formulario Producto */}
+        {/* formulario producto */}
         {productoEditando && (
           <div className="admin-card">
             <h4>{productoEditando.id ? 'Editar Producto' : 'Nuevo Producto'}</h4>
@@ -182,7 +185,7 @@ const MenuAdmin = () => {
         )}
       </div>
 
-      {/* CATEGORÍAS */}
+      {/* categorias */}
       <div className={`admin-layout ${categoriaEditando ? '' : 'admin-layout-single'}`} style={{ marginTop: '20px' }}>
         <div className="admin-card">
           <div className="admin-section-header">
@@ -227,7 +230,7 @@ const MenuAdmin = () => {
           </div>
         </div>
 
-        {/* Formulario Categoría */}
+        {/* formulario categoria */}
         {categoriaEditando && (
           <div className="admin-card">
             <h4>{categoriaEditando.id ? 'Editar Categoría' : 'Nueva Categoría'}</h4>

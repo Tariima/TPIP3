@@ -1,6 +1,6 @@
-// Prueba unitaria de las validaciones de autenticacion del frontend.
-// Framework: Vitest (integrado con Vite).
-// Ejecutar con:  npm test     (desde la raiz del proyecto)
+// prueba unitaria de las validaciones de autenticacion del frontend.
+// framework: Vitest (integrado con Vite).
+// ejecutar con:  npm test     (desde la raiz del proyecto)
 
 import { describe, it, expect } from 'vitest';
 import { validarEmail, validarPassword, validarLogin } from './auth.services';

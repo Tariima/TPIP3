@@ -1,3 +1,4 @@
+// punto de entrada de la app, monta react en el div root del html
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
@@ -10,6 +11,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
+    {/* envuelvo todo en los providers asi el contexto de sesion y de mesa llega a cualquier componente */}
     <AuthContextProvider>
       <MesaContextProvider>
         <BrowserRouter>

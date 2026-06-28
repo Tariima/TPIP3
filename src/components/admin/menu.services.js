@@ -1,5 +1,7 @@
+// llamadas al backend para el menu: productos y categorias
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
+// armo los headers con el token guardado asi el backend me deja pasar
 const getHeaders = () => ({
   'Content-Type': 'application/json',
   'Authorization': `Bearer ${localStorage.getItem('tpip3-token')}`
@@ -11,6 +13,7 @@ export const listarCategorias = async () => {
   return res.json();
 };
 
+// si la categoria ya tiene id es edicion (put), si no es alta nueva (post)
 export const guardarCategoria = async (categoria) => {
   const isEdit = categoria.id;
   const url = isEdit ? `${API_URL}/api/menu/categorias/${categoria.id}` : `${API_URL}/api/menu/categorias`;

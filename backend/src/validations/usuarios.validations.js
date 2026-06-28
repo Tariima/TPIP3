@@ -1,13 +1,14 @@
-// Validaciones de usuarios del backend (alta y edicion).
-// Se mantiene el mismo criterio que en el frontend para avisar al usuario en caso de error.
+// validaciones de usuarios del backend (alta y edicion).
+// se mantiene el mismo criterio que en el frontend para avisar al usuario en caso de error.
 
 const { validarEmail, validarPassword } = require('./auth.validations');
 
-// Valida el body del alta de usuario. Devuelve { error, mensaje }.
+// valida el body del alta de usuario. devuelve { error, mensaje }.
 const validarCrearUsuario = (body) => {
   const resultado = { error: false, mensaje: '' };
   const { nombreCompleto, email, password, rolId } = body || {};
 
+  // para dar de alta pido nombre, email valido, password de 6 o mas y un rol
   if (!nombreCompleto || !nombreCompleto.trim()) {
     resultado.error = true;
     resultado.mensaje = 'El nombre completo es obligatorio';
@@ -25,7 +26,7 @@ const validarCrearUsuario = (body) => {
   return resultado;
 };
 
-// Valida el body de la edicion de usuario (no se modifica la contraseña).
+// valida el body de la edicion de usuario (no se modifica la contrasena).
 const validarActualizarUsuario = (body) => {
   const resultado = { error: false, mensaje: '' };
   const { nombreCompleto, email } = body || {};

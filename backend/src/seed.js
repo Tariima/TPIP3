@@ -1,7 +1,7 @@
 const { Rol, Usuario } = require('./models');
 
-// Carga datos minimos para poder usar la autenticacion: los 3 roles base y un usuario admin.
-// Solo crea lo que falte, asi se puede ejecutar en cada arranque sin duplicar.
+// carga datos minimos para poder usar la autenticacion: los 3 roles base y un usuario admin.
+// solo crea lo que falte, asi se puede ejecutar en cada arranque sin duplicar.
 const cargarDatosIniciales = async () => {
   const rolesBase = [
     { nombre: 'super-admin', descripcion: 'Acceso total al sistema' },
@@ -9,6 +9,7 @@ const cargarDatosIniciales = async () => {
     { nombre: 'cliente', descripcion: 'Realiza pedidos desde la mesa' }
   ];
 
+  // recorre los roles y crea cada uno solo si no existe ya por nombre
   for (const rol of rolesBase) {
     await Rol.findOrCreate({ where: { nombre: rol.nombre }, defaults: rol });
   }
@@ -17,7 +18,7 @@ const cargarDatosIniciales = async () => {
   if (cantidadUsuarios === 0) {
     const rolSuperAdmin = await Rol.findOne({ where: { nombre: 'super-admin' } });
 
-    // La contraseña se hashea automaticamente en el hook beforeSave del modelo Usuario.
+    // la contrasena se hashea automaticamente en el hook beforeSave del modelo Usuario.
     await Usuario.create({
       nombreCompleto: 'Administrador',
       email: 'admin@tpip3.com',

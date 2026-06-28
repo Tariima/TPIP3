@@ -1,3 +1,4 @@
+// controlador de auth y del abm de usuarios (login, perfil, alta, edicion y baja)
 const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
 const { Usuario, Rol } = require('../models');
@@ -7,8 +8,8 @@ const { validarCrearUsuario, validarActualizarUsuario } = require('../validation
 const JWT_SECRET = process.env.JWT_SECRET || 'secreto_desarrollo';
 const JWT_EXPIRES = process.env.JWT_EXPIRES || '8h';
 
-// POST /api/auth/login
-// Valida credenciales, genera un token JWT y devuelve los datos del usuario autenticado.
+// post /api/auth/login
+// valida credenciales, genera un token jwt y devuelve los datos del usuario autenticado.
 const login = async (req, res) => {
   try {
     const validacion = validarLogin(req.body);
@@ -32,6 +33,7 @@ const login = async (req, res) => {
       return res.status(401).json({ mensaje: 'Email o contraseña incorrectos' });
     }
 
+    // si la password esta bien armo el token con el id, email y rol del usuario
     const token = jwt.sign(
       { id: usuario.id, email: usuario.email, rolId: usuario.rolId },
       JWT_SECRET,
@@ -53,8 +55,8 @@ const login = async (req, res) => {
   }
 };
 
-// GET /api/auth/perfil  (ruta protegida)
-// Devuelve los datos del usuario autenticado a partir del token, para mantener la sesion.
+// get /api/auth/perfil  (ruta protegida)
+// devuelve los datos del usuario autenticado a partir del token, para mantener la sesion.
 const perfil = async (req, res) => {
   try {
     const usuario = await Usuario.findByPk(req.usuario.id, {
@@ -78,8 +80,8 @@ const perfil = async (req, res) => {
   }
 };
 
-// POST /api/usuarios (Alta de ABM de usuarios)
-// Crea un nuevo empleado en el sistema
+// post /api/usuarios (alta de abm de usuarios)
+// crea un nuevo empleado en el sistema
 const crearUsuario = async (req, res) => {
   try {
 
@@ -90,18 +92,18 @@ const crearUsuario = async (req, res) => {
 
     const { nombreCompleto, email, password, rolId } = req.body;
 
-    // Comprobamos que el correo no esté repetido
+    // comprobamos que el correo no este repetido
     const usuarioExistente = await Usuario.findOne({ where: { email } });
     if (usuarioExistente) {
       return res.status(400).json({ mensaje: 'El email ya está registrado' });
     }
 
-    // Sequelize usará el hook beforeSave que vimos antes para encriptar la password
+    // Sequelize usara el hook beforeSave que vimos antes para encriptar la password
     const nuevoUsuario = await Usuario.create({
       nombreCompleto,
       email,
       password,
-      rolId, // Si no se envía, el modelo aplica el default 'cliente' (menor privilegio); ver Usuario.js
+      rolId, // si no se envia, el modelo aplica el default 'cliente' (menor privilegio); ver Usuario.js
     });
 
     return res.status(201).json({
@@ -118,9 +120,9 @@ const crearUsuario = async (req, res) => {
   }
 };
 
-// GET /api/auth/roles
-// Devuelve los roles asignables al personal para poblar el combo del formulario (asi el front no hardcodea ids).
-// Excluye 'cliente': los clientes no son cuentas que se den de alta desde el ABM de usuarios (entran por QR/PIN).
+// get /api/auth/roles
+// devuelve los roles asignables al personal para poblar el combo del formulario (asi el front no hardcodea ids).
+// excluye 'cliente': los clientes no son cuentas que se den de alta desde el abm de usuarios (entran por qr/pin).
 const obtenerRoles = async (req, res) => {
   try {
     const roles = await Rol.findAll({
@@ -134,7 +136,7 @@ const obtenerRoles = async (req, res) => {
   }
 };
 
-// Lista todos los usuarios del sistema con sus respectivos roles (para la tabla del admin)
+// lista todos los usuarios del sistema con sus respectivos roles (para la tabla del admin)
 const obtenerUsuarios = async (req, res) => {
   try {
     const usuarios = await Usuario.findAll({
@@ -148,8 +150,8 @@ const obtenerUsuarios = async (req, res) => {
   }
 };
 
-// PUT /api/auth/usuarios/:id
-// Modifica los datos de un usuario, incluyendo su rol o su estado de activación
+// put /api/auth/usuarios/:id
+// modifica los datos de un usuario, incluyendo su rol o su estado de activacion
 const actualizarUsuario = async (req, res) => {
   try {
     const { id } = req.params;
@@ -165,7 +167,7 @@ const actualizarUsuario = async (req, res) => {
       return res.status(404).json({ mensaje: 'Usuario no encontrado' });
     }
 
-    // Actualizamos solo los campos que el administrador haya enviado
+    // actualizamos solo los campos que el administrador haya enviado
     if (nombreCompleto) usuario.nombreCompleto = nombreCompleto;
     if (email) usuario.email = email;
     if (rolId) usuario.rolId = rolId;
@@ -189,8 +191,8 @@ const actualizarUsuario = async (req, res) => {
   }
 };
 
-// DELETE /api/auth/usuarios/:id
-// Baja lógica: desactiva un usuario del sistema
+// delete /api/auth/usuarios/:id
+// baja logica: desactiva un usuario del sistema
 const eliminarUsuario = async (req, res) => {
   try {
     const { id } = req.params;
@@ -200,7 +202,7 @@ const eliminarUsuario = async (req, res) => {
       return res.status(404).json({ mensaje: 'Usuario no encontrado' });
     }
 
-    // Desactivamos al usuario en vez de borrarlo físicamente
+    // desactivamos al usuario en vez de borrarlo fisicamente
     usuario.activo = false;
     await usuario.save();
 

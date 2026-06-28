@@ -1,3 +1,4 @@
+// formulario donde el super-admin crea empleados nuevos del sistema
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { crearNuevoUsuario } from './registro.services';
@@ -21,7 +22,7 @@ const Registro = () => {
   const [cargando, setCargando] = useState(false);
   const [roles, setRoles] = useState([]);
 
-  // Traemos del backend solo los roles asignables al personal (sin 'cliente').
+  // traemos del backend solo los roles asignables al personal (sin 'cliente').
   useEffect(() => {
     obtenerRoles()
       .then(setRoles)
@@ -39,7 +40,7 @@ const Registro = () => {
     e.preventDefault();
     setMensaje({ texto: '', tipo: '' });
 
-    // Validacion en el formulario antes de llamar al backend.
+    // validacion en el formulario antes de llamar al backend.
     const validacion = validarUsuario(formData);
     if (validacion.error) {
       setMensaje({ texto: validacion.mensaje, tipo: 'error' });
@@ -48,10 +49,11 @@ const Registro = () => {
 
     setCargando(true);
 
+    // el select devuelve texto asi que paso el rol a numero antes de mandarlo
     formData.rolId = parseInt(formData.rolId, 10);
 
     try {
-      // Llamamos a la función limpia que importamos del servicio
+      // llamamos a la funcion limpia que importamos del servicio
       await crearNuevoUsuario(formData, token);
       
       setMensaje({ texto: 'Usuario creado con éxito', tipo: 'exito' });

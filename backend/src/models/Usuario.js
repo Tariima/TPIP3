@@ -1,3 +1,4 @@
+// modelo del usuario del sistema, guarda datos de login y el rol que tiene
 const { DataTypes } = require('sequelize');
 const bcrypt = require('bcryptjs');
 const sequelize = require('../db');
@@ -15,7 +16,7 @@ const Usuario = sequelize.define('Usuario', {
   email: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true
+    unique: true // no se puede repetir, sirve como identificador para el login
   },
   password: {
     type: DataTypes.STRING,
@@ -28,13 +29,13 @@ const Usuario = sequelize.define('Usuario', {
   rolId: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: 3 // Por defecto 'cliente' (rol de MENOR privilegio, id 3 en seed.js) si no se envía rolId
+    defaultValue: 3 // por defecto 'cliente' (rol de menor privilegio, id 3 en seed.js) si no se envia rolId
   }
 }, {
   tableName: 'usuarios',
   timestamps: false,
   hooks: {
-    // Hashea la contraseña antes de guardar, tanto al crear como al modificar.
+    // hashea la contrasena antes de guardar, tanto al crear como al modificar.
     beforeSave: async (usuario) => {
       if (usuario.changed('password')) {
         usuario.password = await bcrypt.hash(usuario.password, 10);
@@ -43,7 +44,7 @@ const Usuario = sequelize.define('Usuario', {
   }
 });
 
-// Compara una contraseña en texto plano contra el hash guardado.
+// compara una contrasena en texto plano contra el hash guardado.
 Usuario.prototype.compararPassword = function (passwordPlano) {
   return bcrypt.compare(passwordPlano, this.password);
 };

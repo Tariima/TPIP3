@@ -1,3 +1,4 @@
+// pantalla que muestra las categorias de la carta para que el cliente elija
 import React, { useEffect, useState } from "react";
 import "./Categories.css";
 import CategoryItem from "../categoriesItem/CategoryItem";
@@ -8,6 +9,7 @@ function Categories() {
   const { mesaId, accountId } = useParams();
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
+  // traigo las categorias del backend cuando se monta el componente
   useEffect(() => {
     obtenerCategorias().then((data) => setCategories(data));
   }, []);
@@ -19,6 +21,7 @@ function Categories() {
         <h2>Categorías</h2>
       </header>
       <div className="categories-grid">
+        {/* recorro las categorias y armo una tarjeta por cada una */}
         {categories.map((category) => (
           <CategoryItem
             key={category.id}

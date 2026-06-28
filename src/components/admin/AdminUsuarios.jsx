@@ -1,6 +1,7 @@
+// pantalla del admin para ver, editar y dar de baja usuarios del personal
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { listarUsuarios, modificarUsuario, desactivarUsuario, obtenerRoles } from './admin.services'; // <-- Import actualizado a tu estructura
+import { listarUsuarios, modificarUsuario, desactivarUsuario, obtenerRoles } from './admin.services'; // <-- import actualizado a tu estructura
 import { validarUsuario } from './usuarios.validations';
 import './AdminLayout.css';
 
@@ -22,11 +23,13 @@ const AdminUsuarios = () => {
     }
   };
 
+  // al entrar traigo la lista de usuarios y los roles para el select de edicion
   useEffect(() => {
     cargarUsuarios();
     obtenerRoles().then(setRoles).catch((err) => setError(err.message));
   }, []);
 
+  // pido confirmacion antes de desactivar asi no se va de mano por error
   const handleBaja = async (id) => {
     if (!window.confirm('¿Estás seguro de que deseas desactivar este usuario?')) return;
     try {
@@ -42,7 +45,7 @@ const AdminUsuarios = () => {
     e.preventDefault();
     setError('');
 
-    // Validacion en el formulario antes de llamar al backend (en edicion no se pide contraseña).
+    // validacion en el formulario antes de llamar al backend (en edicion no se pide contrasena).
     const validacion = validarUsuario(usuarioEditando, true);
     if (validacion.error) {
       setError(validacion.mensaje);
@@ -79,7 +82,7 @@ const AdminUsuarios = () => {
           >
             ← Volver al inicio
           </button>
-          {/* 3. Botón para ir a crear un usuario nuevo */}
+          {/* 3. boton para ir a crear un usuario nuevo */}
           <button
             onClick={() => navigate('/registro')}
             className="admin-button admin-button-primary"
@@ -134,6 +137,7 @@ const AdminUsuarios = () => {
       </table>
       </div>
 
+      {/* el formulario aparece solo cuando toco editar y hay un usuario cargado */}
       {usuarioEditando && (
         <div className="admin-card" style={{ marginTop: '22px' }}>
           <h3>Editar Usuario: {usuarioEditando.nombreCompleto}</h3>

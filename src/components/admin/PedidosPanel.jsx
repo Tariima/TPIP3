@@ -1,8 +1,10 @@
+// panel del admin para ver los pedidos de las mesas e ir cambiandoles el estado
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { listarPedidos, actualizarEstadoPedido, eliminarPedido, ESTADOS_PEDIDO } from './order.services';
 import './AdminLayout.css';
 
+// segun el estado del pedidio le pongo una clase distinta para pintar la tarjeta
 const claseEstado = {
   'pendiente': 'admin-order-card-pendiente',
   'en preparacion': 'admin-order-card-preparacion',
@@ -27,6 +29,7 @@ const PedidosPanel = () => {
 
   useEffect(() => { cargarDatos(); }, []);
 
+  // al cambiar el estado en el select aviso al backend y recargo para ver el cambio
   const handleCambiarEstado = async (id, estado) => {
     try {
       await actualizarEstadoPedido(id, estado);
@@ -113,6 +116,7 @@ const PedidosPanel = () => {
                 ))}
               </ul>
 
+              {/* la nota solo la muestro si el cliente cargo alguna */}
               {pedido.notas && (
                 <p style={{ margin: '0 0 8px', fontStyle: 'italic' }}>
                   Nota: {pedido.notas}

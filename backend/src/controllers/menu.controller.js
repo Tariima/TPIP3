@@ -1,7 +1,8 @@
+// controlador del menu: maneja el abm de categorias y productos
 const { Producto, Categoria } = require('../models');
 const { validarProducto, validarCategoria } = require('../validations/menu.validations');
 
-// CATEGORÍAS
+// categorias
 const obtenerCategorias = async (req, res) => {
   try {
     const categorias = await Categoria.findAll();
@@ -11,6 +12,7 @@ const obtenerCategorias = async (req, res) => {
   }
 };
 
+// crea una categoria nueva, antes valida que venga el nombre
 const crearCategoria = async (req, res) => {
   try {
     const validacion = validarCategoria(req.body);
@@ -47,7 +49,8 @@ const actualizarCategoria = async (req, res) => {
   }
 };
 
-// PRODUCTOS
+// productos
+// trae todos los productos con el nombre de su categoria
 const obtenerProductos = async (req, res) => {
   try {
     const productos = await Producto.findAll({
@@ -95,6 +98,7 @@ const actualizarProducto = async (req, res) => {
   }
 };
 
+// borra el producto de la base de forma definitiva
 const eliminarProducto = async (req, res) => {
   try {
     const { id } = req.params;

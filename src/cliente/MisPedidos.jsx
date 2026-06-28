@@ -1,3 +1,4 @@
+// resumen de los pedidos de la mesa agrupados por cuenta con el total de cada una
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { listarMisPedidos, obtenerMesaPorNumero, obtenerCuentasMesa } from '../services/api';
@@ -7,17 +8,17 @@ const MisPedidos = () => {
   const { numero } = useParams();
   const navigate = useNavigate();
   const [pedidos, setPedidos] = useState([]);
-  const [cuentas, setCuentas] = useState([]); // Nueva variable para guardar las cuentas
+  const [cuentas, setCuentas] = useState([]); // nueva variable para guardar las cuentas
   const [error, setError] = useState('');
 
   useEffect(() => {
     const cargarDatos = async () => {
       try {
-        // 1. Traemos los pedidos de la base de datos
+        // 1. traemos los pedidos de la base de datos
         const dataPedidos = await listarMisPedidos();
         setPedidos(dataPedidos);
 
-        // 2. Traemos las cuentas activas (Igual que hace el AccountsPanel)
+        // 2. traemos las cuentas activas (igual que hace el AccountsPanel)
         const mesaData = await obtenerMesaPorNumero(numero);
         const cuentasData = await obtenerCuentasMesa(mesaData.id);
         setCuentas(cuentasData);
@@ -28,13 +29,13 @@ const MisPedidos = () => {
     cargarDatos();
   }, [numero]);
 
-  // Agrupamos cruzando los datos: Pedidos + Cuentas
+  // agrupamos cruzando los datos: pedidos + cuentas
   const resumen = pedidos.reduce((acc, p) => {
     
-    // MAGIA ACÁ: Buscamos el ID del pedido dentro de las cuentas activas que trajimos
+    // magia aca: buscamos el id del pedido dentro de las cuentas activas que trajimos
     const cuentaReal = cuentas.find(c => c.id === p.cuentaId);
     
-    // Si la encuentra, obligamos al sistema a usar su nombre exacto (Ej: "Cuenta 1"). 
+    // si la encuentra, obligamos al sistema a usar su nombre exacto (ej: "cuenta 1").
     const nombreFinal = cuentaReal ? cuentaReal.nombre : (p.Cuenta?.nombre || `Cuenta ${p.cuentaId}`); 
     
     if (!acc[nombreFinal]) {
@@ -45,6 +46,7 @@ const MisPedidos = () => {
     return acc;
   }, {});
 
+  // sumo todos los pedidos para mostrar cuanto gasto la mesa entera
   const totalMesa = pedidos.reduce((acc, ped) => acc + Number(ped.total), 0);
 
   return (
@@ -57,6 +59,7 @@ const MisPedidos = () => {
       </header>
 
       <div className="mis-pedidos-list">
+        {/* ordeno las cuentas por nombre pero teniendo en cuenta los numeros */}
         {Object.entries(resumen)
           .sort(([nombreA], [nombreB]) => nombreA.localeCompare(nombreB, undefined, { numeric: true }))
           .map(([nombreCuenta, datos]) => (
@@ -73,7 +76,7 @@ const MisPedidos = () => {
                         <span>{item.cantidad}x {item.nombreProducto}</span>
                         <strong>${Number(item.subtotal).toFixed(2)}</strong>
                       </div>
-                      {/* Muestra precio unitario solo si se pidio mas de 1  */}
+                      {/* muestra precio unitario solo si se pidio mas de 1  */}
                       {item.cantidad > 1 && (
                         <div className="mis-pedidos-unit">
                           (${Number(item.precioUnitario).toFixed(2)} c/u)

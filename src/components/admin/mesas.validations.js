@@ -1,7 +1,7 @@
-// Validaciones de los formularios de mesas (alta de mesa y PIN del cliente).
-// Mismo criterio que el backend para avisar al usuario en caso de error.
+// validaciones de los formularios de mesas (alta de mesa y pin del cliente).
+// mismo criterio que el backend para avisar al usuario en caso de error.
 
-// Valida los datos de una mesa y devuelve { error, mensaje }.
+// valida los datos de una mesa y devuelve { error, mensaje }.
 export const validarMesa = ({ numero }) => {
   const resultado = { error: false, mensaje: '' };
 
@@ -16,10 +16,11 @@ export const validarMesa = ({ numero }) => {
   return resultado;
 };
 
-// Valida el PIN de acceso del cliente (4 digitos) y devuelve { error, mensaje }.
+// valida el pin de acceso del cliente (4 digitos) y devuelve { error, mensaje }.
 export const validarPin = (pin) => {
   const resultado = { error: false, mensaje: '' };
 
+  // el regex pide exactamente 4 numeros, ni mas ni menos ni letras
   if (!/^\d{4}$/.test(pin || '')) {
     resultado.error = true;
     resultado.mensaje = 'El PIN debe tener 4 dígitos';

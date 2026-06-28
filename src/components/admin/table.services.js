@@ -1,5 +1,7 @@
+// llamadas al backend para las mesas: alta, abrir/cerrar, pin y borrado
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
+// headers con el token para que el backend autorice la peticion
 const getHeaders = () => ({
   'Content-Type': 'application/json',
   'Authorization': `Bearer ${localStorage.getItem('tpip3-token')}`
@@ -15,6 +17,7 @@ export const guardarMesa = async (mesa) => {
   const isEdit = mesa.id;
   const url = isEdit ? `${API_URL}/api/mesas/${mesa.id}` : `${API_URL}/api/mesas`;
   
+  // el numero llega como texto del input, solo en el alta lo paso a entero
   const payload = { ...mesa };
   if (!isEdit) {
     payload.numero = parseInt(payload.numero, 10);
@@ -29,8 +32,8 @@ export const guardarMesa = async (mesa) => {
   return res.json();
 };
 
-// Regenera el PIN de una mesa sin tener que abrir el formulario de edición.
-// Reutiliza el PUT existente conservando los datos actuales de la mesa.
+// regenera el pin de una mesa sin tener que abrir el formulario de edicion.
+// reutiliza el put existente conservando los datos actuales de la mesa.
 export const regenerarPin = async (mesa) => {
   return guardarMesa({
     id: mesa.id,
