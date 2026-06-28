@@ -1,13 +1,17 @@
-import { mesaAuthHeader, limpiarSesionMesa } from "./mesa/mesa.session";
+import { mesaAuthHeader } from "./mesa/mesa.session";
 
 export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 export const API_BASE_URL = `${API_URL}/api`;
 
-// Si el backend rechaza el token de mesa, limpiamos la sesion para forzar el PIN.
-const verificarAcceso = (response) => {
+// Construye el error de la respuesta; si el backend rechazo el token de mesa
+// (401/403) lo marca como sesionExpirada para que el componente cierre la
+// sesion a traves del contexto y redirija al PIN.
+const errorDeRespuesta = (response, mensaje) => {
+  const error = new Error(mensaje);
   if (response.status === 401 || response.status === 403) {
-    limpiarSesionMesa();
+    error.sesionExpirada = true;
   }
+  return error;
 };
 
 export const obtenerPruebaBackend = async () => {
@@ -38,10 +42,7 @@ export const obtenerCuentasMesa = async (mesaId) => {
   const respuesta = await fetch(`${API_BASE_URL}/mesas/${mesaId}/cuentas`, {
     headers: { ...mesaAuthHeader() },
   });
-  if (!respuesta.ok) {
-    verificarAcceso(respuesta);
-    throw new Error("Error al obtener cuentas");
-  }
+  if (!respuesta.ok) throw errorDeRespuesta(respuesta, "Error al obtener cuentas");
   return respuesta.json();
 };
 
@@ -51,11 +52,7 @@ export const crearCuentaMesa = async (mesaId, nombre) => {
     headers: { "Content-Type": "application/json", ...mesaAuthHeader() },
     body: JSON.stringify({ nombre }),
   });
-  
-  if (!respuesta.ok) {
-    verificarAcceso(respuesta);
-    throw new Error("Error al crear cuenta");
-  }
+  if (!respuesta.ok) throw errorDeRespuesta(respuesta, "Error al crear cuenta");
   return respuesta.json();
 };
 
@@ -64,11 +61,6 @@ export const listarMisPedidos = async () => {
     method: "GET",
     headers: { ...mesaAuthHeader() },
   });
-  
-  if (!respuesta.ok) {
-    verificarAcceso(respuesta);
-    throw new Error("Error al obtener los pedidos");
-  }
-  
+  if (!respuesta.ok) throw errorDeRespuesta(respuesta, "Error al obtener los pedidos");
   return respuesta.json();
 };

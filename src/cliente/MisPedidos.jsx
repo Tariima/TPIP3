@@ -48,7 +48,10 @@ const MisPedidos = () => {
 
   return (
     <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
-      <h2>Mesa {numero} - Mis Pedidos</h2>
+      <header style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '20px' }}>
+        <button className="back-button" onClick={() => navigate(`/${numero}/cuentas`)}>←</button>
+        <h2 style={{ margin: 0 }}>Mesa {numero} - Mis Pedidos</h2>
+      </header>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '30px' }}>
         {Object.entries(resumen)

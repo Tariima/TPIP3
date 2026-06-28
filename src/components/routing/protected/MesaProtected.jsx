@@ -1,5 +1,6 @@
+import { useContext } from 'react';
 import { Navigate, Outlet, useParams } from 'react-router-dom';
-import { sesionMesaValida, obtenerMesaNumero } from '../../../services/mesa/mesa.session';
+import { MesaContext } from '../../../services/mesa/mesa.context';
 
 // Permite el acceso a las rutas del cliente solo si hay una sesion de mesa
 // valida y la mesa de la URL coincide con la mesa que se valido por PIN.
@@ -7,12 +8,13 @@ import { sesionMesaValida, obtenerMesaNumero } from '../../../services/mesa/mesa
 const MesaProtected = () => {
   const params = useParams();
   const numeroUrl = params.numero ?? params.mesaId;
+  const { sesionActiva, numero } = useContext(MesaContext);
 
-  if (!sesionMesaValida()) {
+  if (!sesionActiva) {
     return <Navigate to={`/${numeroUrl}`} replace />;
   }
 
-  if (obtenerMesaNumero() !== String(numeroUrl)) {
+  if (numero !== String(numeroUrl)) {
     return <Navigate to={`/${numeroUrl}`} replace />;
   }
 

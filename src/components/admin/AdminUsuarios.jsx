@@ -72,13 +72,21 @@ const AdminUsuarios = () => {
           <p className="admin-subtitle">Administra accesos y roles del personal.</p>
         </div>
 
-      {/* 3. Botón para ir a crear un usuario nuevo */}
-        <button 
-          onClick={() => navigate('/registro')} 
-          className="admin-button admin-button-primary"
-        >
-          Crear usuario
-        </button>
+        <div className="admin-actions">
+          <button
+            onClick={() => navigate('/')}
+            className="admin-button admin-button-secondary"
+          >
+            ← Volver al inicio
+          </button>
+          {/* 3. Botón para ir a crear un usuario nuevo */}
+          <button
+            onClick={() => navigate('/registro')}
+            className="admin-button admin-button-primary"
+          >
+            Crear usuario
+          </button>
+        </div>
       </header>
 
       {error && <div className="admin-message admin-message-error">{error}</div>}

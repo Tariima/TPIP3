@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { listarProductos, listarCategorias, guardarProducto, eliminarProducto, crearCategoria } from './menu.services';
 import { validarProducto, validarCategoria } from './menu.validations';
 import './AdminLayout.css';
 
 const MenuAdmin = () => {
+  const navigate = useNavigate();
   const [productos, setProductos] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [error, setError] = useState('');
@@ -88,6 +90,12 @@ const handleGuardarProducto = async (e) => {
           <h2 className="admin-title">Gestion del menu</h2>
           <p className="admin-subtitle">Carga productos, categorias, precios e imagenes.</p>
         </div>
+        <button
+          onClick={() => navigate('/')}
+          className="admin-button admin-button-secondary"
+        >
+          ← Volver al inicio
+        </button>
       </header>
       {error && <div className="admin-message admin-message-error">{error}</div>}
 

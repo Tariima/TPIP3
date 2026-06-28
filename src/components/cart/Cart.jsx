@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { obtenerCarrito, actualizarCantidad, eliminarDelCarrito, confirmarPedido } from "../../services/cart/cart.services";
-import { sesionMesaValida } from "../../services/mesa/mesa.session";
+import { MesaContext } from "../../services/mesa/mesa.context";
 import DeleteConfirmModal from "../common/DeleteConfirmModal";
 import { toast } from "react-toastify";
 import "./Cart.css";
@@ -9,6 +9,7 @@ import "./Cart.css";
 function Cart() {
   const { mesaId, accountId } = useParams();
   const navigate = useNavigate();
+  const { cerrarSesionMesa } = useContext(MesaContext);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -16,14 +17,23 @@ function Cart() {
   const [notas, setNotas] = useState("");
   const [enviando, setEnviando] = useState(false);
 
+  // Si el backend rechazo la sesion de mesa, la cerramos y volvemos al PIN.
+  const manejarSesionExpirada = (error) => {
+    if (error.sesionExpirada) {
+      cerrarSesionMesa();
+      navigate(`/${mesaId}`);
+      return true;
+    }
+    return false;
+  };
+
   const cargarCarrito = async () => {
     try {
       const data = await obtenerCarrito(accountId);
       setItems(data);
     } catch (error) {
       console.error(error);
-      // Si se perdio la sesion de mesa (token rechazado), volvemos al PIN.
-      if (!sesionMesaValida()) navigate(`/${mesaId}`);
+      manejarSesionExpirada(error);
     } finally {
       setLoading(false);
     }
@@ -45,6 +55,7 @@ function Cart() {
       await actualizarCantidad(accountId, itemId, newQty);
       cargarCarrito();
     } catch (error) {
+      if (manejarSesionExpirada(error)) return;
       toast.error("Error al actualizar la cantidad");
     }
   };
@@ -62,6 +73,7 @@ function Cart() {
       toast.info("Producto eliminado del carrito");
       cargarCarrito();
     } catch (error) {
+      if (manejarSesionExpirada(error)) return;
       toast.error("Error al eliminar el producto");
     }
   };
@@ -80,6 +92,7 @@ function Cart() {
       toast.success("¡Pedido confirmado! Ya lo recibió el personal.");
       cargarCarrito();
     } catch (error) {
+      if (manejarSesionExpirada(error)) return;
       toast.error("Error al confirmar el pedido");
     } finally {
       setEnviando(false);
