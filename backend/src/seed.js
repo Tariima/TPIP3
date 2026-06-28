@@ -29,5 +29,5 @@ const cargarDatosIniciales = async () => {
     console.log('Usuario admin inicial creado: admin@tpip3.com / admin123');
   }
 };
-// test
+
 module.exports = cargarDatosIniciales;

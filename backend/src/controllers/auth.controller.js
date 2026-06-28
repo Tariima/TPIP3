@@ -191,7 +191,6 @@ const actualizarUsuario = async (req, res) => {
   }
 };
 
-// delete /api/auth/usuarios/:id
 // baja logica: desactiva un usuario del sistema
 const eliminarUsuario = async (req, res) => {
   try {

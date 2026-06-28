@@ -32,7 +32,7 @@ const MisPedidos = () => {
   // agrupamos cruzando los datos: pedidos + cuentas
   const resumen = pedidos.reduce((acc, p) => {
     
-    // magia aca: buscamos el id del pedido dentro de las cuentas activas que trajimos
+    // busco el id del pedido dentro de las cuentas activas que traje
     const cuentaReal = cuentas.find(c => c.id === p.cuentaId);
     
     // si la encuentra, obligamos al sistema a usar su nombre exacto (ej: "cuenta 1").

@@ -1,7 +1,7 @@
 // pantalla del admin para ver, editar y dar de baja usuarios del personal
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { listarUsuarios, modificarUsuario, desactivarUsuario, obtenerRoles } from './admin.services'; // <-- import actualizado a tu estructura
+import { listarUsuarios, modificarUsuario, desactivarUsuario, obtenerRoles } from './admin.services';
 import { validarUsuario } from './usuarios.validations';
 import './AdminLayout.css';
 
@@ -29,7 +29,7 @@ const AdminUsuarios = () => {
     obtenerRoles().then(setRoles).catch((err) => setError(err.message));
   }, []);
 
-  // pido confirmacion antes de desactivar asi no se va de mano por error
+  // pido confirmacion antes de desactivar para no hacerlo por error
   const handleBaja = async (id) => {
     if (!window.confirm('¿Estás seguro de que deseas desactivar este usuario?')) return;
     try {

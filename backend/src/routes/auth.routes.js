@@ -1,7 +1,7 @@
 // rutas de login, perfil y el abm de usuarios del sistema
 const express = require('express');
 const { login, perfil, crearUsuario, obtenerRoles, obtenerUsuarios, actualizarUsuario, eliminarUsuario } = require('../controllers/auth.controller');
-const { verificarToken, verificarRol } = require('../middlewares/auth.middleware'); // <-- import actualizado
+const { verificarToken, verificarRol } = require('../middlewares/auth.middleware');
 
 const router = express.Router();
 
