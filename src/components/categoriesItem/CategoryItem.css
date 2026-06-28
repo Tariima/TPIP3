@@ -6,6 +6,7 @@
   cursor: pointer;
   background-size: cover;
   background-position: center;
+  background-color: var(--bg-card);
   border: 1px solid var(--border-color);
   transition: all 0.4s ease;
 }

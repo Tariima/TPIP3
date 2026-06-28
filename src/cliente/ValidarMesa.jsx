@@ -1,3 +1,4 @@
+// pantalla donde el cliente carga el pin de la mesa para entrar al menu
 import React, { useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { MesaContext } from '../services/mesa/mesa.context';
@@ -5,7 +6,7 @@ import { validarPin } from '../components/admin/mesas.validations';
 import './ValidarMesa.css';
 
 const ValidarMesa = () => {
-  const { numero } = useParams(); // Obtenemos numero desde la URL
+  const { numero } = useParams(); // obtenemos numero desde la url
   const navigate = useNavigate();
   const { iniciarSesionMesa } = useContext(MesaContext);
   const [pin, setPin] = useState('');
@@ -15,7 +16,7 @@ const ValidarMesa = () => {
     e.preventDefault();
     setError('');
 
-    // Validacion del PIN antes de llamar al backend.
+    // validacion del pin antes de llamar al backend.
     const validacion = validarPin(pin);
     if (validacion.error) {
       setError(validacion.mensaje);
@@ -23,6 +24,7 @@ const ValidarMesa = () => {
     }
 
     try {
+      // si no hay variable de entorno uso localhost para probar en local
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
       const res = await fetch(`${API_URL}/api/mesas/numero/${numero}/validar`, {
         method: 'POST',
@@ -33,14 +35,14 @@ const ValidarMesa = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.mensaje);
 
-      // Si el PIN es correcto, se inicia la sesión global de mesa (token incluido).
+      // si el pin es correcto, se inicia la sesion global de mesa (token incluido).
       iniciarSesionMesa({
         mesaToken: data.mesaToken,
         mesaId: data.mesaId,
         numero,
       });
 
-      // Redirige al cliente al panel de cuentas de esa mesa.
+      // redirige al cliente al panel de cuentas de esa mesa.
       navigate(`/${numero}/cuentas`)
     } catch (err) {
       setError(err.message);

@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../db");
 
-// Detalle de un pedido. Guarda una "foto" del producto al momento de confirmar
+// detalle de un pedido. guarda una "foto" del producto al momento de confirmar
 // (nombre y precio) para que el panel del personal no dependa de cambios futuros.
 const PedidoItem = sequelize.define(
   "PedidoItem",
@@ -13,7 +13,7 @@ const PedidoItem = sequelize.define(
     },
     nombreProducto: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false, // se copia el nombre asi el pedido no cambia si despues editan el producto
     },
     cantidad: {
       type: DataTypes.INTEGER,

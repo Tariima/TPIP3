@@ -1,3 +1,4 @@
+// modelo de categoria, agrupa los productos del menu (ej bebidas, comidas)
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
 
@@ -15,9 +16,12 @@ const Categoria = sequelize.define('Categoria', {
   descripcion: {
     type: DataTypes.STRING
   },
+  imagen: {
+    type: DataTypes.STRING
+  },
   activa: {
     type: DataTypes.BOOLEAN,
-    defaultValue: true
+    defaultValue: true // permite ocultar la categoria entera sin borrarla
   }
 }, {
   tableName: 'categorias',

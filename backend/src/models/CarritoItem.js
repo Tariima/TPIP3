@@ -1,3 +1,4 @@
+// modelo del item del carrito, es un producto agregado por el cliente antes de confirmar el pedido
 const { DataTypes } = require("sequelize");
 const sequelize = require("../db");
 
@@ -20,7 +21,7 @@ const CarritoItem = sequelize.define(
     },
     subtotal: {
       type: DataTypes.DECIMAL(10, 2),
-      allowNull: false,
+      allowNull: false, // precio por cantidad, se guarda calculado para no recalcular cada vez
     },
   },
   {

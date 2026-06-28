@@ -1,3 +1,4 @@
+// carrito de una cuenta: se ven los productos, se cambian cantidades y se confirma el pedido
 import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { obtenerCarrito, actualizarCantidad, eliminarDelCarrito, confirmarPedido } from "../../services/cart/cart.services";
@@ -17,7 +18,7 @@ function Cart() {
   const [notas, setNotas] = useState("");
   const [enviando, setEnviando] = useState(false);
 
-  // Si el backend rechazo la sesion de mesa, la cerramos y volvemos al PIN.
+  // si el backend rechazo la sesion de mesa, la cerramos y volvemos al pin.
   const manejarSesionExpirada = (error) => {
     if (error.sesionExpirada) {
       cerrarSesionMesa();
@@ -43,6 +44,7 @@ function Cart() {
     cargarCarrito();
   }, [accountId]);
 
+  // sumo o resto cantidad de un item; si queda en 0 abro el modal para borrarlo
   const handleUpdateQuantity = async (itemId, currentQty, delta) => {
     const newQty = currentQty + delta;
     if (newQty <= 0) {
@@ -79,7 +81,7 @@ function Cart() {
   };
 
   const handleConfirmarPedido = async () => {
-    // No se puede confirmar un pedido con el carrito vacio.
+    // no se puede confirmar un pedido con el carrito vacio.
     if (items.length === 0) {
       toast.error("El carrito está vacío, agregá productos antes de confirmar");
       return;
@@ -99,6 +101,7 @@ function Cart() {
     }
   };
 
+  // sumo los subtotales de cada item para mostrar el total del carrito
   const total = items.reduce((sum, item) => sum + parseFloat(item.subtotal), 0);
 
   if (loading) return <div className="cart-container">Cargando carrito...</div>;
@@ -127,7 +130,7 @@ function Cart() {
                   <button onClick={() => handleUpdateQuantity(item.id, item.cantidad, 1)}>+</button>
                 </div>
                 <p className="subtotal">${item.subtotal}</p>
-                <button className="delete-button" onClick={() => openDeleteModal(item)}>🗑️</button>
+                <button className="delete-button" onClick={() => openDeleteModal(item)}>Eliminar</button>
               </div>
             </div>
           ))}

@@ -1,3 +1,4 @@
+// modelo de rol, define los permisos de cada usuario (super-admin, admin, cliente)
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
 

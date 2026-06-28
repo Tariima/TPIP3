@@ -1,3 +1,4 @@
+// modelo del producto del menu, guarda nombre precio y si esta disponible para pedir
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
 
@@ -19,12 +20,12 @@ const Producto = sequelize.define('Producto', {
     allowNull: false
   },
   imagen: {
-    type: DataTypes.STRING, // Campo para la URL de la img
+    type: DataTypes.STRING, // campo para la url de la img
     allowNull: true
   },
   disponible: {
     type: DataTypes.BOOLEAN,
-    defaultValue: true
+    defaultValue: true // si esta en false el producto no se muestra para pedir
   }
 }, {
   tableName: 'productos',

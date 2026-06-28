@@ -1,3 +1,4 @@
+// rutas de mesas: el abm para el admin y la validacion del pin para que entre el cliente
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const { Mesa, SesionMesa, Cuenta } = require("../models");
@@ -8,8 +9,10 @@ const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "secreto_desarrollo";
 const MESA_TOKEN_EXPIRES = process.env.MESA_TOKEN_EXPIRES || "8h";
 
+// arma un pin random de 4 digitos para la mesa
 const generarPinMesa = () => Math.floor(1000 + Math.random() * 9000).toString();
 
+// genera el token temporal de la mesa con el que despues entra el cliente
 const generarMesaToken = (mesa, sesionMesa) => {
   return jwt.sign(
     {
@@ -23,7 +26,7 @@ const generarMesaToken = (mesa, sesionMesa) => {
   );
 };
 
-// RUTAS DE LECTURA (Abiertas o para otros roles) 
+// rutas de lectura (abiertas o para otros roles)
 router.get("/mesas", async (req, res) => {
   try {
     const mesas = await Mesa.findAll();
@@ -44,7 +47,7 @@ router.get("/mesas/numero/:numero", async (req, res) => {
   }
 });
 
-// Validacion de PIN de acceso (Ruta Pública para clientes)
+// validacion de pin de acceso (ruta publica para clientes)
 router.post("/mesas/numero/:numero/validar", async (req, res) => {
   try {
     const { numero } = req.params;
@@ -54,7 +57,7 @@ router.post("/mesas/numero/:numero/validar", async (req, res) => {
     
     if (!mesa) return res.status(404).json({ mensaje: "Mesa no encontrada" });
     
-    // Validaciones de seguridad
+    // validaciones de seguridad
     if (mesa.estado !== 'ocupada') {
       return res.status(403).json({ mensaje: "La mesa no está abierta. Por favor, llamá al mozo." });
     }
@@ -62,6 +65,7 @@ router.post("/mesas/numero/:numero/validar", async (req, res) => {
       return res.status(401).json({ mensaje: "PIN incorrecto" });
     }
 
+    // si el pin coincide busco la sesion abierta para generarle el token de mesa
     const sesionMesa = await SesionMesa.findOne({
       where: {
         mesaId: mesa.id,
@@ -87,9 +91,9 @@ router.post("/mesas/numero/:numero/validar", async (req, res) => {
   }
 });
 
-// RUTAS DE ESCRITURA (ABM Protegido para Administradores)
+// rutas de escritura (abm protegido para administradores)
 
-// Crear Mesa con PIN automático
+// crear mesa con pin automatico
 router.post("/mesas", verificarToken, verificarRol(['super-admin', 'admin']), async (req, res) => {
   try {
     const validacion = validarMesa(req.body);
@@ -98,18 +102,25 @@ router.post("/mesas", verificarToken, verificarRol(['super-admin', 'admin']), as
     }
 
     const { numero } = req.body;
-    // Generamos PIN de 4 dígitos
+
+    // si ya existe una mesa con ese numero avisamos claro en vez de tirar un error generico
+    const mesaExistente = await Mesa.findOne({ where: { numero } });
+    if (mesaExistente) {
+      return res.status(400).json({ mensaje: `Ya existe una mesa con el número ${numero}` });
+    }
+
+    // generamos pin de 4 digitos
     const pinAleatorio = generarPinMesa();
-    
+
     const mesa = await Mesa.create({ numero, pin: pinAleatorio });
     res.status(201).json(mesa);
   } catch (error) {
     console.error("Error en POST /mesas:", error);
-    res.status(500).json({ mensaje: "Error al crear la mesa (¿El número ya existe?)" });
+    res.status(500).json({ mensaje: "Error al crear la mesa" });
   }
 });
 
-// Actualizar Mesa y regenerar PIN opcionalmente
+// actualizar mesa y regenerar pin opcionalmente
 router.put("/mesas/:id", verificarToken, verificarRol(['super-admin', 'admin']), async (req, res) => {
   try {
     const { id } = req.params;
@@ -131,7 +142,7 @@ router.put("/mesas/:id", verificarToken, verificarRol(['super-admin', 'admin']),
   }
 });
 
-// Eliminar Mesa
+// eliminar mesa
 router.delete("/mesas/:id", verificarToken, verificarRol(['super-admin', 'admin']), async (req, res) => {
   try {
     const { id } = req.params;
@@ -146,7 +157,7 @@ router.delete("/mesas/:id", verificarToken, verificarRol(['super-admin', 'admin'
   }
 });
 
-// Abrir Mesa (Inicia sesión y genera PIN)
+// abrir mesa (inicia sesion y genera pin)
 router.post("/mesas/:id/abrir", verificarToken, async (req, res) => {
   try {
     const { id } = req.params;
@@ -155,13 +166,14 @@ router.post("/mesas/:id/abrir", verificarToken, async (req, res) => {
     if (!mesa) return res.status(404).json({ mensaje: "Mesa no encontrada" });
     if (mesa.estado === 'ocupada') return res.status(400).json({ mensaje: "La mesa ya está abierta" });
 
-    // Generamos un PIN seguro de 4 dígitos
+    // al abrir la mesa le doy un pin nuevo y arranco una sesion para el cliente
+    // generamos un pin seguro de 4 digitos
     const nuevoPin = generarPinMesa();
     
-    // Actualizamos la mesa
+    // actualizamos la mesa
     await mesa.update({ estado: 'ocupada', pin: nuevoPin });
 
-    // Creamos el registro de la sesión 
+    // creamos el registro de la sesion
     await SesionMesa.create({ 
       mesaId: mesa.id,
       usuarioAperturaId: req.usuario.id,
@@ -176,7 +188,7 @@ router.post("/mesas/:id/abrir", verificarToken, async (req, res) => {
   }
 });
 
-// Cerrar Mesa (Finaliza sesión e invalida PIN)
+// cerrar mesa (finaliza sesion e invalida pin)
 router.post("/mesas/:id/cerrar", verificarToken, async (req, res) => {
   try {
     const { id } = req.params;
@@ -184,10 +196,10 @@ router.post("/mesas/:id/cerrar", verificarToken, async (req, res) => {
     
     if (!mesa) return res.status(404).json({ mensaje: "Mesa no encontrada" });
 
-    // Liberamos la mesa y bloqueamos el acceso invalidando el PIN
+    // liberamos la mesa y bloqueamos el acceso invalidando el pin
     await mesa.update({ estado: 'disponible', pin: '0000' });
 
-    // Buscamos la sesión que estaba abierta para esta mesa y la cerramos
+    // buscamos la sesion que estaba abierta para esta mesa y la cerramos
     const sesionAbierta = await SesionMesa.findOne({ 
       where: { mesaId: mesa.id, estado: 'abierta' }
     });
@@ -199,7 +211,7 @@ router.post("/mesas/:id/cerrar", verificarToken, async (req, res) => {
       });
     }
 
-    // Cerramos todas las cuentas que quedaron abiertas en esta mesa
+    // cerramos todas las cuentas que quedaron abiertas en esta mesa
     await Cuenta.update(
       { estado: 'cerrada' }, 
       { where: { mesaId: mesa.id, estado: 'abierta' } }

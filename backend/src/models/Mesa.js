@@ -1,3 +1,4 @@
+// modelo de la mesa, guarda numero estado y el pin que pide el cliente para entrar
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
 
@@ -14,11 +15,11 @@ const Mesa = sequelize.define('Mesa', {
   },
   pin: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false // el cliente lo escanea/escribe junto al qr para validar la mesa
   },
   estado: {
     type: DataTypes.STRING,
-    defaultValue: 'disponible'
+    defaultValue: 'disponible' // disponible cuando no esta ocupada por una sesion
   },
   activa: {
     type: DataTypes.BOOLEAN,

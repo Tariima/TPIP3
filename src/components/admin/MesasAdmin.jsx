@@ -1,5 +1,7 @@
+// pantalla del admin para manejar mesas: abrir/cerrar, pin de cliente y codigos qr
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Modal, Button } from 'react-bootstrap';
 import { listarMesas, guardarMesa, regenerarPin, eliminarMesa, abrirMesa, cerrarMesa } from './table.services';
 import { validarMesa } from './mesas.validations';
 import './AdminLayout.css';
@@ -9,10 +11,12 @@ const MesasAdmin = () => {
   const [mesas, setMesas] = useState([]);
   const [error, setError] = useState('');
   const [mesaEditando, setMesaEditando] = useState(null);
+  const [mesaACerrar, setMesaACerrar] = useState(null);
 
-  // URL dinámica hacia donde debe apuntar el QR (Vista Cliente)
+  // url dinamica hacia donde debe apuntar el qr (vista cliente)
   const baseUrl = window.location.origin;
 
+  // ordeno las mesas por numero asi quedan prolijas en la tabla
   const cargarDatos = async () => {
     try {
       const data = await listarMesas();
@@ -28,7 +32,7 @@ const MesasAdmin = () => {
     e.preventDefault();
     setError('');
 
-    // Validacion en el formulario antes de llamar al backend.
+    // validacion en el formulario antes de llamar al backend.
     const validacion = validarMesa(mesaEditando);
     if (validacion.error) {
       setError(validacion.mensaje);
@@ -67,19 +71,20 @@ const MesasAdmin = () => {
   const handleAbrir = async (id) => {
     try {
       await abrirMesa(id);
-      cargarDatos(); // Recarga para ver el nuevo PIN y estado
+      cargarDatos(); // recarga para ver el nuevo pin y estado
     } catch (err) {
       setError(err.message);
     }
   };
 
-  const handleCerrar = async (id) => {
-    if (!window.confirm('¿Seguro que querés cerrar la mesa? Esto bloqueará nuevos pedidos.')) return;
+  const handleCerrar = async () => {
     try {
-      await cerrarMesa(id);
+      await cerrarMesa(mesaACerrar.id);
+      setMesaACerrar(null);
       cargarDatos();
     } catch (err) {
       setError(err.message);
+      setMesaACerrar(null);
     }
   };
 
@@ -102,7 +107,7 @@ const MesasAdmin = () => {
 
       <div className={`admin-layout ${mesaEditando ? '' : 'admin-layout-single'}`}>
         
-        {/* LISTADO DE MESAS */}
+        {/* listado de mesas */}
         <div className="admin-card">
           <div className="admin-section-header">
             <h3>Plano del Salón</h3>
@@ -126,6 +131,7 @@ const MesasAdmin = () => {
             </thead>
             <tbody>
               {mesas.map((m) => {
+                // armo el link de la mesa y se lo paso a un servicio externo que me devuelve la imagen del qr
                 const qrUrl = `${baseUrl}/${m.numero}`;
                 const qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrUrl)}`;
                 return (
@@ -149,11 +155,7 @@ const MesasAdmin = () => {
                       </div>
                     </td>
                     <td>
-                      <div className="admin-qr-cell">
-                        <img
-                          src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(qrUrl)}`}
-                          alt={`QR Mesa ${m.numero}`}
-                        />
+                      <div className="admin-actions admin-actions-column">
                         <button
                           type="button"
                           onClick={() => window.open(qrImgUrl, '_blank', 'noopener')}
@@ -181,8 +183,8 @@ const MesasAdmin = () => {
                         </div>
                     ) : (
                         <div className="admin-actions admin-actions-column">
-                          <button 
-                          onClick={() => handleCerrar(m.id)}
+                          <button
+                          onClick={() => setMesaACerrar(m)}
                           className="admin-button admin-button-danger">
                           Cerrar mesa
                           </button>
@@ -204,7 +206,7 @@ const MesasAdmin = () => {
           </div>
         </div>
 
-        {/* FORMULARIO LATERAL */}
+        {/* formulario lateral */}
         {mesaEditando && (
           <div className="admin-card">
             <h4>{mesaEditando.id ? `Editar Mesa #${mesaEditando.numero}` : 'Nueva Mesa'}</h4>
@@ -236,6 +238,24 @@ const MesasAdmin = () => {
           </div>
         )}
       </div>
+
+      {/* modal aparte para confirmar el cierre de mesa porque bloquea nuevos pedidos */}
+      <Modal show={!!mesaACerrar} onHide={() => setMesaACerrar(null)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Cerrar mesa</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          ¿Seguro que querés cerrar la mesa <strong>#{mesaACerrar?.numero}</strong>? Esto bloqueará nuevos pedidos.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setMesaACerrar(null)}>
+            Cancelar
+          </Button>
+          <Button variant="danger" onClick={handleCerrar}>
+            Cerrar mesa
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

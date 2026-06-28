@@ -1,3 +1,4 @@
+// punto de arranque del backend, levanta express, conecta la base y registra las rutas de la api
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
@@ -18,9 +19,11 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
 
+// cors limitado al front y json para poder leer el body de las peticones
 app.use(cors({ origin: CLIENT_URL }));
 app.use(express.json());
 
+// cada grupo de rutas cuelga de su prefijo dentro de /api
 app.use("/api", pruebaRoutes);
 app.use("/api/auth", authRoutes);
 app.use('/api/menu', menuRoutes);
@@ -33,7 +36,8 @@ app.use("/api", orderRoutes);
 
 const startServer = async () => {
   try {
-    await sequelize.sync();
+    // sync con alter ajusta las tablas al modelo y despues se cargan los datos base
+    await sequelize.sync({ alter: true });
     await cargarDatosIniciales();
 
     app.listen(PORT, () => {

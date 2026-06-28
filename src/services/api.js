@@ -1,11 +1,13 @@
+// aca junto todas las llamadas al backend (categorias, productos, mesas, cuentas)
 import { mesaAuthHeader } from "./mesa/mesa.session";
 
+// uso la url del .env y si no esta arranco con localhost para desarrollo
 export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 export const API_BASE_URL = `${API_URL}/api`;
 
-// Construye el error de la respuesta; si el backend rechazo el token de mesa
+// construye el error de la respuesta; si el backend rechazo el token de mesa
 // (401/403) lo marca como sesionExpirada para que el componente cierre la
-// sesion a traves del contexto y redirija al PIN.
+// sesion a traves del contexto y redirija al pin.
 const errorDeRespuesta = (response, mensaje) => {
   const error = new Error(mensaje);
   if (response.status === 401 || response.status === 403) {
@@ -39,6 +41,7 @@ export const obtenerMesaPorNumero = async (numero) => {
 };
 
 export const obtenerCuentasMesa = async (mesaId) => {
+  // mando el token de mesa en el header porque esta ruta esta protegida
   const respuesta = await fetch(`${API_BASE_URL}/mesas/${mesaId}/cuentas`, {
     headers: { ...mesaAuthHeader() },
   });
@@ -56,6 +59,7 @@ export const crearCuentaMesa = async (mesaId, nombre) => {
   return respuesta.json();
 };
 
+// trae solo los pedidos del cliente segun el token de su mesa
 export const listarMisPedidos = async () => {
   const respuesta = await fetch(`${API_BASE_URL}/pedidos/cliente`, {
     method: "GET",

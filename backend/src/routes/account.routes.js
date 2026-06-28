@@ -1,12 +1,15 @@
+// rutas de las cuentas de una mesa, las usa el cliente con su token de mesa
 const express = require("express");
 const { Mesa, Cuenta } = require("../models");
 const { verificarMesaToken } = require("../middlewares/auth.middleware");
 
 const router = express.Router();
 
+// devuelve las cuentas abiertas de la mesa
 router.get("/mesas/:mesaId/cuentas", verificarMesaToken, async (req, res) => {
   const { mesaId } = req.params;
 
+  // chequeo que la mesa del token sea la misma que pide, asi no espia otra mesa
   if (Number(mesaId) !== req.mesaCliente.mesaId) {
     return res.status(403).json({ mensaje: "No tenes permiso para ver esta mesa" });
   }
@@ -21,6 +24,7 @@ router.get("/mesas/:mesaId/cuentas", verificarMesaToken, async (req, res) => {
   res.json(cuentas);
 });
 
+// crea una cuenta nueva en la mesa, si no le mandan nombre le pone uno por defecto
 router.post("/mesas/:mesaId/cuentas", verificarMesaToken, async (req, res) => {
   const { mesaId } = req.params;
   const { nombre } = req.body;

@@ -1,9 +1,11 @@
+// rutas del carrito de cada cuenta de la mesa, las usa el cliente
 const express = require("express");
 const { Cuenta, Producto, CarritoItem } = require("../models");
 const { verificarMesaToken } = require("../middlewares/auth.middleware");
 
 const router = express.Router();
 
+// busca la cuenta y de paso valida que sea de esta mesa, para reusar en todos los endpoints
 const obtenerCuentaDeMesa = async (cuentaId, mesaId) => {
   return Cuenta.findOne({
     where: {
@@ -14,7 +16,7 @@ const obtenerCuentaDeMesa = async (cuentaId, mesaId) => {
   });
 };
 
-// 1. Obtener todos los productos en el carrito de una cuenta especifica
+// 1. obtener todos los productos en el carrito de una cuenta especifica
 router.get("/cuentas/:cuentaId/items", verificarMesaToken, async (req, res) => {
   try {
     const { cuentaId } = req.params;
@@ -35,7 +37,7 @@ router.get("/cuentas/:cuentaId/items", verificarMesaToken, async (req, res) => {
   }
 });
 
-// 2. Agregar un producto al carrito
+// 2. agregar un producto al carrito
 router.post("/cuentas/:cuentaId/items", verificarMesaToken, async (req, res) => {
   try {
     const { cuentaId } = req.params;
@@ -57,6 +59,7 @@ router.post("/cuentas/:cuentaId/items", verificarMesaToken, async (req, res) => 
 
     const cantAgregar = cantidad || 1;
 
+    // si ya estaba el producto le sumo cantidad, sino creo el item nuevo
     if (item) {
       item.cantidad += cantAgregar;
       item.subtotal = item.cantidad * item.precioUnitario;
@@ -77,7 +80,7 @@ router.post("/cuentas/:cuentaId/items", verificarMesaToken, async (req, res) => 
   }
 });
 
-// 3. Actualizar la cantidad de un item
+// 3. actualizar la cantidad de un item
 router.patch("/cuentas/:cuentaId/items/:itemId", verificarMesaToken, async (req, res) => {
   try {
     const { cuentaId, itemId } = req.params;
@@ -114,7 +117,7 @@ router.patch("/cuentas/:cuentaId/items/:itemId", verificarMesaToken, async (req,
   }
 });
 
-// 4. Eliminar un producto del carrito
+// 4. eliminar un producto del carrito
 router.delete("/cuentas/:cuentaId/items/:itemId", verificarMesaToken, async (req, res) => {
   try {
     const { cuentaId, itemId } = req.params;

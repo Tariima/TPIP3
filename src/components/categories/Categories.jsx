@@ -1,25 +1,17 @@
+// pantalla que muestra las categorias de la carta para que el cliente elija
 import React, { useEffect, useState } from "react";
 import "./Categories.css";
 import CategoryItem from "../categoriesItem/CategoryItem";
 import { useParams, useNavigate } from "react-router-dom";
 import { obtenerCategorias } from "../../services/api";
 
-const imagenCategoriaDefault =
-  "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1200&auto=format&fit=crop";
-
 function Categories() {
   const { mesaId, accountId } = useParams();
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
+  // traigo las categorias del backend cuando se monta el componente
   useEffect(() => {
-    obtenerCategorias().then((data) => {
-      const categoriasConImagen = data.map((categoria) => ({
-        ...categoria,
-        imagen: categoria.imagen || imagenCategoriaDefault,
-      }));
-
-      setCategories(categoriasConImagen);
-    });
+    obtenerCategorias().then((data) => setCategories(data));
   }, []);
 
   return (
@@ -29,6 +21,7 @@ function Categories() {
         <h2>Categorías</h2>
       </header>
       <div className="categories-grid">
+        {/* recorro las categorias y armo una tarjeta por cada una */}
         {categories.map((category) => (
           <CategoryItem
             key={category.id}
@@ -41,7 +34,7 @@ function Categories() {
         className="floating-cart-button" 
         onClick={() => navigate(`/${mesaId}/cart/${accountId}`)}
       >
-        🛒 Ver Carrito
+        Ver Carrito
       </button>
     </div>
   );

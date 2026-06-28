@@ -1,3 +1,4 @@
+// muestra las cuentas abiertas de una mesa y permite crear nuevas
 import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { obtenerMesaPorNumero, obtenerCuentasMesa, crearCuentaMesa } from "../../services/api";
@@ -16,6 +17,7 @@ function AccountsPanel() {
   const [creatingAccount, setCreatingAccount] = useState(false);
   const [modalError, setModalError] = useState("");
 
+  // busco primero la mesa por su numero y despues sus cuentas abiertas
   useEffect(() => {
     const cargarDatos = async () => {
       try {
@@ -25,7 +27,7 @@ function AccountsPanel() {
         setAccounts(cuentasData);
       } catch (error) {
         console.error("Error al cargar datos de la mesa:", error);
-        // Si se perdio la sesion de mesa (token rechazado), volvemos al PIN.
+        // si se perdio la sesion de mesa (token rechazado), volvemos al pin.
         if (error.sesionExpirada) {
           cerrarSesionMesa();
           navigate(`/${mesaId}`);
@@ -49,6 +51,7 @@ function AccountsPanel() {
     setModalError("");
   };
 
+  // valido el nombre, creo la cuenta en el backend y la agrego a la lista
   const handleCreateAccount = async (event) => {
     event.preventDefault();
     const nombre = accountName.trim();

@@ -1,7 +1,8 @@
+// controlador del menu: maneja el abm de categorias y productos
 const { Producto, Categoria } = require('../models');
 const { validarProducto, validarCategoria } = require('../validations/menu.validations');
 
-// CATEGORÍAS
+// categorias
 const obtenerCategorias = async (req, res) => {
   try {
     const categorias = await Categoria.findAll();
@@ -11,6 +12,7 @@ const obtenerCategorias = async (req, res) => {
   }
 };
 
+// crea una categoria nueva, antes valida que venga el nombre
 const crearCategoria = async (req, res) => {
   try {
     const validacion = validarCategoria(req.body);
@@ -18,15 +20,37 @@ const crearCategoria = async (req, res) => {
       return res.status(400).json({ mensaje: validacion.mensaje });
     }
 
-    const { nombre, descripcion } = req.body;
-    const nuevaCategoria = await Categoria.create({ nombre, descripcion });
+    const { nombre, descripcion, imagen } = req.body;
+    const nuevaCategoria = await Categoria.create({ nombre, descripcion, imagen });
     res.status(201).json(nuevaCategoria);
   } catch (error) {
     res.status(500).json({ mensaje: 'Error al crear categoría' });
   }
 };
 
-// PRODUCTOS
+const actualizarCategoria = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const validacion = validarCategoria(req.body);
+    if (validacion.error) {
+      return res.status(400).json({ mensaje: validacion.mensaje });
+    }
+
+    const { nombre, descripcion, imagen } = req.body;
+
+    const categoria = await Categoria.findByPk(id);
+    if (!categoria) return res.status(404).json({ mensaje: 'Categoría no encontrada' });
+
+    await categoria.update({ nombre, descripcion, imagen });
+    res.json(categoria);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al actualizar categoría' });
+  }
+};
+
+// productos
+// trae todos los productos con el nombre de su categoria
 const obtenerProductos = async (req, res) => {
   try {
     const productos = await Producto.findAll({
@@ -74,6 +98,7 @@ const actualizarProducto = async (req, res) => {
   }
 };
 
+// borra el producto de la base de forma definitiva
 const eliminarProducto = async (req, res) => {
   try {
     const { id } = req.params;
@@ -88,6 +113,6 @@ const eliminarProducto = async (req, res) => {
 };
 
 module.exports = {
-  obtenerCategorias, crearCategoria,
+  obtenerCategorias, crearCategoria, actualizarCategoria,
   obtenerProductos, crearProducto, actualizarProducto, eliminarProducto
 };

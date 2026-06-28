@@ -1,3 +1,4 @@
+// pantalla de login del personal, toma email y pass y arranca la sesion
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../services/auth/auth.context';
@@ -18,7 +19,7 @@ function Login() {
     evento.preventDefault();
     setError('');
 
-    // Validacion en el formulario antes de llamar al backend.
+    // validacion en el formulario antes de llamar al backend.
     const validacion = validarLogin({ email, password });
     if (validacion.error) {
       setError(validacion.mensaje);
@@ -30,6 +31,7 @@ function Login() {
       email,
       password,
       (data) => {
+        // si el login salio bien guardo token y usuario en el contexto y voy al home
         handleUserLogin(data.token, data.usuario);
         navigate('/');
       },

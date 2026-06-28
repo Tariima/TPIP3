@@ -1,6 +1,7 @@
-// Validaciones de autenticacion del backend.
-// Se mantiene el mismo criterio que en el frontend para avisar al usuario en caso de error.
+// validaciones de autenticacion del backend.
+// se mantiene el mismo criterio que en el frontend para avisar al usuario en caso de error.
 
+// chequeo basico de que el email tenga formato algo@algo.algo
 const validarEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
@@ -16,7 +17,7 @@ const validarPassword = (password, minLength) => {
   return true;
 };
 
-// Valida el body del login. Devuelve { error, mensaje }.
+// valida el body del login. devuelve { error, mensaje }.
 const validarLogin = (body) => {
   const resultado = {
     error: false,

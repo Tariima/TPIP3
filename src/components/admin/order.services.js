@@ -1,11 +1,13 @@
+// llamadas al backend para listar pedidos y cambiarles el estado
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
+// headers con el token para que el backend autorice la peticion
 const getHeaders = () => ({
   'Content-Type': 'application/json',
   'Authorization': `Bearer ${localStorage.getItem('tpip3-token')}`
 });
 
-// Estados posibles de un pedido (deben coincidir con los del backend).
+// estados posibles de un pedido (deben coincidir con los del backend).
 export const ESTADOS_PEDIDO = ['pendiente', 'en preparacion', 'listo', 'entregado', 'cancelado'];
 
 export const listarPedidos = async () => {
@@ -14,6 +16,7 @@ export const listarPedidos = async () => {
   return res.json();
 };
 
+// uso patch porque solo toco el estado y no el pedido entero
 export const actualizarEstadoPedido = async (id, estado) => {
   const res = await fetch(`${API_URL}/api/pedidos/${id}/estado`, {
     method: 'PATCH',

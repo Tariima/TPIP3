@@ -1,9 +1,10 @@
+// llamadas al backend del carrito del cliente (ver, agregar, editar, sacar y confirmar)
 import { API_BASE_URL } from "../api";
 import { mesaAuthHeader } from "../mesa/mesa.session";
 
-// Construye el error de la respuesta; si el backend rechazo el token de mesa
+// construye el error de la respuesta; si el backend rechazo el token de mesa
 // (401/403) lo marca como sesionExpirada para que el componente cierre la
-// sesion a traves del contexto y redirija al PIN.
+// sesion a traves del contexto y redirija al pin.
 const errorDeRespuesta = (response, mensaje) => {
   const error = new Error(mensaje);
   if (response.status === 401 || response.status === 403) {
@@ -20,6 +21,7 @@ export const obtenerCarrito = async (cuentaId) => {
   return response.json();
 };
 
+// mando el producto y la cantidad para sumarlo al carrito de esa cuenta
 export const agregarAlCarrito = async (cuentaId, productoId, cantidad) => {
   const response = await fetch(`${API_BASE_URL}/cuentas/${cuentaId}/items`, {
     method: "POST",
@@ -49,7 +51,7 @@ export const eliminarDelCarrito = async (cuentaId, itemId) => {
   return response.json();
 };
 
-// Confirma el carrito y lo convierte en un pedido para el personal.
+// confirma el carrito y lo convierte en un pedido para el personal.
 export const confirmarPedido = async (cuentaId, notas) => {
   const response = await fetch(`${API_BASE_URL}/cuentas/${cuentaId}/confirmar`, {
     method: "POST",

@@ -1,3 +1,4 @@
+// modal de confirmacion para asegurarse antes de borrar un producto del carrito
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
 

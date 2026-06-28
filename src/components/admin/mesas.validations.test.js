@@ -1,6 +1,6 @@
-// Prueba unitaria de las validaciones de mesas (numero de mesa y PIN del cliente).
-// Framework: Vitest (integrado con Vite).
-// Ejecutar con:  npm test     (desde la raiz del proyecto)
+// prueba unitaria de las validaciones de mesas (numero de mesa y pin del cliente).
+// framework: Vitest (integrado con Vite).
+// ejecutar con:  npm test     (desde la raiz del proyecto)
 
 import { describe, it, expect } from 'vitest';
 import { validarMesa, validarPin } from './mesas.validations';

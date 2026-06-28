@@ -1,13 +1,15 @@
+// modal que pregunta cuantas unidades agregar antes de meter el producto al carrito
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 
 function QuantityModal({ show, handleClose, handleConfirm, productName }) {
   const [quantity, setQuantity] = useState(1);
 
+  // mando la cantidad elegida y reseteo a 1 para la proxima vez que se abra
   const onSubmit = (e) => {
     e.preventDefault();
     handleConfirm(quantity);
-    setQuantity(1); // Reset for next time
+    setQuantity(1); // reset for next time
   };
 
   return (

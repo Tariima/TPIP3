@@ -1,8 +1,10 @@
+// middlewares para cuidar las rutas: token de empleado, rol y token de mesa del cliente
 const jwt = require('jsonwebtoken');
 const { Rol, Mesa, SesionMesa } = require('../models');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secreto_desarrollo';
 
+// verifico el token antes de dejar pasar y guardo los datos del usuario en req
 const verificarToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
@@ -21,7 +23,7 @@ const verificarToken = (req, res, next) => {
   }
 };
 
-//Middleware dinámico que recibe un arreglo de roles permitidos
+//middleware dinamico que recibe un arreglo de roles permitidos
 const verificarRol = (rolesPermitidos) => {
   return async (req, res, next) => {
     try {
@@ -41,6 +43,7 @@ const verificarRol = (rolesPermitidos) => {
   };
 };
 
+// valida el token de mesa del cliente: que sea tipo mesa, que la mesa este ocupada y la sesion abierta
 const verificarMesaToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 

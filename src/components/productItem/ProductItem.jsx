@@ -1,3 +1,4 @@
+// tarjeta de un producto con su boton para agregarlo al carrito
 import React, { useState } from "react";
 import "./ProductItem.css";
 import { agregarAlCarrito } from "../../services/cart/cart.services";
@@ -11,6 +12,7 @@ function ProductItem({ product, accountId }) {
     setShowModal(true);
   };
 
+  // confirma la cantidad elegida en el modal y lo manda al carrito
   const handleConfirmQuantity = async (cantidad) => {
     try {
       await agregarAlCarrito(accountId, product.id, cantidad);
@@ -26,11 +28,16 @@ function ProductItem({ product, accountId }) {
     <>
       <article className="product-card">
         <div className="product-image-wrapper">
-          <img
-            className="product-image"
-            src={product.imagen}
-            alt={product.nombre}
-          />
+          {/* si el producto tiene imagen la muestro, sino dejo un placeholder */}
+          {product.imagen ? (
+            <img
+              className="product-image"
+              src={product.imagen}
+              alt={product.nombre}
+            />
+          ) : (
+            <div className="product-image-placeholder"></div>
+          )}
         </div>
 
         <div className="product-info">

@@ -1,6 +1,6 @@
-// Prueba unitaria de las validaciones del menu (productos y categorias).
-// Framework: Vitest (integrado con Vite).
-// Ejecutar con:  npm test     (desde la raiz del proyecto)
+// prueba unitaria de las validaciones del menu (productos y categorias).
+// framework: Vitest (integrado con Vite).
+// ejecutar con:  npm test     (desde la raiz del proyecto)
 
 import { describe, it, expect } from 'vitest';
 import { validarProducto, validarCategoria } from './menu.validations';
