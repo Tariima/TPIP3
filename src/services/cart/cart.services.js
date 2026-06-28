@@ -1,21 +1,22 @@
 import { API_BASE_URL } from "../api";
-import { mesaAuthHeader, limpiarSesionMesa } from "../mesa/mesa.session";
+import { mesaAuthHeader } from "../mesa/mesa.session";
 
-// Si el backend rechaza el token de mesa, limpiamos la sesion para forzar el PIN.
-const verificarAcceso = (response) => {
+// Construye el error de la respuesta; si el backend rechazo el token de mesa
+// (401/403) lo marca como sesionExpirada para que el componente cierre la
+// sesion a traves del contexto y redirija al PIN.
+const errorDeRespuesta = (response, mensaje) => {
+  const error = new Error(mensaje);
   if (response.status === 401 || response.status === 403) {
-    limpiarSesionMesa();
+    error.sesionExpirada = true;
   }
+  return error;
 };
 
 export const obtenerCarrito = async (cuentaId) => {
   const response = await fetch(`${API_BASE_URL}/cuentas/${cuentaId}/items`, {
     headers: { ...mesaAuthHeader() },
   });
-  if (!response.ok) {
-    verificarAcceso(response);
-    throw new Error("Error al obtener el carrito");
-  }
+  if (!response.ok) throw errorDeRespuesta(response, "Error al obtener el carrito");
   return response.json();
 };
 
@@ -25,10 +26,7 @@ export const agregarAlCarrito = async (cuentaId, productoId, cantidad) => {
     headers: { "Content-Type": "application/json", ...mesaAuthHeader() },
     body: JSON.stringify({ productoId, cantidad }),
   });
-  if (!response.ok) {
-    verificarAcceso(response);
-    throw new Error("Error al agregar al carrito");
-  }
+  if (!response.ok) throw errorDeRespuesta(response, "Error al agregar al carrito");
   return response.json();
 };
 
@@ -38,10 +36,7 @@ export const actualizarCantidad = async (cuentaId, itemId, cantidad) => {
     headers: { "Content-Type": "application/json", ...mesaAuthHeader() },
     body: JSON.stringify({ cantidad }),
   });
-  if (!response.ok) {
-    verificarAcceso(response);
-    throw new Error("Error al actualizar cantidad");
-  }
+  if (!response.ok) throw errorDeRespuesta(response, "Error al actualizar cantidad");
   return response.json();
 };
 
@@ -50,10 +45,7 @@ export const eliminarDelCarrito = async (cuentaId, itemId) => {
     method: "DELETE",
     headers: { ...mesaAuthHeader() },
   });
-  if (!response.ok) {
-    verificarAcceso(response);
-    throw new Error("Error al eliminar del carrito");
-  }
+  if (!response.ok) throw errorDeRespuesta(response, "Error al eliminar del carrito");
   return response.json();
 };
 
@@ -64,9 +56,6 @@ export const confirmarPedido = async (cuentaId, notas) => {
     headers: { "Content-Type": "application/json", ...mesaAuthHeader() },
     body: JSON.stringify({ notas }),
   });
-  if (!response.ok) {
-    verificarAcceso(response);
-    throw new Error("Error al confirmar el pedido");
-  }
+  if (!response.ok) throw errorDeRespuesta(response, "Error al confirmar el pedido");
   return response.json();
 };
