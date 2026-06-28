@@ -127,7 +127,7 @@ function Cart() {
                   <button onClick={() => handleUpdateQuantity(item.id, item.cantidad, 1)}>+</button>
                 </div>
                 <p className="subtotal">${item.subtotal}</p>
-                <button className="delete-button" onClick={() => openDeleteModal(item)}>🗑️</button>
+                <button className="delete-button" onClick={() => openDeleteModal(item)}>Eliminar</button>
               </div>
             </div>
           ))}

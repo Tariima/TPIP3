@@ -4,22 +4,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import "./Products.css";
 import { obtenerProductos } from "../../services/api";
 
-const imagenProductoDefault = "https://picsum.photos/300/200";
-
 function Products() {
   const { mesaId, accountId, categoryName } = useParams();
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    obtenerProductos().then((data) => {
-      const productosConImagen = data.map((producto) => ({
-        ...producto,
-        imagen: producto.imagen || imagenProductoDefault,
-      }));
-
-      setProducts(productosConImagen);
-    });
+    obtenerProductos().then((data) => setProducts(data));
   }, []);
 
   const filteredProducts = products.filter((product) => {
@@ -41,7 +32,7 @@ function Products() {
         className="floating-cart-button" 
         onClick={() => navigate(`/${mesaId}/cart/${accountId}`)}
       >
-        🛒 Ver Carrito
+        Ver Carrito
       </button>
     </div>
   );

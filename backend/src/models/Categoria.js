@@ -15,6 +15,9 @@ const Categoria = sequelize.define('Categoria', {
   descripcion: {
     type: DataTypes.STRING
   },
+  imagen: {
+    type: DataTypes.STRING
+  },
   activa: {
     type: DataTypes.BOOLEAN,
     defaultValue: true

@@ -80,9 +80,12 @@ const PedidosPanel = () => {
               key={pedido.id}
               className={`admin-order-card ${claseEstado[pedido.estado] || ''}`}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <h3 style={{ margin: 0 }}>
-                  Pedido #{pedido.id} - Mesa {pedido.mesa ?? '—'}
-                </h3>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span className="admin-order-dot"></span>
+                  <h3 style={{ margin: 0 }}>
+                    Pedido #{pedido.id} - Mesa {pedido.mesa ?? '—'}
+                  </h3>
+                </div>
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                   <select
                     value={pedido.estado}

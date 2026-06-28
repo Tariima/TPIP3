@@ -260,6 +260,7 @@
   font-size: 1.15rem;
   letter-spacing: 0.14em;
   color: var(--text-primary);
+  text-align: center;
 }
 
 .admin-qr-cell {
@@ -302,24 +303,33 @@
   border: 1px solid var(--border-color);
 }
 
-.admin-order-card-pendiente {
-  border-left: 5px solid var(--danger);
+.admin-order-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--border-color);
+  flex-shrink: 0;
 }
 
-.admin-order-card-preparacion {
-  border-left: 5px solid var(--warning);
+.admin-order-card-pendiente .admin-order-dot {
+  background: var(--danger);
 }
 
-.admin-order-card-listo {
-  border-left: 5px solid #3b82f6;
+.admin-order-card-preparacion .admin-order-dot {
+  background: var(--warning);
 }
 
-.admin-order-card-entregado {
-  border-left: 5px solid var(--success);
+.admin-order-card-listo .admin-order-dot {
+  background: #3b82f6;
 }
 
-.admin-order-card-cancelado {
-  border-left: 5px solid #9ca3af;
+.admin-order-card-entregado .admin-order-dot {
+  background: var(--success);
+}
+
+.admin-order-card-cancelado .admin-order-dot {
+  background: #9ca3af;
 }
 
 @media (max-width: 850px) {

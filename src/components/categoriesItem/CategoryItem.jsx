@@ -13,9 +13,7 @@ function CategoryItem({ category, accountId }) {
     <div
       className="category-item"
       onClick={handleClick}
-      style={{
-        backgroundImage: `url(${category.imagen})`,
-      }}
+      style={category.imagen ? { backgroundImage: `url(${category.imagen})` } : undefined}
     >
       <div className="category-overlay">
         <h2>{category.nombre}</h2>

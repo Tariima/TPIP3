@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { listarProductos, listarCategorias, guardarProducto, eliminarProducto, crearCategoria } from './menu.services';
+import { listarProductos, listarCategorias, guardarProducto, eliminarProducto, guardarCategoria } from './menu.services';
 import { validarProducto, validarCategoria } from './menu.validations';
 import './AdminLayout.css';
 
@@ -9,10 +9,10 @@ const MenuAdmin = () => {
   const [productos, setProductos] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [error, setError] = useState('');
-  
-  // Estados para formularios
+
+  // Formularios (null = cerrado, igual que en productos)
   const [productoEditando, setProductoEditando] = useState(null);
-  const [nuevaCategoria, setNuevaCategoria] = useState({ nombre: '', descripcion: '' });
+  const [categoriaEditando, setCategoriaEditando] = useState(null);
 
   const cargarDatos = async () => {
     try {
@@ -26,7 +26,7 @@ const MenuAdmin = () => {
 
   useEffect(() => { cargarDatos(); }, []);
 
-const handleGuardarProducto = async (e) => {
+  const handleGuardarProducto = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -63,20 +63,20 @@ const handleGuardarProducto = async (e) => {
     }
   };
 
-  const handleCrearCategoria = async (e) => {
+  const handleGuardarCategoria = async (e) => {
     e.preventDefault();
     setError('');
 
     // Validacion en el formulario antes de llamar al backend.
-    const validacion = validarCategoria(nuevaCategoria);
+    const validacion = validarCategoria(categoriaEditando);
     if (validacion.error) {
       setError(validacion.mensaje);
       return;
     }
 
     try {
-      await crearCategoria(nuevaCategoria);
-      setNuevaCategoria({ nombre: '', descripcion: '' });
+      await guardarCategoria(categoriaEditando);
+      setCategoriaEditando(null);
       cargarDatos();
     } catch (err) {
       setError(err.message);
@@ -99,101 +99,150 @@ const handleGuardarProducto = async (e) => {
       </header>
       {error && <div className="admin-message admin-message-error">{error}</div>}
 
-      <div className="admin-layout">
-        {/* TABLA DE PRODUCTOS */}
+      {/* PRODUCTOS */}
+      <div className={`admin-layout ${productoEditando ? '' : 'admin-layout-single'}`}>
         <div className="admin-card">
           <div className="admin-section-header">
             <h3>Productos</h3>
-            <button 
+            <button
               onClick={() => setProductoEditando({ nombre: '', descripcion: '', precio: '', categoriaId: '', disponible: true, imagen: '' })}
               className="admin-button admin-button-primary">
               Nuevo producto
             </button>
           </div>
           <div className="admin-table-wrapper">
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Imagen</th>
-                <th>Nombre</th>
-                <th>Precio</th>
-                <th>Categoría</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {productos.map((p) => (
-                <tr key={p.id}>
-                  <td>
-                    {p.imagen ? (
-                      <img src={p.imagen} alt={p.nombre} className="admin-product-image" />
-                    ) : (
-                      <div className="admin-image-placeholder">Sin foto</div>
-                    )}
-                  </td>
-                  <td>{p.nombre}</td>
-                  <td>${p.precio}</td>
-                  <td>{categorias.find(c => c.id === p.categoriaId)?.nombre || `ID guardado: ${p.categoriaId}`}</td>
-                  <td>
-                    <span className={`admin-badge ${p.disponible ? 'admin-badge-success' : 'admin-badge-danger'}`}>
-                      {p.disponible ? 'Disponible' : 'Agotado'}
-                    </span>
-                  </td>
-                  <td>
-                    <div className="admin-actions">
-                      <button onClick={() => setProductoEditando(p)} className="admin-button admin-button-secondary">Editar</button>
-                      <button onClick={() => handleEliminarProducto(p.id)} className="admin-button admin-button-danger">Borrar</button>
-                    </div>
-                  </td>
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Imagen</th>
+                  <th>Nombre</th>
+                  <th>Precio</th>
+                  <th>Categoría</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {productos.map((p) => (
+                  <tr key={p.id}>
+                    <td>
+                      {p.imagen ? (
+                        <img src={p.imagen} alt={p.nombre} className="admin-product-image" />
+                      ) : (
+                        <div className="admin-image-placeholder">Sin foto</div>
+                      )}
+                    </td>
+                    <td>{p.nombre}</td>
+                    <td>${p.precio}</td>
+                    <td>{categorias.find(c => c.id === p.categoriaId)?.nombre || `ID guardado: ${p.categoriaId}`}</td>
+                    <td>
+                      <span className={`admin-badge ${p.disponible ? 'admin-badge-success' : 'admin-badge-danger'}`}>
+                        {p.disponible ? 'Disponible' : 'Agotado'}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="admin-actions">
+                        <button onClick={() => setProductoEditando(p)} className="admin-button admin-button-secondary">Editar</button>
+                        <button onClick={() => handleEliminarProducto(p.id)} className="admin-button admin-button-danger">Borrar</button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
 
-        {/* PANEL LATERAL: FORMULARIOS */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          
-          {/* Formulario Producto */}
-          {productoEditando && (
-            <div className="admin-card">
-              <h4>{productoEditando.id ? 'Editar Producto' : 'Nuevo Producto'}</h4>
-              <form onSubmit={handleGuardarProducto} className="admin-form">
-                <input type="text" placeholder="Nombre" value={productoEditando.nombre} onChange={(e) => setProductoEditando({...productoEditando, nombre: e.target.value})} required />
-                <input type="number" placeholder="Precio" value={productoEditando.precio} onChange={(e) => setProductoEditando({...productoEditando, precio: e.target.value})} required />
-                <input type="text" placeholder="URL de la imagen (ej: https://...)" value={productoEditando.imagen || ''} onChange={(e) => setProductoEditando({...productoEditando, imagen: e.target.value})} />
-                <textarea placeholder="Descripción" value={productoEditando.descripcion} onChange={(e) => setProductoEditando({...productoEditando, descripcion: e.target.value})} />
-                
-                <select value={productoEditando.categoriaId} onChange={(e) => setProductoEditando({...productoEditando, categoriaId: e.target.value})} required>
-                  <option value="">Seleccioná Categoría</option>
-                  {categorias.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
-                </select>
-
-                <label style={{ display: 'flex', gap: '5px' }}>
-                  <input type="checkbox" checked={productoEditando.disponible} onChange={(e) => setProductoEditando({...productoEditando, disponible: e.target.checked})} />
-                  Disponible
-                </label>
-
-                <div className="admin-form-row">
-                  <button type="submit" className="admin-button admin-button-primary">Guardar</button>
-                  <button type="button" onClick={() => setProductoEditando(null)} className="admin-button admin-button-secondary">Cancelar</button>
-                </div>
-              </form>
-            </div>
-          )}
-
-          {/* Formulario Categoría */}
+        {/* Formulario Producto */}
+        {productoEditando && (
           <div className="admin-card">
-            <h4>Nueva Categoría</h4>
-            <form onSubmit={handleCrearCategoria} className="admin-form">
-              <input type="text" placeholder="Nombre" value={nuevaCategoria.nombre} onChange={(e) => setNuevaCategoria({...nuevaCategoria, nombre: e.target.value})} required />
-              <button type="submit" className="admin-button admin-button-primary">Crear categoría</button>
+            <h4>{productoEditando.id ? 'Editar Producto' : 'Nuevo Producto'}</h4>
+            <form onSubmit={handleGuardarProducto} className="admin-form">
+              <input type="text" placeholder="Nombre" value={productoEditando.nombre} onChange={(e) => setProductoEditando({...productoEditando, nombre: e.target.value})} required />
+              <input type="number" placeholder="Precio" value={productoEditando.precio} onChange={(e) => setProductoEditando({...productoEditando, precio: e.target.value})} required />
+              <input type="text" placeholder="URL de la imagen (ej: https://...)" value={productoEditando.imagen || ''} onChange={(e) => setProductoEditando({...productoEditando, imagen: e.target.value})} />
+              <textarea placeholder="Descripción" value={productoEditando.descripcion} onChange={(e) => setProductoEditando({...productoEditando, descripcion: e.target.value})} />
+
+              <select value={productoEditando.categoriaId} onChange={(e) => setProductoEditando({...productoEditando, categoriaId: e.target.value})} required>
+                <option value="">Seleccioná Categoría</option>
+                {categorias.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
+              </select>
+
+              <label style={{ display: 'flex', gap: '5px' }}>
+                <input type="checkbox" checked={productoEditando.disponible} onChange={(e) => setProductoEditando({...productoEditando, disponible: e.target.checked})} />
+                Disponible
+              </label>
+
+              <div className="admin-form-row">
+                <button type="submit" className="admin-button admin-button-primary">Guardar</button>
+                <button type="button" onClick={() => setProductoEditando(null)} className="admin-button admin-button-secondary">Cancelar</button>
+              </div>
             </form>
           </div>
+        )}
+      </div>
 
+      {/* CATEGORÍAS */}
+      <div className={`admin-layout ${categoriaEditando ? '' : 'admin-layout-single'}`} style={{ marginTop: '20px' }}>
+        <div className="admin-card">
+          <div className="admin-section-header">
+            <h3>Categorías</h3>
+            <button
+              onClick={() => setCategoriaEditando({ nombre: '', descripcion: '', imagen: '' })}
+              className="admin-button admin-button-primary">
+              Nueva categoría
+            </button>
+          </div>
+          <div className="admin-table-wrapper">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Imagen</th>
+                  <th>Nombre</th>
+                  <th>Descripción</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {categorias.map((c) => (
+                  <tr key={c.id}>
+                    <td>
+                      {c.imagen ? (
+                        <img src={c.imagen} alt={c.nombre} className="admin-product-image" />
+                      ) : (
+                        <div className="admin-image-placeholder">Sin foto</div>
+                      )}
+                    </td>
+                    <td>{c.nombre}</td>
+                    <td>{c.descripcion}</td>
+                    <td>
+                      <div className="admin-actions">
+                        <button onClick={() => setCategoriaEditando(c)} className="admin-button admin-button-secondary">Editar</button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
+
+        {/* Formulario Categoría */}
+        {categoriaEditando && (
+          <div className="admin-card">
+            <h4>{categoriaEditando.id ? 'Editar Categoría' : 'Nueva Categoría'}</h4>
+            <form onSubmit={handleGuardarCategoria} className="admin-form">
+              <input type="text" placeholder="Nombre" value={categoriaEditando.nombre} onChange={(e) => setCategoriaEditando({...categoriaEditando, nombre: e.target.value})} required />
+              <input type="text" placeholder="URL de la imagen (ej: https://...)" value={categoriaEditando.imagen || ''} onChange={(e) => setCategoriaEditando({...categoriaEditando, imagen: e.target.value})} />
+              <textarea placeholder="Descripción" value={categoriaEditando.descripcion || ''} onChange={(e) => setCategoriaEditando({...categoriaEditando, descripcion: e.target.value})} />
+
+              <div className="admin-form-row">
+                <button type="submit" className="admin-button admin-button-primary">Guardar</button>
+                <button type="button" onClick={() => setCategoriaEditando(null)} className="admin-button admin-button-secondary">Cancelar</button>
+              </div>
+            </form>
+          </div>
+        )}
       </div>
     </div>
   );

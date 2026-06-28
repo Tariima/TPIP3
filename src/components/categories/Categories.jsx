@@ -4,22 +4,12 @@ import CategoryItem from "../categoriesItem/CategoryItem";
 import { useParams, useNavigate } from "react-router-dom";
 import { obtenerCategorias } from "../../services/api";
 
-const imagenCategoriaDefault =
-  "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1200&auto=format&fit=crop";
-
 function Categories() {
   const { mesaId, accountId } = useParams();
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   useEffect(() => {
-    obtenerCategorias().then((data) => {
-      const categoriasConImagen = data.map((categoria) => ({
-        ...categoria,
-        imagen: categoria.imagen || imagenCategoriaDefault,
-      }));
-
-      setCategories(categoriasConImagen);
-    });
+    obtenerCategorias().then((data) => setCategories(data));
   }, []);
 
   return (
@@ -41,7 +31,7 @@ function Categories() {
         className="floating-cart-button" 
         onClick={() => navigate(`/${mesaId}/cart/${accountId}`)}
       >
-        🛒 Ver Carrito
+        Ver Carrito
       </button>
     </div>
   );

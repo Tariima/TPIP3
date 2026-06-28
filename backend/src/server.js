@@ -33,7 +33,7 @@ app.use("/api", orderRoutes);
 
 const startServer = async () => {
   try {
-    await sequelize.sync();
+    await sequelize.sync({ alter: true });
     await cargarDatosIniciales();
 
     app.listen(PORT, () => {

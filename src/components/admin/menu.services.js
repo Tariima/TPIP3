@@ -11,13 +11,15 @@ export const listarCategorias = async () => {
   return res.json();
 };
 
-export const crearCategoria = async (datos) => {
-  const res = await fetch(`${API_URL}/api/menu/categorias`, {
-    method: 'POST',
+export const guardarCategoria = async (categoria) => {
+  const isEdit = categoria.id;
+  const url = isEdit ? `${API_URL}/api/menu/categorias/${categoria.id}` : `${API_URL}/api/menu/categorias`;
+  const res = await fetch(url, {
+    method: isEdit ? 'PUT' : 'POST',
     headers: getHeaders(),
-    body: JSON.stringify(datos)
+    body: JSON.stringify(categoria)
   });
-  if (!res.ok) throw new Error('Error al crear categoría');
+  if (!res.ok) throw new Error('Error al guardar la categoría');
   return res.json();
 };
 

@@ -26,11 +26,15 @@ function ProductItem({ product, accountId }) {
     <>
       <article className="product-card">
         <div className="product-image-wrapper">
-          <img
-            className="product-image"
-            src={product.imagen}
-            alt={product.nombre}
-          />
+          {product.imagen ? (
+            <img
+              className="product-image"
+              src={product.imagen}
+              alt={product.nombre}
+            />
+          ) : (
+            <div className="product-image-placeholder"></div>
+          )}
         </div>
 
         <div className="product-info">

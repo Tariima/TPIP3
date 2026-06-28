@@ -1,7 +1,7 @@
 const express = require('express');
-const { 
-  obtenerCategorias, crearCategoria, 
-  obtenerProductos, crearProducto, actualizarProducto, eliminarProducto 
+const {
+  obtenerCategorias, crearCategoria, actualizarCategoria,
+  obtenerProductos, crearProducto, actualizarProducto, eliminarProducto
 } = require('../controllers/menu.controller');
 const { verificarToken, verificarRol } = require('../middlewares/auth.middleware');
 
@@ -12,6 +12,7 @@ router.use(verificarToken, verificarRol(['super-admin', 'admin']));
 
 router.get('/categorias', obtenerCategorias);
 router.post('/categorias', crearCategoria);
+router.put('/categorias/:id', actualizarCategoria);
 
 router.get('/productos', obtenerProductos);
 router.post('/productos', crearProducto);

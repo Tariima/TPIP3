@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Modal, Button } from 'react-bootstrap';
 import { listarMesas, guardarMesa, regenerarPin, eliminarMesa, abrirMesa, cerrarMesa } from './table.services';
 import { validarMesa } from './mesas.validations';
 import './AdminLayout.css';
@@ -9,6 +10,7 @@ const MesasAdmin = () => {
   const [mesas, setMesas] = useState([]);
   const [error, setError] = useState('');
   const [mesaEditando, setMesaEditando] = useState(null);
+  const [mesaACerrar, setMesaACerrar] = useState(null);
 
   // URL dinámica hacia donde debe apuntar el QR (Vista Cliente)
   const baseUrl = window.location.origin;
@@ -73,13 +75,14 @@ const MesasAdmin = () => {
     }
   };
 
-  const handleCerrar = async (id) => {
-    if (!window.confirm('¿Seguro que querés cerrar la mesa? Esto bloqueará nuevos pedidos.')) return;
+  const handleCerrar = async () => {
     try {
-      await cerrarMesa(id);
+      await cerrarMesa(mesaACerrar.id);
+      setMesaACerrar(null);
       cargarDatos();
     } catch (err) {
       setError(err.message);
+      setMesaACerrar(null);
     }
   };
 
@@ -149,11 +152,7 @@ const MesasAdmin = () => {
                       </div>
                     </td>
                     <td>
-                      <div className="admin-qr-cell">
-                        <img
-                          src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(qrUrl)}`}
-                          alt={`QR Mesa ${m.numero}`}
-                        />
+                      <div className="admin-actions admin-actions-column">
                         <button
                           type="button"
                           onClick={() => window.open(qrImgUrl, '_blank', 'noopener')}
@@ -181,8 +180,8 @@ const MesasAdmin = () => {
                         </div>
                     ) : (
                         <div className="admin-actions admin-actions-column">
-                          <button 
-                          onClick={() => handleCerrar(m.id)}
+                          <button
+                          onClick={() => setMesaACerrar(m)}
                           className="admin-button admin-button-danger">
                           Cerrar mesa
                           </button>
@@ -236,6 +235,23 @@ const MesasAdmin = () => {
           </div>
         )}
       </div>
+
+      <Modal show={!!mesaACerrar} onHide={() => setMesaACerrar(null)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Cerrar mesa</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          ¿Seguro que querés cerrar la mesa <strong>#{mesaACerrar?.numero}</strong>? Esto bloqueará nuevos pedidos.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setMesaACerrar(null)}>
+            Cancelar
+          </Button>
+          <Button variant="danger" onClick={handleCerrar}>
+            Cerrar mesa
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

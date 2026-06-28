@@ -18,11 +18,32 @@ const crearCategoria = async (req, res) => {
       return res.status(400).json({ mensaje: validacion.mensaje });
     }
 
-    const { nombre, descripcion } = req.body;
-    const nuevaCategoria = await Categoria.create({ nombre, descripcion });
+    const { nombre, descripcion, imagen } = req.body;
+    const nuevaCategoria = await Categoria.create({ nombre, descripcion, imagen });
     res.status(201).json(nuevaCategoria);
   } catch (error) {
     res.status(500).json({ mensaje: 'Error al crear categoría' });
+  }
+};
+
+const actualizarCategoria = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const validacion = validarCategoria(req.body);
+    if (validacion.error) {
+      return res.status(400).json({ mensaje: validacion.mensaje });
+    }
+
+    const { nombre, descripcion, imagen } = req.body;
+
+    const categoria = await Categoria.findByPk(id);
+    if (!categoria) return res.status(404).json({ mensaje: 'Categoría no encontrada' });
+
+    await categoria.update({ nombre, descripcion, imagen });
+    res.json(categoria);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al actualizar categoría' });
   }
 };
 
@@ -88,6 +109,6 @@ const eliminarProducto = async (req, res) => {
 };
 
 module.exports = {
-  obtenerCategorias, crearCategoria,
+  obtenerCategorias, crearCategoria, actualizarCategoria,
   obtenerProductos, crearProducto, actualizarProducto, eliminarProducto
 };
