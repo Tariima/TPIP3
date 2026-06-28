@@ -67,7 +67,8 @@ const Registro = () => {
     <div style={{ maxWidth: '400px', margin: '20px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}>
       <button
         onClick={() => navigate('/admin/usuarios')}
-        style={{ background: 'none', border: 'none', color: '#4f46e5', fontSize: '1em', cursor: 'pointer', padding: 0, marginBottom: '10px' }}
+        className="admin-button admin-button-secondary"
+        style={{ marginBottom: '15px' }}
       >
         ← Volver a usuarios
       </button>

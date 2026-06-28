@@ -48,13 +48,10 @@ const MisPedidos = () => {
 
   return (
     <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
-      <button
-        onClick={() => navigate(`/${numero}/cuentas`)}
-        style={{ background: 'none', border: 'none', color: '#4f46e5', fontSize: '1em', cursor: 'pointer', padding: 0, marginBottom: '10px' }}
-      >
-        ← Volver a la mesa
-      </button>
-      <h2>Mesa {numero} - Mis Pedidos</h2>
+      <header style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '20px' }}>
+        <button className="back-button" onClick={() => navigate(`/${numero}/cuentas`)}>←</button>
+        <h2 style={{ margin: 0 }}>Mesa {numero} - Mis Pedidos</h2>
+      </header>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '30px' }}>
         {Object.entries(resumen)
