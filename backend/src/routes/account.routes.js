@@ -38,12 +38,14 @@ router.post("/mesas/:mesaId/cuentas", verificarMesaToken, async (req, res) => {
   const cantidadCuentas = await Cuenta.count({
     where: {
       mesaId,
+      estado: "abierta",
     },
   });
 
   const cuenta = await Cuenta.create({
     nombre: nombre?.trim() || `Cuenta ${cantidadCuentas + 1}`,
     mesaId,
+    estado: "abierta"
   });
 
   res.status(201).json(cuenta);

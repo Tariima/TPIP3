@@ -51,9 +51,24 @@ export const crearCuentaMesa = async (mesaId, nombre) => {
     headers: { "Content-Type": "application/json", ...mesaAuthHeader() },
     body: JSON.stringify({ nombre }),
   });
+  
   if (!respuesta.ok) {
     verificarAcceso(respuesta);
     throw new Error("Error al crear cuenta");
   }
+  return respuesta.json();
+};
+
+export const listarMisPedidos = async () => {
+  const respuesta = await fetch(`${API_BASE_URL}/pedidos/cliente`, {
+    method: "GET",
+    headers: { ...mesaAuthHeader() },
+  });
+  
+  if (!respuesta.ok) {
+    verificarAcceso(respuesta);
+    throw new Error("Error al obtener los pedidos");
+  }
+  
   return respuesta.json();
 };
