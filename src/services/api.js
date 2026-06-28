@@ -45,15 +45,11 @@ export const obtenerCuentasMesa = async (mesaId) => {
   return respuesta.json();
 };
 
-export const crearCuentaMesa = async (mesaId, nombreCuenta = "") => {
+export const crearCuentaMesa = async (mesaId, nombre) => {
   const respuesta = await fetch(`${API_BASE_URL}/mesas/${mesaId}/cuentas`, {
     method: "POST",
-    headers: { 
-      ...mesaAuthHeader(),
-      "Content-Type": "application/json" // Agregamos esto para poder enviar JSON
-    },
-    // Enviamos el nombre al backend
-    body: JSON.stringify({ nombre: nombreCuenta }) 
+    headers: { "Content-Type": "application/json", ...mesaAuthHeader() },
+    body: JSON.stringify({ nombre }),
   });
   
   if (!respuesta.ok) {

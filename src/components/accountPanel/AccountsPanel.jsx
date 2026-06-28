@@ -10,6 +10,10 @@ function AccountsPanel() {
   const [mesa, setMesa] = useState(null);
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [accountName, setAccountName] = useState("");
+  const [creatingAccount, setCreatingAccount] = useState(false);
+  const [modalError, setModalError] = useState("");
 
   useEffect(() => {
     const cargarDatos = async () => {
@@ -29,22 +33,38 @@ function AccountsPanel() {
     cargarDatos();
   }, [mesaId]);
 
-  const handleCreateAccount = async () => {
-    // Desplegamos el prompt pidiendo el nombre
-    const nombreIngresado = window.prompt("Ingresá tu nombre (o dejalo vacío para usar el automático):");
+  const openCreateModal = () => {
+    setAccountName("");
+    setModalError("");
+    setShowCreateModal(true);
+  };
 
-    // Si el usuario hace clic en "Cancelar", no hacemos nada
-    if (nombreIngresado === null) {
-      return; 
+  const closeCreateModal = () => {
+    if (creatingAccount) return;
+    setShowCreateModal(false);
+    setModalError("");
+  };
+
+  const handleCreateAccount = async (event) => {
+    event.preventDefault();
+    const nombre = accountName.trim();
+
+    if (!nombre) {
+      setModalError("Ingresá un nombre para la cuenta");
+      return;
     }
 
     try {
-      // Le pasamos a nuestra API el nombre que escribió el cliente
-      const nuevaCuenta = await crearCuentaMesa(mesa.id, nombreIngresado);
+      setCreatingAccount(true);
+      const nuevaCuenta = await crearCuentaMesa(mesa.id, nombre);
       setAccounts([...accounts, nuevaCuenta]);
+      setShowCreateModal(false);
+      setAccountName("");
     } catch (error) {
       if (!sesionMesaValida()) return navigate(`/${mesaId}`);
-      alert("Error al crear la cuenta");
+      setModalError("Error al crear la cuenta");
+    } finally {
+      setCreatingAccount(false);
     }
   };
 
@@ -63,7 +83,7 @@ function AccountsPanel() {
           <p>Mesa Número: {mesa.numero}</p>
         </div>
 
-        <button className="create-account-button" onClick={handleCreateAccount}>
+        <button className="create-account-button" onClick={openCreateModal}>
           Crear cuenta
         </button>
         <button className="create-account-button" style={{ backgroundColor: '#10b981', color: 'white' }} onClick={() => navigate(`/${mesaId}/mis-pedidos`)}>
@@ -90,6 +110,36 @@ function AccountsPanel() {
           ))
         )}
       </div>
+
+      {showCreateModal && (
+        <div className="account-modal-backdrop">
+          <div className="account-modal">
+            <h3>Nueva cuenta</h3>
+            <p>Ingresá un nombre para identificar esta cuenta.</p>
+
+            <form onSubmit={handleCreateAccount}>
+              <input
+                type="text"
+                value={accountName}
+                onChange={(e) => setAccountName(e.target.value)}
+                placeholder="Ej: Familia Perez"
+                autoFocus
+              />
+
+              {modalError && <span className="account-modal-error">{modalError}</span>}
+
+              <div className="account-modal-actions">
+                <button type="button" onClick={closeCreateModal} disabled={creatingAccount}>
+                  Cancelar
+                </button>
+                <button type="submit" disabled={creatingAccount}>
+                  {creatingAccount ? "Creando..." : "Crear cuenta"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
