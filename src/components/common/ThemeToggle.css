@@ -1,0 +1,26 @@
+.theme-toggle {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 1200;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--accent);
+  color: white;
+  padding: 10px 14px;
+  font-weight: 800;
+  box-shadow: var(--shadow);
+}
+
+.theme-toggle:hover {
+  background: var(--accent-hover);
+}
+
+@media (max-width: 520px) {
+  .theme-toggle {
+    right: 12px;
+    bottom: 12px;
+    padding: 9px 12px;
+    font-size: 0.85rem;
+  }
+}

@@ -19,11 +19,13 @@ import PedidosPanel from "./components/admin/PedidosPanel";
 import ValidarMesa from "./cliente/ValidarMesa";
 import MesaProtected from "./components/routing/protected/MesaProtected";
 import MisPedidos from "./cliente/MisPedidos";
+import ThemeToggle from "./components/common/ThemeToggle";
 
 
 function App() {
   return (
     <>
+      <ThemeToggle />
       <Routes>
         <Route path="/login" element={<Login />} />
 

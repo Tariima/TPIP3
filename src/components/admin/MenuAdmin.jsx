@@ -119,9 +119,9 @@ const handleGuardarProducto = async (e) => {
                 <tr key={p.id}>
                   <td>
                     {p.imagen ? (
-                      <img src={p.imagen} alt={p.nombre} style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }} />
+                      <img src={p.imagen} alt={p.nombre} className="admin-product-image" />
                     ) : (
-                      <div style={{ width: '50px', height: '50px', backgroundColor: '#e5e7eb', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', color: '#6b7280' }}>Sin foto</div>
+                      <div className="admin-image-placeholder">Sin foto</div>
                     )}
                   </td>
                   <td>{p.nombre}</td>

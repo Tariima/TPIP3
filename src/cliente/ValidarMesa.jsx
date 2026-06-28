@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { guardarSesionMesa } from '../services/mesa/mesa.session';
 import { validarPin } from '../components/admin/mesas.validations';
+import './ValidarMesa.css';
 
 const ValidarMesa = () => {
   const { numero } = useParams(); // Obtenemos numero desde la URL
@@ -46,24 +47,23 @@ const ValidarMesa = () => {
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#f3f4f6' }}>
-      <div style={{ padding: '40px', backgroundColor: 'white', borderRadius: '10px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', textAlign: 'center', maxWidth: '400px', width: '100%' }}>
+    <div className="validar-mesa-page">
+      <div className="validar-mesa-card">
         <h2>Mesa #{numero}</h2>
-        <p style={{ color: '#4b5563', marginBottom: '20px' }}>Ingresá el PIN de 4 dígitos que te brindó el mozo para acceder al menú.</p>
+        <p>Ingresá el PIN de 4 dígitos que te brindó el mozo para acceder al menú.</p>
         
-        {error && <p style={{ color: '#ef4444', fontWeight: 'bold' }}>{error}</p>}
+        {error && <p className="validar-mesa-error">{error}</p>}
         
-        <form onSubmit={handleValidar} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+        <form onSubmit={handleValidar} className="validar-mesa-form">
           <input 
             type="text" 
             maxLength="4" 
             placeholder="Ej: 1234" 
             value={pin}
             onChange={(e) => setPin(e.target.value)}
-            style={{ padding: '15px', fontSize: '2em', textAlign: 'center', letterSpacing: '10px', borderRadius: '5px', border: '2px solid #ccc' }}
             required
           />
-          <button type="submit" style={{ backgroundColor: '#4f46e5', color: 'white', padding: '15px', fontSize: '1.2em', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>
+          <button type="submit">
             Ver Menú
           </button>
         </form>
