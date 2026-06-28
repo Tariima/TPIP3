@@ -45,14 +45,34 @@ export const obtenerCuentasMesa = async (mesaId) => {
   return respuesta.json();
 };
 
-export const crearCuentaMesa = async (mesaId) => {
+export const crearCuentaMesa = async (mesaId, nombreCuenta = "") => {
   const respuesta = await fetch(`${API_BASE_URL}/mesas/${mesaId}/cuentas`, {
     method: "POST",
-    headers: { ...mesaAuthHeader() },
+    headers: { 
+      ...mesaAuthHeader(),
+      "Content-Type": "application/json" // Agregamos esto para poder enviar JSON
+    },
+    // Enviamos el nombre al backend
+    body: JSON.stringify({ nombre: nombreCuenta }) 
   });
+  
   if (!respuesta.ok) {
     verificarAcceso(respuesta);
     throw new Error("Error al crear cuenta");
   }
+  return respuesta.json();
+};
+
+export const listarMisPedidos = async () => {
+  const respuesta = await fetch(`${API_BASE_URL}/pedidos/cliente`, {
+    method: "GET",
+    headers: { ...mesaAuthHeader() },
+  });
+  
+  if (!respuesta.ok) {
+    verificarAcceso(respuesta);
+    throw new Error("Error al obtener los pedidos");
+  }
+  
   return respuesta.json();
 };
