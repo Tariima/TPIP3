@@ -102,14 +102,21 @@ router.post("/mesas", verificarToken, verificarRol(['super-admin', 'admin']), as
     }
 
     const { numero } = req.body;
+
+    // si ya existe una mesa con ese numero avisamos claro en vez de tirar un error generico
+    const mesaExistente = await Mesa.findOne({ where: { numero } });
+    if (mesaExistente) {
+      return res.status(400).json({ mensaje: `Ya existe una mesa con el número ${numero}` });
+    }
+
     // generamos pin de 4 digitos
     const pinAleatorio = generarPinMesa();
-    
+
     const mesa = await Mesa.create({ numero, pin: pinAleatorio });
     res.status(201).json(mesa);
   } catch (error) {
     console.error("Error en POST /mesas:", error);
-    res.status(500).json({ mensaje: "Error al crear la mesa (¿El número ya existe?)" });
+    res.status(500).json({ mensaje: "Error al crear la mesa" });
   }
 });
 

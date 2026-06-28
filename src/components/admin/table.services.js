@@ -28,7 +28,11 @@ export const guardarMesa = async (mesa) => {
     headers: getHeaders(),
     body: JSON.stringify(payload)
   });
-  if (!res.ok) throw new Error('Error al guardar los datos de la mesa');
+  if (!res.ok) {
+    // uso el mensaje que manda el backend (ej: mesa repetida) y si no hay, uno generico
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.mensaje || 'Error al guardar los datos de la mesa');
+  }
   return res.json();
 };
 
