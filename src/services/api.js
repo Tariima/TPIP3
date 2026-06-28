@@ -56,3 +56,17 @@ export const crearCuentaMesa = async (mesaId) => {
   }
   return respuesta.json();
 };
+
+export const listarMisPedidos = async () => {
+  const respuesta = await fetch(`${API_BASE_URL}/pedidos/cliente`, {
+    method: "GET",
+    headers: { ...mesaAuthHeader() },
+  });
+  
+  if (!respuesta.ok) {
+    verificarAcceso(respuesta);
+    throw new Error("Error al obtener los pedidos");
+  }
+  
+  return respuesta.json();
+};

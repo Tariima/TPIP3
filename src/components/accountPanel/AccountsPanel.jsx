@@ -57,7 +57,11 @@ function AccountsPanel() {
         <button className="create-account-button" onClick={handleCreateAccount}>
           Crear cuenta
         </button>
+        <button className="create-account-button" style={{ backgroundColor: '#10b981', color: 'white' }} onClick={() => navigate(`/${mesaId}/mis-pedidos`)}>
+          Mis pedidos
+        </button>
       </div>
+      
 
       <div className="accounts-list">
         {accounts.length === 0 ? (

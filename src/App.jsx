@@ -18,6 +18,7 @@ import MesasAdmin from "./components/admin/MesasAdmin";
 import PedidosPanel from "./components/admin/PedidosPanel";
 import ValidarMesa from "./cliente/ValidarMesa";
 import MesaProtected from "./components/routing/protected/MesaProtected";
+import MisPedidos from "./cliente/MisPedidos";
 
 
 function App() {
@@ -55,6 +56,7 @@ function App() {
           <Route path="/:mesaId/category/:accountId" element={<Categories />} />
           <Route path="/:mesaId/category/:accountId/:categoryName" element={<Products />} />
           <Route path="/:mesaId/cart/:accountId" element={<Cart />} />
+          <Route path="/:numero/mis-pedidos" element={<MisPedidos />} />
         </Route>
 
       </Routes>
