@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { listarMisPedidos, obtenerMesaPorNumero, obtenerCuentasMesa } from '../services/api';
+import './MisPedidos.css';
 
 const MisPedidos = () => {
   const { numero } = useParams();
@@ -47,32 +48,34 @@ const MisPedidos = () => {
   const totalMesa = pedidos.reduce((acc, ped) => acc + Number(ped.total), 0);
 
   return (
-    <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
-      <header style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '20px' }}>
-        <button className="back-button" onClick={() => navigate(`/${numero}/cuentas`)}>←</button>
-        <h2 style={{ margin: 0 }}>Mesa {numero} - Mis Pedidos</h2>
+    <div className="mis-pedidos-page">
+      <header className="mis-pedidos-header">
+        <button className="mis-pedidos-back" onClick={() => navigate(`/${numero}/cuentas`)}>
+          ←
+        </button>
+        <h2>Mesa {numero} - Mis Pedidos</h2>
       </header>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '30px' }}>
+      <div className="mis-pedidos-list">
         {Object.entries(resumen)
           .sort(([nombreA], [nombreB]) => nombreA.localeCompare(nombreB, undefined, { numeric: true }))
           .map(([nombreCuenta, datos]) => (
-          <div key={nombreCuenta} style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '15px' }}>
-            <h3 style={{ borderBottom: '1px solid #ddd', paddingBottom: '10px' }}>
+          <div key={nombreCuenta} className="mis-pedidos-card">
+            <h3>
               {nombreCuenta} (Gasto: ${datos.total.toFixed(2)})
             </h3>
             {datos.items.map((pedido, index) => (
-              <div key={pedido.id} style={{ marginBottom: '10px',paddingBottom: '10px',borderBottom: index !== datos.items.length - 1 ? '1px dashed #eee' : 'none' }}>
-                <ul style={{ paddingLeft: '20px', margin: 0, paddingRight: '10px' }}>
+              <div key={pedido.id} className={`mis-pedidos-order ${index !== datos.items.length - 1 ? 'mis-pedidos-order-border' : ''}`}>
+                <ul>
                   {pedido.PedidoItems.map(item => (
-                    <li key={item.id} style={{ marginBottom: '8px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <li key={item.id}>
+                      <div className="mis-pedidos-row">
                         <span>{item.cantidad}x {item.nombreProducto}</span>
                         <strong>${Number(item.subtotal).toFixed(2)}</strong>
                       </div>
                       {/* Muestra precio unitario solo si se pidio mas de 1  */}
                       {item.cantidad > 1 && (
-                        <div style={{ fontSize: '0.85em', color: '#666' }}>
+                        <div className="mis-pedidos-unit">
                           (${Number(item.precioUnitario).toFixed(2)} c/u)
                         </div>
                       )}
@@ -85,9 +88,9 @@ const MisPedidos = () => {
         ))}
       </div>
 
-      <div style={{ background: '#4f46e5', color: 'white', padding: '15px', borderRadius: '8px', textAlign: 'center' }}>
-        <p style={{ margin: 0, fontSize: '0.8em' }}>TOTAL DE LA MESA</p>
-        <h2 style={{ margin: 0 }}>${totalMesa.toFixed(2)}</h2>
+      <div className="mis-pedidos-total">
+        <p>TOTAL DE LA MESA</p>
+        <h2>${totalMesa.toFixed(2)}</h2>
       </div>
 
     </div>

@@ -32,7 +32,7 @@ function QuantityModal({ show, handleClose, handleConfirm, productName }) {
           <Button variant="secondary" onClick={handleClose}>
             Cancelar
           </Button>
-          <Button variant="primary" type="submit" style={{ backgroundColor: '#e67e22', border: 'none' }}>
+          <Button variant="primary" type="submit" style={{ backgroundColor: 'var(--accent)', border: 'none' }}>
             Agregar al carrito
           </Button>
         </Modal.Footer>

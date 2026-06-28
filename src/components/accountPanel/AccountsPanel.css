@@ -3,6 +3,8 @@
   max-width: 800px;
   margin: 0 auto;
   min-height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .accounts-header {
@@ -40,6 +42,17 @@
 .create-account-button:hover {
   background-color: var(--accent-hover);
   transform: translateY(-2px);
+}
+
+.secondary-account-button {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.secondary-account-button:hover {
+  background-color: var(--bg-card);
+  border-color: var(--accent);
 }
 
 .accounts-list {

@@ -105,7 +105,7 @@ const PedidosPanel = () => {
                 {pedido.items.map((item) => (
                   <li key={item.id}>
                     {item.cantidad} x {item.nombreProducto}
-                    <span style={{ color: '#555' }}> (${item.subtotal})</span>
+                    <span className="admin-muted"> (${item.subtotal})</span>
                   </li>
                 ))}
               </ul>

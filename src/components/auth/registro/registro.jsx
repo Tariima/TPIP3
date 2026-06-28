@@ -4,6 +4,7 @@ import { crearNuevoUsuario } from './registro.services';
 import { obtenerRoles } from '../../admin/admin.services';
 import { validarUsuario } from '../../admin/usuarios.validations';
 import { AuthContext } from '../../../services/auth/auth.context';
+import '../../admin/AdminLayout.css';
 
 const Registro = () => {
   const {token} = useContext(AuthContext);
@@ -64,7 +65,8 @@ const Registro = () => {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '20px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}>
+    <div className="admin-page admin-page-narrow">
+      <div className="admin-card" style={{ maxWidth: '420px', margin: '0 auto' }}>
       <button
         onClick={() => navigate('/admin/usuarios')}
         className="admin-button admin-button-secondary"
@@ -75,12 +77,12 @@ const Registro = () => {
       <h2>Registrar Nuevo Empleado</h2>
       
       {mensaje.texto && (
-        <div style={{ color: mensaje.tipo === 'error' ? 'red' : 'green', marginBottom: '15px' }}>
+        <div className={`admin-message ${mensaje.tipo === 'error' ? 'admin-message-error' : 'admin-message-success'}`}>
           {mensaje.texto}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+      <form onSubmit={handleSubmit} className="admin-form">
         <div>
           <label>Nombre Completo:</label><br />
           <input 
@@ -111,10 +113,11 @@ const Registro = () => {
             ))}
           </select>
         </div>
-        <button type="submit" disabled={cargando} style={{ padding: '10px', backgroundColor: '#4f46e5', color: 'white', cursor: 'pointer' }}>
+        <button type="submit" disabled={cargando} className="admin-button admin-button-primary">
           {cargando ? 'Guardando...' : 'Crear Usuario'}
         </button>
       </form>
+      </div>
     </div>
   );
 };

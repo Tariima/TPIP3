@@ -93,7 +93,7 @@ function AccountsPanel() {
         <button className="create-account-button" onClick={openCreateModal}>
           Crear cuenta
         </button>
-        <button className="create-account-button" style={{ backgroundColor: '#10b981', color: 'white' }} onClick={() => navigate(`/${mesaId}/mis-pedidos`)}>
+        <button className="create-account-button" onClick={() => navigate(`/${mesaId}/mis-pedidos`)}>
           Mis pedidos
         </button>
       </div>
