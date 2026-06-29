@@ -1,5 +1,5 @@
 // servicio que manda al backend los datos del nuevo empleado para crearlo
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 export const crearNuevoUsuario = async (formData, token) => {
 

@@ -1,5 +1,5 @@
 // servicio que habla con el backend para hacer el login
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 // llama al endpoint de login del backend. usa callbacks onSuccess / onError.
 export const loginUsuario = (email, password, onSuccess, onError) => {

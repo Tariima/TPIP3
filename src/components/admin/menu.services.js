@@ -1,5 +1,5 @@
 // llamadas al backend para el menu: productos y categorias
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 // armo los headers con el token guardado asi el backend me deja pasar
 const getHeaders = () => ({

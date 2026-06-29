@@ -1,5 +1,5 @@
 // llamadas al backend para administrar usuarios y roles del personal
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 // si no hay token mando el authorization vacio en vez de un "bearer null"
 const obtenerConfigHeaders = () => {

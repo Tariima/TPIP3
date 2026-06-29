@@ -24,8 +24,8 @@ const ValidarMesa = () => {
     }
 
     try {
-      // si no hay variable de entorno uso localhost para probar en local
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      // sin variable de entorno uso url relativa: el proxy de vite la redirige al backend
+      const API_URL = import.meta.env.VITE_API_URL || '';
       const res = await fetch(`${API_URL}/api/mesas/numero/${numero}/validar`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -1,8 +1,8 @@
 // aca junto todas las llamadas al backend (categorias, productos, mesas, cuentas)
 import { mesaAuthHeader } from "./mesa/mesa.session";
 
-// uso la url del .env y si no esta arranco con localhost para desarrollo
-export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
+// si hay VITE_API_URL la uso; si no, vacio = url relativa y el proxy de vite la manda al backend
+export const API_URL = import.meta.env.VITE_API_URL || "";
 export const API_BASE_URL = `${API_URL}/api`;
 
 // construye el error de la respuesta; si el backend rechazo el token de mesa

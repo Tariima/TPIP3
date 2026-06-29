@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Mesas — Resumen para el coloquio</title>
+    <style>
+        :root {
+            --bg: #0f0f13;
+            --surface: #1a1a24;
+            --surface2: #22222e;
+            --border: #2e2e3e;
+            --text: #e0e0e8;
+            --text-muted: #8888a0;
+            --accent: #7c6ff7;
+            --accent-light: #a699ff;
+            --accent-bg: rgba(124,111,247,0.08);
+            --green: #4ade80;
+            --green-bg: rgba(74,222,128,0.08);
+            --yellow: #facc15;
+            --yellow-bg: rgba(250,204,21,0.08);
+            --red: #f87171;
+            --red-bg: rgba(248,113,113,0.08);
+            --blue: #60a5fa;
+            --blue-bg: rgba(96,165,250,0.08);
+            --orange: #fb923c;
+            --orange-bg: rgba(251,146,60,0.08);
+            --cyan: #22d3ee;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg); color: var(--text);
+            line-height: 1.7; scroll-behavior: smooth;
+        }
+        .sidebar {
+            position: fixed; top: 0; left: 0;
+            width: 280px; height: 100vh;
+            background: var(--surface); border-right: 1px solid var(--border);
+            overflow-y: auto; padding: 24px 0; z-index: 100; transition: transform 0.3s;
+        }
+        .sidebar-title {
+            font-size: 14px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1.5px;
+            color: var(--accent-light); padding: 0 20px 16px;
+            border-bottom: 1px solid var(--border); margin-bottom: 12px;
+        }
+        .sidebar a {
+            display: block; padding: 9px 20px;
+            color: var(--text-muted); text-decoration: none;
+            font-size: 13.5px; transition: all 0.2s; border-left: 3px solid transparent;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            color: var(--accent-light); background: var(--accent-bg); border-left-color: var(--accent);
+        }
+        .sidebar .nav-section {
+            font-size: 11px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1px;
+            color: var(--text-muted); padding: 16px 20px 6px; opacity: 0.6;
+        }
+        .sidebar-toggle {
+            display: none; position: fixed; top: 16px; left: 16px;
+            z-index: 200; background: var(--accent); color: white;
+            border: none; border-radius: 8px; width: 42px; height: 42px; font-size: 20px; cursor: pointer;
+        }
+        .main { margin-left: 280px; max-width: 920px; padding: 48px 48px 100px; }
+        .hero { text-align: center; padding: 50px 0 30px; }
+        .hero h1 {
+            font-size: 34px; font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-light), var(--cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px;
+        }
+        .hero p { color: var(--text-muted); font-size: 16px; }
+        .unit { margin-top: 40px; }
+        .unit-header {
+            display: flex; align-items: center; gap: 14px;
+            margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid var(--border);
+        }
+        .unit-badge {
+            flex-shrink: 0; width: 44px; height: 44px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 18px; color: white;
+            background: linear-gradient(135deg, #7c6ff7, #a699ff);
+        }
+        .unit-header h2 { font-size: 22px; font-weight: 700; }
+        .topic {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 14px; margin-bottom: 16px; overflow: hidden; transition: border-color 0.2s;
+        }
+        .topic:hover { border-color: var(--accent); }
+        .topic-header {
+            padding: 18px 22px; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center; user-select: none;
+        }
+        .topic-header h3 { font-size: 17px; font-weight: 600; }
+        .topic-toggle { font-size: 18px; color: var(--text-muted); transition: transform 0.3s; }
+        .topic.open .topic-toggle { transform: rotate(180deg); }
+        .topic-body { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; }
+        .topic.open .topic-body { max-height: 60000px; }
+        .topic-content { padding: 0 22px 22px; border-top: 1px solid var(--border); }
+        h4 { font-size: 15px; font-weight: 700; color: var(--accent-light); margin-top: 20px; margin-bottom: 8px; }
+        p, li { font-size: 14.5px; color: var(--text); line-height: 1.8; }
+        ul { padding-left: 20px; margin: 8px 0; }
+        li { margin-bottom: 4px; }
+        code {
+            background: var(--surface2); color: var(--cyan);
+            padding: 2px 7px; border-radius: 5px;
+            font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; font-size: 13px;
+        }
+        pre {
+            background: #12121a; border: 1px solid var(--border);
+            border-radius: 10px; padding: 16px 20px; overflow-x: auto; margin: 12px 0;
+            font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+            font-size: 12.5px; line-height: 1.6; color: var(--text);
+        }
+        pre .cmt { color: var(--text-muted); font-style: italic; }
+        .filepath {
+            display: inline-block; margin: 14px 0 2px; padding: 3px 10px;
+            background: var(--accent-bg); color: var(--accent-light);
+            border: 1px solid var(--border); border-radius: 6px;
+            font-family: 'Consolas', monospace; font-size: 12.5px;
+        }
+        .highlight { padding: 14px 18px; border-radius: 10px; margin: 12px 0; font-size: 14px; }
+        .highlight-purple { background: var(--accent-bg); border-left: 3px solid var(--accent); }
+        .highlight-green  { background: var(--green-bg);  border-left: 3px solid var(--green); }
+        .highlight-yellow { background: var(--yellow-bg); border-left: 3px solid var(--yellow); }
+        .highlight-red    { background: var(--red-bg);    border-left: 3px solid var(--red); }
+        .highlight-blue   { background: var(--blue-bg);   border-left: 3px solid var(--blue); }
+        .highlight-orange { background: var(--orange-bg); border-left: 3px solid var(--orange); }
+        strong { color: #fff; }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13.5px; }
+        th {
+            background: var(--surface2); color: var(--accent-light);
+            padding: 11px 14px; text-align: left; font-weight: 600;
+            font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        td { padding: 9px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+        tr:hover td { background: var(--accent-bg); }
+        td code { font-size: 12px; }
+        .qa { margin-bottom: 14px; }
+        .qa .q { font-weight: 700; color: var(--accent-light); font-size: 14.5px; margin-bottom: 4px; }
+        .qa .a { color: var(--text); font-size: 14px; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+        .back-top {
+            position: fixed; bottom: 24px; right: 24px; width: 44px; height: 44px;
+            background: var(--accent); color: white; border: none; border-radius: 50%;
+            font-size: 20px; cursor: pointer; opacity: 0; transition: opacity 0.3s; z-index: 50;
+        }
+        .back-top.visible { opacity: 1; }
+        @media (max-width: 900px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-toggle { display: flex; align-items: center; justify-content: center; }
+            .main { margin-left: 0; padding: 24px 20px 80px; }
+            .hero h1 { font-size: 24px; }
+        }
+        @media print {
+            .sidebar, .sidebar-toggle, .back-top { display: none !important; }
+            .main { margin-left: 0; max-width: 100%; }
+            .topic-body { max-height: none !important; }
+            body { background: white; color: #1a1a1a; }
+            .topic, .highlight, pre { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+<button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">&#9776;</button>
+
+<nav class="sidebar">
+    <div class="sidebar-title">Gestión de Mesas</div>
+    <div class="nav-section">Secciones</div>
+    <a href="#mapa">1. Mapa de archivos</a>
+    <a href="#conceptos">2. Conceptos clave</a>
+    <a href="#ciclo">3. Ciclo de vida de una mesa</a>
+    <a href="#admin">4. Panel del admin</a>
+    <a href="#cliente">5. Acceso del cliente</a>
+    <a href="#proteccion">6. Protección de rutas</a>
+    <a href="#preguntas">7. Posibles preguntas</a>
+</nav>
+
+<div class="main">
+    <div class="hero">
+        <h1>Gestión de Mesas</h1>
+        <p>App del bar con pedidos por QR — Resumen para estudiar la parte de mesas</p>
+    </div>
+
+    <!-- ============ 1. MAPA DE ARCHIVOS ============ -->
+    <div class="unit" id="mapa">
+        <div class="unit-header"><div class="unit-badge">1</div><h2>Mapa de archivos (a dónde ir)</h2></div>
+
+        <div class="topic open">
+            <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>Qué hace cada archivo</h3><span class="topic-toggle">&#9660;</span>
+            </div>
+            <div class="topic-body"><div class="topic-content">
+
+                <h4>Backend (la lógica y los datos)</h4>
+                <table>
+                    <tr><th>Archivo</th><th>Para qué sirve</th></tr>
+                    <tr><td><code>backend/src/models/Mesa.js</code></td><td>El modelo / tabla <code>mesas</code>.</td></tr>
+                    <tr><td><code>backend/src/models/SesionMesa.js</code></td><td>El modelo / tabla <code>sesiones_mesa</code>.</td></tr>
+                    <tr><td><code>backend/src/models/index.js</code></td><td>Las <strong>relaciones</strong> entre modelos.</td></tr>
+                    <tr><td><code>backend/src/routes/table.routes.js</code></td><td>Todos los <strong>endpoints</strong> de mesas (archivo central).</td></tr>
+                    <tr><td><code>backend/src/validations/mesas.validations.js</code></td><td>Valida el número de mesa.</td></tr>
+                    <tr><td><code>backend/src/middlewares/auth.middleware.js</code></td><td><code>verificarToken</code>, <code>verificarRol</code>, <code>verificarMesaToken</code>.</td></tr>
+                </table>
+
+                <h4>Frontend — panel del admin</h4>
+                <table>
+                    <tr><th>Archivo</th><th>Para qué sirve</th></tr>
+                    <tr><td><code>src/components/admin/MesasAdmin.jsx</code></td><td>La pantalla de gestión (tabla + formulario).</td></tr>
+                    <tr><td><code>src/components/admin/table.services.js</code></td><td>Las llamadas al backend (fetch).</td></tr>
+                    <tr><td><code>src/components/admin/mesas.validations.js</code></td><td>Validación del número y del PIN en el front.</td></tr>
+                </table>
+
+                <h4>Frontend — acceso del cliente (entra por la mesa)</h4>
+                <table>
+                    <tr><th>Archivo</th><th>Para qué sirve</th></tr>
+                    <tr><td><code>src/cliente/ValidarMesa.jsx</code></td><td>Pantalla donde el cliente pone el PIN.</td></tr>
+                    <tr><td><code>src/services/mesa/MesaContextProvider.jsx</code> + <code>mesa.context.js</code></td><td>El Context que guarda la sesión activa.</td></tr>
+                    <tr><td><code>src/services/mesa/mesa.session.js</code></td><td>Guarda la sesión en <code>sessionStorage</code>.</td></tr>
+                    <tr><td><code>src/components/routing/protected/MesaProtected.jsx</code></td><td>Protege las rutas del cliente.</td></tr>
+                </table>
+
+            </div></div>
+        </div>
+    </div>
+
+    <!-- ============ 2. CONCEPTOS ============ -->
+    <div class="unit" id="conceptos">
+        <div class="unit-header"><div class="unit-badge">2</div><h2>Conceptos clave (qué es cada cosa)</h2></div>
+
+        <div class="topic open">
+            <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>Mesa y Sesión de mesa (los dos modelos)</h3><span class="topic-toggle">&#9660;</span>
+            </div>
+            <div class="topic-body"><div class="topic-content">
+
+                <p><strong>Mesa</strong> (<code>mesas</code>): la mesa física del bar. Campos: <code>numero</code> (único, entero), <code>pin</code> (4 dígitos), <code>estado</code> (<code>disponible</code> / <code>ocupada</code>), <code>activa</code> (si está habilitada en el salón).</p>
+                <span class="filepath">backend/src/models/Mesa.js</span>
+<pre>const Mesa = sequelize.define('Mesa', {
+  id:     { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  numero: { type: DataTypes.INTEGER, allowNull: false, unique: true },
+  pin:    { type: DataTypes.STRING,  allowNull: false },
+  estado: { type: DataTypes.STRING,  defaultValue: 'disponible' },
+  activa: { type: DataTypes.BOOLEAN, defaultValue: true }
+}, { tableName: 'mesas', timestamps: false });</pre>
+
+                <p><strong>Sesión de mesa</strong> (<code>sesiones_mesa</code>): representa <strong>una atención</strong>, desde que se abre la mesa hasta que se cierra. Una mesa tiene <strong>muchas</strong> sesiones a lo largo del tiempo. Los <strong>pedidos se cuelgan de la sesión</strong> (<code>sesionMesaId</code>), no de la mesa directamente.</p>
+                <span class="filepath">backend/src/models/SesionMesa.js</span>
+<pre>const SesionMesa = sequelize.define('SesionMesa', {
+  id:            { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  fechaApertura: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
+  fechaCierre:   { type: DataTypes.DATE },  <span class="cmt">// null mientras la sesion sigue abierta</span>
+  estado:        { type: DataTypes.STRING, defaultValue: 'abierta' }  <span class="cmt">// abierta / cerrada</span>
+}, { tableName: 'sesiones_mesa', timestamps: false });</pre>
+
+                <span class="filepath">backend/src/models/index.js (relaciones)</span>
+<pre><span class="cmt">// una mesa tiene muchas sesiones, y cada sesion pertenece a una mesa</span>
+Mesa.hasMany(SesionMesa, { foreignKey: "mesaId" });
+SesionMesa.belongsTo(Mesa, { foreignKey: "mesaId" });
+
+<span class="cmt">// los pedidos se cuelgan de la sesion (no de la mesa directamente)</span>
+SesionMesa.hasMany(Pedido, { foreignKey: "sesionMesaId" });
+Pedido.belongsTo(SesionMesa, { foreignKey: "sesionMesaId" });
+
+<span class="cmt">// la mesa tambien tiene muchas cuentas (cada cliente arma la suya)</span>
+Mesa.hasMany(Cuenta, { foreignKey: "mesaId" });
+Cuenta.belongsTo(Mesa, { foreignKey: "mesaId" });</pre>
+
+                <div class="highlight highlight-purple"><strong>Por qué dos modelos:</strong> una mesa se usa muchas veces. Cada atención (de apertura a cierre) es una sesión distinta. Así los pedidos quedan asociados a la sesión y se puede tener historial por atención.</div>
+
+            </div></div>
+        </div>
+
+        <div class="topic">
+            <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>PIN, QR y Token de mesa</h3><span class="topic-toggle">&#9660;</span>
+            </div>
+            <div class="topic-body"><div class="topic-content">
+
+                <h4>PIN</h4>
+                <p>4 dígitos al azar. Es lo que el cliente necesita <strong>además del QR</strong> para entrar. Se genera nuevo cada vez que se abre la mesa, y al cerrar se pone en <code>'0000'</code> para bloquear el acceso.</p>
+
+                <h4>QR</h4>
+                <p>Apunta a la URL del cliente (<code>origin/numero</code>). <strong>No se guarda en la BD</strong>: se arma al vuelo con un servicio externo (<code>api.qrserver.com</code>) pasándole esa URL.</p>
+
+                <h4>Token de mesa (JWT temporal, 8h)</h4>
+                <p>Distinto del token de login del personal. Lleva <code>tipo: "mesa"</code>, <code>mesaId</code>, <code>numero</code>, <code>sesionMesaId</code>. Autoriza al cliente en las rutas protegidas (cuentas, carrito, pedidos), <strong>sin que el cliente sea un usuario con contraseña</strong>.</p>
+                <span class="filepath">backend/src/routes/table.routes.js</span>
+<pre><span class="cmt">// pin random de 4 digitos</span>
+const generarPinMesa = () =&gt; Math.floor(1000 + Math.random() * 9000).toString();
+
+<span class="cmt">// token temporal de la mesa con el que despues entra el cliente</span>
+const generarMesaToken = (mesa, sesionMesa) =&gt; {
+  return jwt.sign(
+    { tipo: "mesa", mesaId: mesa.id, numero: mesa.numero, sesionMesaId: sesionMesa.id },
+    JWT_SECRET,
+    { expiresIn: MESA_TOKEN_EXPIRES }  <span class="cmt">// "8h"</span>
+  );
+};</pre>
+
+            </div></div>
+        </div>
+    </div>
+
+    <!-- ============ 3. CICLO DE VIDA ============ -->
+    <div class="unit" id="ciclo">
+        <div class="unit-header"><div class="unit-badge">3</div><h2>Ciclo de vida de una mesa</h2></div>
+
+        <div class="topic open">
+            <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>Paso 1 — Crear la mesa (admin)</h3><span class="topic-toggle">&#9660;</span>
+            </div>
+            <div class="topic-body"><div class="topic-content">
+                <p>En MesasAdmin, "Agregar mesa" &rarr; <code>guardarMesa</code> &rarr; <code>POST /mesas</code>. Se crea con <code>estado: 'disponible'</code>, <code>activa: true</code> y un PIN automático. Antes de crear se chequea que el número no exista.</p>
+                <span class="filepath">backend/src/routes/table.routes.js — POST /mesas</span>
+<pre>router.post("/mesas", verificarToken, verificarRol(['super-admin', 'admin']), async (req, res) =&gt; {
+  try {
+    const validacion = validarMesa(req.body);
+    if (validacion.error) return res.status(400).json({ mensaje: validacion.mensaje });
+
+    const { numero } = req.body;
+
+    <span class="cmt">// si ya existe una mesa con ese numero avisamos claro (no un 500 generico)</span>
+    const mesaExistente = await Mesa.findOne({ where: { numero } });
+    if (mesaExistente) {
+      return res.status(400).json({ mensaje: `Ya existe una mesa con el número ${numero}` });
+    }
+
+    const pinAleatorio = generarPinMesa();
+    const mesa = await Mesa.create({ numero, pin: pinAleatorio });
+    res.status(201).json(mesa);
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error al crear la mesa" });
+  }
+});</pre>
+            </div></div>
+        </div>
+
+        <div class="topic">
+            <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>Paso 2 — Abrir la mesa (cuando llegan clientes)</h3><span class="topic-toggle">&#9660;</span>
+            </div>
+            <div class="topic-body"><div class="topic-content">
+                <p>Botón "Abrir mesa" &rarr; <code>POST /mesas/:id/abrir</code>. Hace 3 cosas: pone <code>estado: 'ocupada'</code>, <strong>genera un PIN nuevo</strong> y <strong>crea una SesionMesa</strong> (<code>estado: 'abierta'</code>, <code>fechaApertura</code>, <code>usuarioAperturaId</code> = quién la abrió).</p>
+                <span class="filepath">backend/src/routes/table.routes.js — POST /mesas/:id/abrir</span>
+<pre>router.post("/mesas/:id/abrir", verificarToken, async (req, res) =&gt; {
+  const mesa = await Mesa.findByPk(req.params.id);
+  if (!mesa) return res.status(404).json({ mensaje: "Mesa no encontrada" });
+  if (mesa.estado === 'ocupada') return res.status(400).json({ mensaje: "La mesa ya está abierta" });
+
+  const nuevoPin = generarPinMesa();
+  await mesa.update({ estado: 'ocupada', pin: nuevoPin });
+
+  <span class="cmt">// arranca una sesion para esta atencion</span>
+  await SesionMesa.create({
+    mesaId: mesa.id,
+    usuarioAperturaId: req.usuario.id,
+    estado: 'abierta',
+    fechaApertura: new Date()
+  });
+
+  res.json({ mensaje: "Mesa abierta", mesa });
+});</pre>
+            </div></div>
+        </div>
+
+        <div class="topic">
+            <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>Paso 3 — El cliente entra (valida el PIN)</h3><span class="topic-toggle">&#9660;</span>
+            </div>
+            <div class="topic-body"><div class="topic-content">
+                <p>Escanea el QR &rarr; va a <code>/:numero</code> &rarr; ValidarMesa &rarr; escribe el PIN &rarr; <code>POST /mesas/numero/:numero/validar</code>. El backend chequea: que la mesa esté <strong>ocupada</strong>, que el <strong>PIN coincida</strong> y que haya una <strong>sesión abierta</strong>. Si todo está bien, devuelve el <strong>token de mesa</strong>.</p>
+                <span class="filepath">backend/src/routes/table.routes.js — POST /mesas/numero/:numero/validar</span>
+<pre>router.post("/mesas/numero/:numero/validar", async (req, res) =&gt; {
+  const { numero } = req.params;
+  const { pin } = req.body;
+
+  const mesa = await Mesa.findOne({ where: { numero } });
+  if (!mesa) return res.status(404).json({ mensaje: "Mesa no encontrada" });
+
+  if (mesa.estado !== 'ocupada') return res.status(403).json({ mensaje: "La mesa no está abierta..." });
+  if (mesa.pin !== pin)          return res.status(401).json({ mensaje: "PIN incorrecto" });
+
+  const sesionMesa = await SesionMesa.findOne({ where: { mesaId: mesa.id, estado: "abierta" } });
+  if (!sesionMesa) return res.status(403).json({ mensaje: "La mesa no tiene una sesion abierta" });
+
+  const mesaToken = generarMesaToken(mesa, sesionMesa);
+  res.json({ mensaje: "Acceso concedido", mesaId: mesa.id, numero: mesa.numero, mesaToken });
+});</pre>
+                <div class="highlight highlight-blue">El front guarda ese token con <code>iniciarSesionMesa</code> del <strong>Context</strong> (que persiste en <code>sessionStorage</code>). Desde ahí el cliente ve el menú, crea cuentas, arma el carrito y confirma pedidos (todo ligado a <code>sesionMesaId</code>).</div>
+            </div></div>
+        </div>
+
+        <div class="topic">
+            <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>Paso 4 — Cerrar la mesa (admin)</h3><span class="topic-toggle">&#9660;</span>
+            </div>
+            <div class="topic-body"><div class="topic-content">
+                <p>Botón "Cerrar mesa" (con <strong>modal</strong> de confirmación) &rarr; <code>POST /mesas/:id/cerrar</code>. Pone la mesa en <code>disponible</code>, el PIN en <code>'0000'</code> (corta el acceso), pasa la <strong>sesión a cerrada</strong> (con <code>fechaCierre</code>) y <strong>cierra todas las cuentas abiertas</strong> de esa mesa.</p>
+                <span class="filepath">backend/src/routes/table.routes.js — POST /mesas/:id/cerrar</span>
+<pre>router.post("/mesas/:id/cerrar", verificarToken, async (req, res) =&gt; {
+  const mesa = await Mesa.findByPk(req.params.id);
+  if (!mesa) return res.status(404).json({ mensaje: "Mesa no encontrada" });
+
+  <span class="cmt">// libera la mesa y bloquea el acceso invalidando el pin</span>
+  await mesa.update({ estado: 'disponible', pin: '0000' });
+
+  <span class="cmt">// cierra la sesion que estaba abierta</span>
+  const sesionAbierta = await SesionMesa.findOne({ where: { mesaId: mesa.id, estado: 'abierta' } });
+  if (sesionAbierta) await sesionAbierta.update({ estado: 'cerrada', fechaCierre: new Date() });
+
+  <span class="cmt">// cierra todas las cuentas que quedaron abiertas</span>
+  await Cuenta.update({ estado: 'cerrada' }, { where: { mesaId: mesa.id, estado: 'abierta' } });
+
+  res.json({ mensaje: "Mesa cerrada correctamente", mesa });
+});</pre>
+            </div></div>
+        </div>
+    </div>
+
+    <!-- ============ 4. PANEL ADMIN ============ -->
+    <div class="unit" id="admin">
+        <div class="unit-header"><div class="unit-badge">4</div><h2>Panel del admin (MesasAdmin)</h2></div>
+
+        <div class="topic open">
+            <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>La tabla, el formulario y los handlers</h3><span class="topic-toggle">&#9660;</span>
+            </div>
+            <div class="topic-body"><div class="topic-content">
+
+                <p>La tabla tiene una fila por mesa con columnas: <strong>Mesa</strong> (#número), <strong>Estado</strong> (badge), <strong>PIN cliente</strong> (+ botón "Nuevo PIN"), <strong>QR</strong> (botón "Abrir QR" + "Ir a mesa"), <strong>Sesión</strong> (botón "Abrir mesa" o "Cerrar mesa" según el estado) y <strong>Acciones</strong> (Editar / Borrar).</p>
+                <ul>
+                    <li>El formulario se controla con el estado <code>mesaEditando</code> (<code>null</code> = cerrado). Mismo patrón que productos.</li>
+                    <li><strong>Validación</strong> antes de mandar (front) y también en el back &mdash; requisito del TPI.</li>
+                    <li>"Nuevo PIN" reusa el <code>PUT</code> con <code>generarNuevoPin: true</code>, sin abrir el formulario.</li>
+                    <li>En la edición, el campo <strong>número está deshabilitado</strong> (no se cambia el número de una mesa existente).</li>
+                </ul>
+
+                <span class="filepath">src/components/admin/MesasAdmin.jsx — handlers</span>
+<pre>const handleGuardar = async (e) =&gt; {
+  e.preventDefault();
+  setError('');
+  const validacion = validarMesa(mesaEditando);   <span class="cmt">// valido antes de llamar</span>
+  if (validacion.error) { setError(validacion.mensaje); return; }
+  try {
+    await guardarMesa(mesaEditando);
+    setMesaEditando(null);
+    cargarDatos();
+  } catch (err) { setError(err.message); }         <span class="cmt">// muestra el aviso en el cartel rojo</span>
+};
+
+const handleAbrir = async (id) =&gt; {
+  try { await abrirMesa(id); cargarDatos(); }
+  catch (err) { setError(err.message); }
+};
+
+const handleCerrar = async () =&gt; {                  <span class="cmt">// lo dispara el modal de confirmacion</span>
+  try {
+    await cerrarMesa(mesaACerrar.id);
+    setMesaACerrar(null);
+    cargarDatos();
+  } catch (err) { setError(err.message); setMesaACerrar(null); }
+};</pre>
+
+            </div></div>
+        </div>
+
+        <div class="topic">
+            <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>Las llamadas al backend (table.services.js)</h3><span class="topic-toggle">&#9660;</span>
+            </div>
+            <div class="topic-body"><div class="topic-content">
+                <span class="filepath">src/components/admin/table.services.js</span>
+<pre><span class="cmt">// POST si es alta, PUT si es edicion. el numero va como entero en el alta.</span>
+export const guardarMesa = async (mesa) =&gt; {
+  const isEdit = mesa.id;
+  const url = isEdit ? `${API_URL}/api/mesas/${mesa.id}` : `${API_URL}/api/mesas`;
+  const payload = { ...mesa };
+  if (!isEdit) payload.numero = parseInt(payload.numero, 10);
+
+  const res = await fetch(url, {
+    method: isEdit ? 'PUT' : 'POST',
+    headers: getHeaders(),
+    body: JSON.stringify(payload)
+  });
+  if (!res.ok) {
+    <span class="cmt">// uso el mensaje del backend (ej: mesa repetida) y si no hay, uno generico</span>
+    const data = await res.json().catch(() =&gt; ({}));
+    throw new Error(data.mensaje || 'Error al guardar los datos de la mesa');
+  }
+  return res.json();
+};
+
+export const abrirMesa  = (id) =&gt; fetch(`${API_URL}/api/mesas/${id}/abrir`,  { method: 'POST', headers: getHeaders() });
+export const cerrarMesa = (id) =&gt; fetch(`${API_URL}/api/mesas/${id}/cerrar`, { method: 'POST', headers: getHeaders() });
+
+<span class="cmt">// regenera el pin reusando el PUT sin abrir el formulario</span>
+export const regenerarPin = (mesa) =&gt; guardarMesa({ ...mesa, generarNuevoPin: true });</pre>
+                <div class="highlight highlight-green"><strong>Mejora que hicimos:</strong> antes <code>guardarMesa</code> mostraba siempre "Error al guardar..." aunque el back explicara el motivo. Ahora lee <code>data.mensaje</code>, así al duplicar una mesa aparece "Ya existe una mesa con el número X".</div>
+
+                <h4>Validación (mismo criterio front y back)</h4>
+                <span class="filepath">src/components/admin/mesas.validations.js</span>
+<pre>export const validarMesa = ({ numero }) =&gt; {
+  const r = { error: false, mensaje: '' };
+  if (numero === '' || isNaN(Number(numero)) || Number(numero) &lt;= 0) {
+    r.error = true; r.mensaje = 'El número de mesa debe ser un número mayor a 0';
+  } else if (!Number.isInteger(Number(numero))) {
+    r.error = true; r.mensaje = 'El número de mesa debe ser un número entero';
+  }
+  return r;
+};
+
+export const validarPin = (pin) =&gt; {
+  const r = { error: false, mensaje: '' };
+  if (!/^\d{4}$/.test(pin || '')) { r.error = true; r.mensaje = 'El PIN debe tener 4 dígitos'; }
+  return r;
+};</pre>
+            </div></div>
+        </div>
+    </div>
+
+    <!-- ============ 5. CLIENTE ============ -->
+    <div class="unit" id="cliente">
+        <div class="unit-header"><div class="unit-badge">5</div><h2>Acceso del cliente (Context + sesión)</h2></div>
+
+        <div class="topic open">
+            <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>ValidarMesa — el cliente pone el PIN</h3><span class="topic-toggle">&#9660;</span>
+            </div>
+            <div class="topic-body"><div class="topic-content">
+                <span class="filepath">src/cliente/ValidarMesa.jsx</span>
+<pre>const handleValidar = async (e) =&gt; {
+  e.preventDefault();
+  setError('');
+
+  const validacion = validarPin(pin);            <span class="cmt">// valido el pin antes de llamar</span>
+  if (validacion.error) { setError(validacion.mensaje); return; }
+
+  try {
+    const res = await fetch(`${API_URL}/api/mesas/numero/${numero}/validar`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pin })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.mensaje);
+
+    iniciarSesionMesa({ mesaToken: data.mesaToken, mesaId: data.mesaId, numero }); <span class="cmt">// guardo en el Context</span>
+    navigate(`/${numero}/cuentas`);
+  } catch (err) { setError(err.message); }
+};</pre>
+            </div></div>
+        </div>
+
+        <div class="topic">
+            <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>El Context de mesa (estado global)</h3><span class="topic-toggle">&#9660;</span>
+            </div>
+            <div class="topic-body"><div class="topic-content">
+                <span class="filepath">src/services/mesa/MesaContextProvider.jsx</span>
+<pre>export const MesaContextProvider = ({ children }) =&gt; {
+  <span class="cmt">// arranco leyendo lo que haya en sessionStorage (si recarga, no pierde la mesa)</span>
+  const [mesaToken, setMesaToken] = useState(() =&gt; obtenerMesaToken());
+  const [mesaId, setMesaId]       = useState(() =&gt; obtenerMesaId());
+  const [numero, setNumero]       = useState(() =&gt; obtenerMesaNumero());
+
+  const iniciarSesionMesa = (sesion) =&gt; {        <span class="cmt">// al validar el pin</span>
+    guardarSesionMesa(sesion);
+    setMesaToken(sesion.mesaToken);
+    setMesaId(String(sesion.mesaId));
+    setNumero(String(sesion.numero));
+  };
+
+  const cerrarSesionMesa = () =&gt; {               <span class="cmt">// al cerrar o si el token es rechazado</span>
+    limpiarSesionMesa();
+    setMesaToken(null); setMesaId(null); setNumero(null);
+  };
+
+  const sesionActiva = isTokenValid(mesaToken);  <span class="cmt">// hay sesion si el token existe y no expiro</span>
+
+  return (
+    &lt;MesaContext.Provider value={{ mesaId, numero, sesionActiva, iniciarSesionMesa, cerrarSesionMesa }}&gt;
+      {children}
+    &lt;/MesaContext.Provider&gt;
+  );
+};</pre>
+
+                <span class="filepath">src/services/mesa/mesa.session.js (persistencia en sessionStorage)</span>
+<pre><span class="cmt">// guarda token, id y numero de la mesa en sessionStorage</span>
+export const guardarSesionMesa = ({ mesaToken, mesaId, numero }) =&gt; {
+  sessionStorage.setItem(MESA_TOKEN_KEY, mesaToken);
+  sessionStorage.setItem(MESA_ID_KEY, String(mesaId));
+  sessionStorage.setItem(MESA_NUMERO_KEY, String(numero));
+};
+<span class="cmt">// header de autorizacion para las llamadas protegidas del cliente</span>
+export const mesaAuthHeader = () =&gt; ({ Authorization: `Bearer ${obtenerMesaToken()}` });</pre>
+                <div class="highlight highlight-yellow"><strong>Por qué sessionStorage y no localStorage:</strong> la sesión de mesa es temporal &mdash; se borra al cerrar la pestaña, así no queda "pegada" en el celular del cliente. El login del personal sí usa localStorage.</div>
+            </div></div>
+        </div>
+
+        <div class="topic">
+            <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>MesaProtected — protege las pantallas del cliente</h3><span class="topic-toggle">&#9660;</span>
+            </div>
+            <div class="topic-body"><div class="topic-content">
+                <span class="filepath">src/components/routing/protected/MesaProtected.jsx</span>
+<pre>const MesaProtected = () =&gt; {
+  const params = useParams();
+  const numeroUrl = params.numero ?? params.mesaId;
+  const { sesionActiva, numero } = useContext(MesaContext);
+
+  <span class="cmt">// si no hay sesion valida, lo mando a la pantalla del pin</span>
+  if (!sesionActiva) return &lt;Navigate to={`/${numeroUrl}`} replace /&gt;;
+
+  <span class="cmt">// evito que con la sesion de una mesa entre a la url de otra</span>
+  if (numero !== String(numeroUrl)) return &lt;Navigate to={`/${numeroUrl}`} replace /&gt;;
+
+  return &lt;Outlet /&gt;;
+};</pre>
+            </div></div>
+        </div>
+    </div>
+
+    <!-- ============ 6. PROTECCION ============ -->
+    <div class="unit" id="proteccion">
+        <div class="unit-header"><div class="unit-badge">6</div><h2>Protección de rutas (importante para defender)</h2></div>
+
+        <div class="topic open">
+            <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>Dos niveles de protección distintos</h3><span class="topic-toggle">&#9660;</span>
+            </div>
+            <div class="topic-body"><div class="topic-content">
+                <ul>
+                    <li><strong>Rutas del personal</strong> (POST/PUT/DELETE /mesas): <code>verificarToken</code> + <code>verificarRol(['super-admin','admin'])</code>.</li>
+                    <li><strong>Rutas del cliente</strong> (cuentas, carrito, pedidos): <code>verificarMesaToken</code> &mdash; valida el token de mesa y que la mesa del token sea la que se pide.</li>
+                    <li>En el <strong>front</strong>, además, <code>MesaProtected</code> no deja entrar sin sesión válida.</li>
+                </ul>
+
+                <span class="filepath">backend/src/middlewares/auth.middleware.js</span>
+<pre><span class="cmt">// 1) token del personal: verifica el jwt del login y guarda el usuario en req</span>
+const verificarToken = (req, res, next) =&gt; {
+  const token = (req.headers.authorization || '').split(' ')[1];
+  try {
+    req.usuario = jwt.verify(token, JWT_SECRET);
+    next();
+  } catch { return res.status(401).json({ mensaje: 'Token invalido o expirado' }); }
+};
+
+<span class="cmt">// 2) rol: recibe los roles permitidos y compara contra el del usuario</span>
+const verificarRol = (rolesPermitidos) =&gt; async (req, res, next) =&gt; {
+  const rol = await Rol.findByPk(req.usuario.rolId);
+  if (!rol || !rolesPermitidos.includes(rol.nombre)) {
+    return res.status(403).json({ mensaje: 'Acceso denegado...' });
+  }
+  next();
+};
+
+<span class="cmt">// 3) token de mesa del cliente: que sea tipo mesa, la mesa ocupada y la sesion abierta</span>
+const verificarMesaToken = async (req, res, next) =&gt; {
+  const token = (req.headers.authorization || '').split(' ')[1];
+  try {
+    const datos = jwt.verify(token, JWT_SECRET);
+    if (datos.tipo !== 'mesa') return res.status(401).json({ mensaje: 'Token de mesa invalido' });
+
+    const mesa = await Mesa.findByPk(datos.mesaId);
+    if (!mesa || mesa.estado !== 'ocupada') return res.status(403).json({ mensaje: 'La mesa no esta habilitada' });
+
+    const sesion = await SesionMesa.findOne({ where: { id: datos.sesionMesaId, mesaId: datos.mesaId, estado: 'abierta' } });
+    if (!sesion) return res.status(403).json({ mensaje: 'La sesion de mesa no esta activa' });
+
+    req.mesaCliente = { mesaId: datos.mesaId, numero: datos.numero, sesionMesaId: datos.sesionMesaId };
+    next();
+  } catch { return res.status(401).json({ mensaje: 'Token de mesa invalido o expirado' }); }
+};</pre>
+            </div></div>
+        </div>
+    </div>
+
+    <!-- ============ 7. PREGUNTAS ============ -->
+    <div class="unit" id="preguntas">
+        <div class="unit-header"><div class="unit-badge">7</div><h2>Posibles preguntas (con respuestas)</h2></div>
+
+        <div class="topic open">
+            <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>Las 15 preguntas más probables</h3><span class="topic-toggle">&#9660;</span>
+            </div>
+            <div class="topic-body"><div class="topic-content">
+
+                <div class="qa"><div class="q">1. ¿Por qué un modelo SesionMesa aparte de Mesa?</div><div class="a">Porque una mesa se usa muchas veces. Cada atención (de apertura a cierre) es una sesión distinta. Así los pedidos quedan ligados a la sesión (<code>sesionMesaId</code>), hay historial por atención, y "Mis pedidos" del cliente solo muestra los de la sesión actual.</div></div>
+
+                <div class="qa"><div class="q">2. ¿Cómo entra el cliente sin loguearse? ¿Diferencia con el token del personal?</div><div class="a">El cliente no tiene usuario/contraseña: valida el PIN y recibe un token de mesa (JWT temporal, 8h). El token del personal sale del login con email/contraseña y lleva el rol. Son dos tokens distintos, validados por middlewares distintos (<code>verificarMesaToken</code> vs <code>verificarToken</code>).</div></div>
+
+                <div class="qa"><div class="q">3. ¿Por qué PIN si ya está el QR?</div><div class="a">Porque cualquiera que conozca la URL (<code>/numero</code>) entraría sin estar en la mesa. El PIN funciona como segundo factor: el QR te lleva a la mesa, el PIN (que da el mozo y cambia en cada apertura) te autoriza. Al cerrar la mesa el PIN se invalida (<code>'0000'</code>).</div></div>
+
+                <div class="qa"><div class="q">4. ¿Qué pasa con cuentas y pedidos al cerrar la mesa?</div><div class="a">La sesión pasa a cerrada (con <code>fechaCierre</code>) y todas las cuentas abiertas de esa mesa se cierran. Los pedidos quedan guardados (asociados a esa sesión) como historial; no se borran.</div></div>
+
+                <div class="qa"><div class="q">5. ¿El QR se guarda en la base?</div><div class="a">No. Se arma al vuelo con la URL de la mesa (<code>origin/numero</code>) usando un servicio externo (<code>api.qrserver.com</code>). Si cambia el dominio, se regenera solo.</div></div>
+
+                <div class="qa"><div class="q">6. ¿Qué pasa si dos personas escanean el mismo QR?</div><div class="a">Las dos entran a la misma mesa (mismo PIN/sesión) y cada una crea su propia cuenta dentro de la mesa. Por eso la mesa tiene muchas cuentas (<code>Mesa.hasMany(Cuenta)</code>).</div></div>
+
+                <div class="qa"><div class="q">7. ¿Dónde se evita que se repita el número de mesa?</div><div class="a">En dos lados: <code>numero</code> es <code>unique</code> en el modelo, y el controller chequea con un <code>findOne</code> antes de crear y devuelve un mensaje claro. Antes, sin ese chequeo, la constraint tiraba un 500 genérico.</div></div>
+
+                <div class="qa"><div class="q">8. ¿Qué estados puede tener una mesa y una sesión?</div><div class="a">Mesa: <code>disponible</code> u <code>ocupada</code> (+ <code>activa</code> true/false). Sesión: <code>abierta</code> o <code>cerrada</code>.</div></div>
+
+                <div class="qa"><div class="q">9. ¿Por qué el token de mesa expira (8h)? ¿Y si expira mientras pide?</div><div class="a">Para que el acceso no quede abierto para siempre. Si expira (o el back lo rechaza con 401/403), el front detecta <code>sesionExpirada</code>, cierra la sesión vía Context y manda de nuevo al PIN.</div></div>
+
+                <div class="qa"><div class="q">10. ¿Por qué Context? ¿Por qué sessionStorage y no localStorage?</div><div class="a">Context porque es un estado global que usan varias pantallas (cumple el requisito del TPI). <code>sessionStorage</code> porque la sesión de mesa es temporal: se borra al cerrar la pestaña, así no queda "pegada" en el dispositivo del cliente (el login del personal sí usa localStorage).</div></div>
+
+                <div class="qa"><div class="q">11. ¿Qué pasa si el cliente recarga la página?</div><div class="a">La sesión persiste en <code>sessionStorage</code>; el <code>MesaContextProvider</code> la vuelve a leer al arrancar (en los <code>useState</code> iniciales), así que no se pierde el acceso.</div></div>
+
+                <div class="qa"><div class="q">12. ¿Qué rol puede gestionar las mesas?</div><div class="a">El alta/edición/borrado lo protege <code>verificarRol(['super-admin','admin'])</code>. (Dato fino: abrir/cerrar mesa solo usan <code>verificarToken</code>, o sea cualquier usuario logueado &mdash; y como solo se loguean admin/super-admin, en la práctica son ellos.)</div></div>
+
+                <div class="qa"><div class="q">13. ¿El PIN de 4 dígitos es seguro?</div><div class="a">Es simple y se puede adivinar (10.000 combinaciones). Mitiga que: cambia en cada apertura, se invalida al cerrar, y además haría falta la URL de esa mesa. Como mejora futura se podría limitar intentos o usar más dígitos.</div></div>
+
+                <div class="qa"><div class="q">14. ¿Hay validación de formularios?</div><div class="a">Sí, doble: en el front (<code>mesas.validations.js</code>) antes de llamar, y en el back (<code>validarMesa</code>) antes de tocar la BD &mdash; mismo criterio, para avisar el error al usuario (requisito del TPI).</div></div>
+
+                <div class="qa"><div class="q">15. (La clásica) Explicá el flujo de punta a punta.</div><div class="a">Admin crea la mesa &rarr; la abre (genera PIN + sesión) &rarr; el cliente escanea el QR y pone el PIN &rarr; el back valida y devuelve el token de mesa &rarr; el cliente arma su cuenta y pide &rarr; el admin ve los pedidos y al final cierra la mesa (cierra sesión y cuentas).</div></div>
+
+            </div></div>
+        </div>
+    </div>
+
+</div>
+
+<button class="back-top" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">&#8593;</button>
+
+<script>
+    // mostrar el boton de volver arriba al hacer scroll
+    const backTop = document.querySelector('.back-top');
+    window.addEventListener('scroll', () => {
+        backTop.classList.toggle('visible', window.scrollY > 400);
+    });
+
+    // resaltar en la sidebar la seccion que se esta viendo
+    const links = document.querySelectorAll('.sidebar a');
+    const units = document.querySelectorAll('.unit');
+    window.addEventListener('scroll', () => {
+        let actual = '';
+        units.forEach((u) => { if (window.scrollY >= u.offsetTop - 120) actual = u.id; });
+        links.forEach((a) => {
+            a.classList.toggle('active', a.getAttribute('href') === '#' + actual);
+        });
+    });
+
+    // al tocar un link de la sidebar, abrir ese tema si estaba colapsado
+    links.forEach((a) => {
+        a.addEventListener('click', () => {
+            const destino = document.querySelector(a.getAttribute('href'));
+            const topic = destino && destino.querySelector('.topic');
+            if (topic) topic.classList.add('open');
+            document.querySelector('.sidebar').classList.remove('open');
+        });
+    });
+</script>
+
+</body>
+</html>
